@@ -1,0 +1,151 @@
+import Link from 'next/link'
+import { requireUser } from '@/lib/supabase/server'
+import { deckLabel, pct, prettyArch, shortDate } from '@/lib/format'
+import type { Deck } from '@/lib/types'
+
+interface Row {
+  id: string
+  played_at: string
+  deck_id: string | null
+  result: 'W' | 'L' | null
+  went_first: boolean | null
+  opp_archetype: string | null
+  opponent: string | null
+  tags: string[]
+  end_reason: string | null
+  prizes_taken: number
+  prizes_given: number
+}
+
+const PAGE = 1000
+
+export default async function MatchLog({ searchParams }: { searchParams: Promise<{ deck?: string; v?: string }> }) {
+  const q = await searchParams
+  const { supabase } = await requireUser()
+  const { data: deckData } = await supabase.from('decks').select('*').order('name').order('version_order')
+  const decks = (deckData ?? []) as Deck[]
+  const deckById = new Map(decks.map((d) => [d.id, d]))
+  const names = [...new Set(decks.map((d) => d.name))]
+  const versions = decks.filter((d) => d.name === q.deck)
+
+  const ids = q.v ? [q.v] : q.deck ? versions.map((d) => d.id) : null
+  const rows: Row[] = []
+  for (let from = 0; ; from += PAGE) {
+    let query = supabase.from('games')
+      .select('id, played_at, deck_id, result, went_first, opp_archetype, opponent, tags, end_reason, prizes_taken:stats->prizes_taken, prizes_given:stats->prizes_given')
+      .order('played_at', { ascending: false })
+      .range(from, from + PAGE - 1)
+    if (ids) query = query.in('deck_id', ids.length ? ids : ['00000000-0000-0000-0000-000000000000'])
+    const { data, error } = await query
+    if (error) throw error
+    rows.push(...(data as unknown as Row[]))
+    if (data.length < PAGE) break
+  }
+
+  const done = rows.filter((r) => r.result)
+  const wins = (xs: Row[]) => xs.filter((r) => r.result === 'W').length
+  const first = done.filter((r) => r.went_first === true)
+  const second = done.filter((r) => r.went_first === false)
+
+  const byOpp = new Map<string, Row[]>()
+  for (const r of done) byOpp.set(r.opp_archetype ?? '', [...(byOpp.get(r.opp_archetype ?? '') ?? []), r])
+  const matchups = [...byOpp.entries()].sort((a, b) => b[1].length - a[1].length)
+  const tagCounts = new Map<string, number>()
+  for (const r of done) if (r.result === 'L') for (const t of r.tags) tagCounts.set(t, (tagCounts.get(t) ?? 0) + 1)
+  const losses = done.length - wins(done)
+
+  return (
+    <>
+      <div className="row" style={{ justifyContent: 'space-between' }}>
+        <h1>Match log</h1>
+        <form className="row" method="get">
+          <label>Deck
+            <select name="deck" defaultValue={q.deck ?? ''}>
+              <option value="">All decks</option>
+              {names.map((n) => <option key={n}>{n}</option>)}
+            </select>
+          </label>
+          {q.deck && versions.length > 1 && (
+            <label>Version
+              <select name="v" defaultValue={q.v ?? ''}>
+                <option value="">All versions</option>
+                {versions.map((d) => <option key={d.id} value={d.id}>{d.version || 'Unnamed'}</option>)}
+              </select>
+            </label>
+          )}
+          <button className="secondary">Show</button>
+        </form>
+      </div>
+
+      {!rows.length ? (
+        <p className="panel">No games yet. <Link href="/upload">Upload some logs</Link> to get started.</p>
+      ) : (
+        <>
+          <div className="tiles">
+            <div className="panel tile"><div className="muted small">Games</div><div className="n">{rows.length}</div></div>
+            <div className="panel tile"><div className="muted small">Win rate</div><div className="n">{pct(wins(done), done.length)}</div>
+              <div className="muted small">{wins(done)}–{done.length - wins(done)}</div></div>
+            <div className="panel tile"><div className="muted small">Going 1st</div><div className="n">{pct(wins(first), first.length)}</div>
+              <div className="muted small">{first.length} games</div></div>
+            <div className="panel tile"><div className="muted small">Going 2nd</div><div className="n">{pct(wins(second), second.length)}</div>
+              <div className="muted small">{second.length} games</div></div>
+          </div>
+
+          <div className="table-wrap">
+            <table>
+              <thead><tr><th>Played</th><th>Deck</th><th>Opponent deck</th><th>Order</th><th>Result</th><th>Prizes</th><th>Tags</th></tr></thead>
+              <tbody>
+                {rows.map((r) => (
+                  <tr key={r.id}>
+                    <td><Link href={`/games/${r.id}`}>{shortDate(r.played_at)}</Link></td>
+                    <td>{deckLabel(r.deck_id ? deckById.get(r.deck_id) : null)}</td>
+                    <td>{prettyArch(r.opp_archetype)}</td>
+                    <td>{r.went_first === null ? '–' : r.went_first ? '1st' : '2nd'}</td>
+                    <td><span className={`badge ${r.result ?? 'none'}`}>{r.result === 'W' ? 'Win' : r.result === 'L' ? 'Loss' : '?'}</span></td>
+                    <td>{r.prizes_taken}–{r.prizes_given}</td>
+                    <td className="wrap">{r.result === 'L' && r.tags.map((t) => <span key={t} className="pill">{t}</span>)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="grid2">
+            <div>
+              <h2>Matchups</h2>
+              <div className="table-wrap">
+                <table>
+                  <thead><tr><th>Opponent deck</th><th>Games</th><th>Win rate</th><th>1st</th><th>2nd</th></tr></thead>
+                  <tbody>
+                    {matchups.map(([opp, xs]) => {
+                      const f = xs.filter((r) => r.went_first === true), s = xs.filter((r) => r.went_first === false)
+                      return (
+                        <tr key={opp}>
+                          <td>{prettyArch(opp)}</td><td>{xs.length}</td><td>{pct(wins(xs), xs.length)}</td>
+                          <td>{pct(wins(f), f.length)}</td><td>{pct(wins(s), s.length)}</td>
+                        </tr>
+                      )
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div>
+              <h2>What went wrong in losses</h2>
+              <div className="table-wrap">
+                <table>
+                  <thead><tr><th>Tag</th><th>Losses</th><th>Share</th></tr></thead>
+                  <tbody>
+                    {[...tagCounts.entries()].sort((a, b) => b[1] - a[1]).map(([t, n]) => (
+                      <tr key={t}><td>{t}</td><td>{n}</td><td>{pct(n, losses)}</td></tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+    </>
+  )
+}

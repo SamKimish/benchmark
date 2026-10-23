@@ -1,0 +1,90 @@
+Setup
+Rival99 chose heads for the opening coin flip.
+Rival99 won the coin toss.
+Rival99 decided to go first.
+Rival99 drew 7 cards for the opening hand.
+- 7 drawn cards.
+Kimish17 drew 7 cards for the opening hand.
+- 7 drawn cards.
+   • Rosa's Encouragement, Munkidori, Fezandipiti ex, Drakloak, Risky Ruins, Night Stretcher, Dreepy
+Rival99 played Mega Kangaskhan ex to the Active Spot.
+Kimish17 played Dreepy to the Active Spot.
+
+Rival99's Turn
+Rival99 drew a card.
+Rival99's Mega Kangaskhan ex used Run Errand.
+- Rival99 drew 2 cards.
+Rival99 played Mega Absol ex to the Bench.
+Rival99 attached Basic Darkness Energy to Mega Absol ex on the Bench.
+Rival99 played Pokégear 3.0.
+- Rival99 drew Eri.
+- Rival99 shuffled their deck.
+Rival99 ended their turn.
+
+Kimish17's Turn
+Kimish17 drew Basic Darkness Energy.
+Kimish17 played Fezandipiti ex to the Bench.
+Kimish17 played Munkidori to the Bench.
+Kimish17 attached Basic Darkness Energy to Dreepy in the Active Spot.
+Kimish17 retreated Dreepy to the Bench.
+- Basic Darkness Energy was discarded from Kimish17's Dreepy.
+Kimish17's Munkidori is now in the Active Spot.
+Kimish17 ended their turn.
+
+Rival99's Turn
+Rival99 drew a card.
+Rival99's Mega Kangaskhan ex used Run Errand.
+- Rival99 drew 2 cards.
+Rival99 attached Basic Darkness Energy to Mega Absol ex on the Bench.
+Rival99 played Lumiose City to the Stadium spot.
+Rival99 played Eri.
+- Kimish17 discarded Night Stretcher.
+Rival99 played Lumiose City.
+- Rival99 drew Latias ex and played it to the Bench.
+- Rival99 shuffled their deck.
+
+Kimish17's Turn
+Kimish17 drew Munkidori.
+Kimish17 evolved Dreepy to Drakloak on the Bench.
+Kimish17's Drakloak used Recon Directive.
+- Kimish17 drew Ultra Ball.
+Kimish17 played Ultra Ball.
+- Kimish17 discarded 2 cards.
+   • Munkidori, Risky Ruins
+- Kimish17 drew Meowth ex.
+- Kimish17 shuffled their deck.
+Kimish17 played Meowth ex to the Bench.
+Kimish17's Meowth ex used Last-Ditch Catch.
+- Kimish17 drew Lillie's Determination.
+- Kimish17 shuffled their deck.
+Kimish17 played Lillie's Determination.
+- Kimish17 shuffled Rosa's Encouragement into their deck.
+- Kimish17 drew 8 cards.
+   • Basic Fire Energy, Buddy-Buddy Poffin, Drakloak, Poké Pad, Boss's Orders, Unfair Stamp, Buddy-Buddy Poffin, Psyduck
+Kimish17 played Buddy-Buddy Poffin.
+- Kimish17 drew 2 cards and played them to the Bench.
+   • Dreepy, Budew
+- Kimish17 shuffled their deck.
+Kimish17 attached Basic Fire Energy to Munkidori in the Active Spot.
+Kimish17 retreated Munkidori to the Bench.
+- Basic Fire Energy was discarded from Kimish17's Munkidori.
+Kimish17's Budew is now in the Active Spot.
+Kimish17's Budew used Itchy Pollen on Rival99’s Mega Kangaskhan ex for 10 damage.
+
+Rival99's Turn
+Rival99 drew a card.
+Rival99's Mega Kangaskhan ex used Run Errand.
+- Rival99 drew 2 cards.
+Rival99 played Munkidori to the Bench.
+Rival99 attached Basic Darkness Energy to Mega Absol ex on the Bench.
+Rival99 retreated Mega Kangaskhan ex to the Bench.
+Rival99's Mega Absol ex is now in the Active Spot.
+Rival99 played Boss's Orders.
+- Kimish17's Drakloak was switched with Kimish17's Budew to become the Active Pokémon.
+Kimish17's Drakloak is now in the Active Spot.
+Rival99's Mega Absol ex used Claw of Darkness on Kimish17’s Drakloak for 200 damage.
+- Kimish17 discarded Unfair Stamp.
+Kimish17's Drakloak was Knocked Out!
+Dreepy was discarded from Kimish17's Drakloak.
+You conceded. Rival99 wins.
+

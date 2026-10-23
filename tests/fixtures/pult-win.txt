@@ -1,0 +1,348 @@
+Setup
+Rival99 chose tails for the opening coin flip.
+Kimish17 won the coin toss.
+Kimish17 decided to go second.
+Rival99 drew 7 cards for the opening hand.
+- 7 drawn cards.
+Kimish17 drew 7 cards for the opening hand.
+- 7 drawn cards.
+   • Poké Pad, Ultra Ball, Lillie's Determination, Ultra Ball, Dusknoir, Night Stretcher, Meowth ex
+Rival99 played Shaymin to the Active Spot.
+Kimish17 played Meowth ex to the Active Spot.
+
+Rival99's Turn
+Rival99 drew a card.
+Rival99 played Team Rocket's Transceiver.
+- Rival99 drew Team Rocket's Petrel.
+- Rival99 shuffled their deck.
+Rival99 played Buddy-Buddy Poffin.
+- Rival99 drew 2 cards and played them to the Bench.
+   • Drilbur, Beldum
+- Rival99 shuffled their deck.
+Rival99 played Pokégear 3.0.
+- Rival99 drew Boss's Orders.
+- Rival99 shuffled their deck.
+Rival99 attached Basic Metal Energy to Drilbur on the Bench.
+Rival99 ended their turn.
+
+Kimish17's Turn
+Kimish17 drew Poké Pad.
+Kimish17 played Poké Pad.
+- Kimish17 drew Dreepy.
+- Kimish17 shuffled their deck.
+Kimish17 played Dreepy to the Bench.
+Kimish17 played Poké Pad.
+- Kimish17 drew Budew.
+- Kimish17 shuffled their deck.
+Kimish17 played Budew to the Bench.
+Kimish17 played Lillie's Determination.
+- Kimish17 shuffled 4 cards into their deck.
+   • Ultra Ball, Ultra Ball, Dusknoir, Night Stretcher
+- Kimish17 drew 8 cards.
+   • Munkidori, Crushing Hammer, Basic Fire Energy, Unfair Stamp, Drakloak, Ultra Ball, Boss's Orders, Dragapult ex
+Kimish17 played Crushing Hammer.
+- Kimish17 flipped a coin and it landed on heads.
+- Basic Metal Energy was discarded from Kimish17's Drilbur.
+Kimish17 attached Basic Fire Energy to Meowth ex in the Active Spot.
+Kimish17 retreated Meowth ex to the Bench.
+- Basic Fire Energy was discarded from Kimish17's Meowth ex.
+Kimish17's Budew is now in the Active Spot.
+Kimish17's Budew used Itchy Pollen on Rival99’s Shaymin for 10 damage.
+
+Rival99's Turn
+Rival99 drew a card.
+Rival99 played Team Rocket's Petrel.
+- Rival99 drew Precious Trolley.
+- Rival99 shuffled their deck.
+Rival99 evolved Drilbur to Mega Excadrill ex on the Bench.
+Rival99 evolved Beldum to Metang on the Bench.
+Rival99's Metang used Metal Maker.
+- Rival99 attached Basic Metal Energy to Shaymin in the Active Spot.
+- Rival99 attached Basic Metal Energy to Mega Excadrill ex on the Bench.
+- Kimish17 shuffled their cards.
+Rival99 retreated Shaymin to the Bench.
+- Basic Metal Energy was discarded from Rival99's Shaymin.
+Rival99's Mega Excadrill ex is now in the Active Spot.
+Rival99 ended their turn.
+
+Kimish17's Turn
+Kimish17 drew Crushing Hammer.
+Kimish17 played Crushing Hammer.
+- Kimish17 flipped a coin and it landed on tails.
+Kimish17 evolved Dreepy to Drakloak on the Bench.
+Kimish17's Drakloak used Recon Directive.
+- Kimish17 drew Crispin.
+Kimish17 played Munkidori to the Bench.
+Kimish17 played Crispin.
+- Kimish17 drew Basic Psychic Energy.
+- Kimish17 attached Basic Fire Energy to Drakloak on the Bench.
+- Kimish17 shuffled their deck.
+Kimish17 attached Basic Psychic Energy to Drakloak on the Bench.
+Kimish17's Budew used Itchy Pollen on Rival99’s Mega Excadrill ex for 0 damage. Rival99's Mega Excadrill ex took -10 less damage because of Grass Resistance.
+- Damage breakdown:
+   • Base damage: 10 damage
+   • Resistance to Grass: -10 damage
+   • Total damage: 0 damage
+
+
+Rival99's Turn
+Rival99 drew a card.
+Rival99's Metang used Metal Maker.
+- Rival99 attached Basic Metal Energy to Mega Excadrill ex in the Active Spot.
+- Rival99 attached Basic Metal Energy to Mega Excadrill ex in the Active Spot.
+- Kimish17 shuffled their cards.
+Rival99 played Boss's Orders.
+- Kimish17's Drakloak was switched with Kimish17's Budew to become the Active Pokémon.
+Kimish17's Drakloak is now in the Active Spot.
+Rival99's Mega Excadrill ex used Undermine on Kimish17’s Drakloak for 90 damage.
+- Rival99 moved Kimish17's 2 cards to the discard pile.
+   • Buddy-Buddy Poffin, Dreepy
+Kimish17's Drakloak was Knocked Out!
+- 3 cards were discarded from Kimish17's Drakloak.
+   • Basic Fire Energy, Basic Psychic Energy, Dreepy
+Rival99 took a Prize card.
+A card was added to Rival99's hand.
+Kimish17's Budew is now in the Active Spot.
+
+Kimish17's Turn
+Kimish17 drew Fezandipiti ex.
+Kimish17 played Fezandipiti ex to the Bench.
+Kimish17's Fezandipiti ex used Flip the Script.
+- Kimish17 drew 3 cards.
+   • Basic Psychic Energy, Crushing Hammer, Dreepy
+Kimish17 played Crushing Hammer.
+- Kimish17 flipped a coin and it landed on tails.
+Kimish17 played Dreepy to the Bench.
+Kimish17 attached Basic Psychic Energy to Dreepy on the Bench.
+Kimish17 played Boss's Orders.
+- Rival99's Metang was switched with Rival99's Mega Excadrill ex to become the Active Pokémon.
+Rival99's Metang is now in the Active Spot.
+Kimish17 played Unfair Stamp.
+- Kimish17 shuffled 2 cards into their deck.
+   • Ultra Ball, Dragapult ex
+- Kimish17 shuffled 5 cards into their deck.
+- Kimish17 drew 5 cards.
+   • Crispin, Buddy-Buddy Poffin, Lillie's Determination, Buddy-Buddy Poffin, Dragapult ex
+- Kimish17 drew 2 cards.
+Kimish17 played Buddy-Buddy Poffin.
+- Kimish17 drew Dreepy and played it to the Bench.
+- Kimish17 shuffled their deck.
+Kimish17's Budew used Itchy Pollen on Rival99’s Metang for 0 damage. Rival99's Metang took -10 less damage because of Grass Resistance.
+- Damage breakdown:
+   • Base damage: 10 damage
+   • Resistance to Grass: -10 damage
+   • Total damage: 0 damage
+
+
+Rival99's Turn
+Rival99 drew a card.
+Rival99's Metang used Metal Maker.
+- Rival99 attached Basic Metal Energy to Metang in the Active Spot.
+- Kimish17 shuffled their cards.
+Rival99 ended their turn.
+
+Kimish17's Turn
+Kimish17 drew Ultra Ball.
+Kimish17 played Crispin.
+- Kimish17 drew Basic Fire Energy.
+- Kimish17 attached Basic Psychic Energy to Dreepy on the Bench.
+- Kimish17 shuffled their deck.
+Kimish17 played Ultra Ball.
+- Kimish17 discarded 2 cards.
+   • Buddy-Buddy Poffin, Dragapult ex
+- Kimish17 drew Drakloak.
+- Kimish17 shuffled their deck.
+Kimish17 evolved Dreepy to Drakloak on the Bench.
+Kimish17's Drakloak used Recon Directive.
+- Kimish17 drew Drakloak.
+Kimish17 evolved Dreepy to Drakloak on the Bench.
+Kimish17's Drakloak used Recon Directive.
+- Kimish17 drew Hilda.
+Kimish17's Budew used Itchy Pollen on Rival99’s Metang for 0 damage. Rival99's Metang took -10 less damage because of Grass Resistance.
+- Damage breakdown:
+   • Base damage: 10 damage
+   • Resistance to Grass: -10 damage
+   • Total damage: 0 damage
+
+
+Rival99's Turn
+Rival99 drew a card.
+Rival99's Metang used Metal Maker.
+- Rival99 attached Basic Metal Energy to Metang in the Active Spot.
+- Kimish17 shuffled their cards.
+Rival99 retreated Metang to the Bench.
+- 2 cards were discarded from Rival99's Metang.
+   • Basic Metal Energy, Basic Metal Energy
+Rival99's Mega Excadrill ex is now in the Active Spot.
+Rival99 played Team Rocket's Petrel.
+- Rival99 drew Precious Trolley.
+- Rival99 shuffled their deck.
+Rival99's Mega Excadrill ex used Undermine on Kimish17’s Budew for 90 damage.
+- Rival99 moved Kimish17's 2 cards to the discard pile.
+   • Dusclops, Crushing Hammer
+Kimish17's Budew was Knocked Out!
+Rival99 took a Prize card.
+A card was added to Rival99's hand.
+Kimish17's Drakloak is now in the Active Spot.
+
+Kimish17's Turn
+Kimish17 drew Ultra Ball.
+Kimish17's Drakloak used Recon Directive.
+- Kimish17 drew Lillie's Determination.
+Kimish17 attached Basic Fire Energy to Drakloak in the Active Spot.
+Kimish17's Drakloak used Recon Directive.
+- Kimish17 drew Ultra Ball.
+Kimish17's Fezandipiti ex used Flip the Script.
+- Kimish17 drew 3 cards.
+   • Basic Darkness Energy, Night Stretcher, Night Stretcher
+Kimish17 played Night Stretcher.
+- Kimish17 moved Kimish17's Dragapult ex to their hand.
+Kimish17 evolved Drakloak to Dragapult ex in the Active Spot.
+Kimish17 played Night Stretcher.
+- Kimish17 moved Kimish17's Basic Fire Energy to their hand.
+Kimish17 played Lillie's Determination.
+- Kimish17 shuffled 6 cards into their deck.
+   • Lillie's Determination, Hilda, Ultra Ball, Ultra Ball, Basic Darkness Energy, Basic Fire Energy
+- Kimish17 drew 8 cards.
+   • Ultra Ball, Dusknoir, Dragapult ex, Drakloak, Ultra Ball, Lillie's Determination, Special Red Card, Team Rocket's Watchtower
+Kimish17 played Team Rocket's Watchtower to the Stadium spot.
+Kimish17's Dragapult ex used Phantom Dive on Rival99’s Mega Excadrill ex for 200 damage.
+- Kimish17 put a damage counter on Kimish17's Shaymin.
+- Kimish17 put 5 damage counters on Kimish17's Metang.
+
+Rival99's Turn
+Rival99 drew a card.
+Rival99 played Precious Trolley.
+- Rival99 drew 3 cards and played them to the Bench.
+   • Beldum, Beldum, Genesect ex
+- Rival99 shuffled their deck.
+Rival99's Genesect ex used Metallic Signal.
+- Rival99 drew 2 cards.
+   • Metang, Metagross
+- Rival99 shuffled their deck.
+Rival99 played Team Rocket's Transceiver.
+- Rival99 drew Team Rocket's Petrel.
+- Rival99 shuffled their deck.
+Rival99 played Team Rocket's Petrel.
+- Rival99 drew Jumbo Ice Cream.
+- Rival99 shuffled their deck.
+Rival99 played Jumbo Ice Cream.
+- Rival99's Mega Excadrill ex healed 80 damage.
+Rival99's Metang used Metal Maker.
+- Kimish17 shuffled their cards.
+Rival99's Mega Excadrill ex used Maximum Drilling on Kimish17’s Dragapult ex for 200 damage.
+
+Kimish17's Turn
+Kimish17 drew Basic Fire Energy.
+Kimish17's Drakloak used Recon Directive.
+- Kimish17 drew Basic Darkness Energy.
+Kimish17 attached Basic Darkness Energy to Munkidori on the Bench.
+Kimish17 evolved Drakloak to Dragapult ex on the Bench.
+Kimish17's Munkidori used Adrena-Brain.
+- Kimish17 moved 3 damage counters from Kimish17's Dragapult ex to Kimish17's Beldum.
+Kimish17 played Ultra Ball.
+- Kimish17 discarded 2 cards.
+   • Ultra Ball, Dusknoir
+- Kimish17 drew Dusclops.
+- Kimish17 shuffled their deck.
+Kimish17 played Lillie's Determination.
+- Kimish17 shuffled 4 cards into their deck.
+   • Drakloak, Special Red Card, Basic Fire Energy, Dusclops
+- Kimish17 drew 8 cards.
+   • Drakloak, Special Red Card, Poké Pad, Poké Pad, Budew, Ultra Ball, Boss's Orders, Dusclops
+Kimish17's Dragapult ex used Phantom Dive on Rival99’s Mega Excadrill ex for 200 damage.
+- Kimish17 put 5 damage counters on Kimish17's Metang.
+- Kimish17 put a damage counter on Kimish17's Beldum.
+Rival99's Metang was Knocked Out!
+Beldum was discarded from Rival99's Metang.
+Kimish17 took a Prize card.
+Jamming Tower was added to Kimish17's hand.
+
+Rival99's Turn
+Rival99 drew a card.
+Rival99 evolved Beldum to Metang on the Bench.
+Rival99 evolved Beldum to Metang on the Bench.
+Rival99 attached Basic Metal Energy to Mega Excadrill ex in the Active Spot.
+Rival99's Genesect ex used Metallic Signal.
+- Rival99 drew 2 cards.
+   • Metagross, Mega Excadrill ex
+- Rival99 shuffled their deck.
+Rival99's Metang used Metal Maker.
+- Kimish17 shuffled their cards.
+Rival99's Metang used Metal Maker.
+- Kimish17 shuffled their cards.
+Rival99 played Judge.
+- Rival99 shuffled 5 cards into their deck.
+- Rival99 shuffled 9 cards into their deck.
+   • Drakloak, Special Red Card, Poké Pad, Poké Pad, Budew, Ultra Ball, Boss's Orders, Dusclops, Jamming Tower
+- Rival99 drew 4 cards.
+- Rival99 drew 4 cards.
+   • Rosa's Encouragement, Ultra Ball, Poké Pad, Boss's Orders
+Rival99's Mega Excadrill ex used Maximum Drilling on Kimish17’s Dragapult ex for 200 damage.
+Kimish17's Dragapult ex was Knocked Out!
+- 4 cards were discarded from Kimish17's Dragapult ex.
+   • Basic Psychic Energy, Basic Fire Energy, Drakloak, Dreepy
+Rival99 took 2 Prize cards.
+A card was added to Rival99's hand.
+A card was added to Rival99's hand.
+Kimish17's Dragapult ex is now in the Active Spot.
+
+Kimish17's Turn
+Kimish17 drew Jamming Tower.
+Kimish17 played Jamming Tower to the Stadium spot.
+- Kimish17 discarded Team Rocket's Watchtower.
+Kimish17 played Poké Pad.
+- Kimish17 drew Dusclops.
+- Kimish17 shuffled their deck.
+Kimish17 played Boss's Orders.
+- Rival99's Genesect ex was switched with Rival99's Mega Excadrill ex to become the Active Pokémon.
+Rival99's Genesect ex is now in the Active Spot.
+Kimish17's Fezandipiti ex used Flip the Script.
+- Kimish17 drew 3 cards.
+   • Budew, Hilda, Poké Pad
+Kimish17's Dragapult ex used Jet Headbutt on Rival99’s Genesect ex for 70 damage.
+
+Rival99's Turn
+Rival99 drew a card.
+Rival99 played Team Rocket's Transceiver.
+- Rival99 drew Team Rocket's Petrel.
+- Rival99 shuffled their deck.
+Rival99 played Team Rocket's Petrel.
+- Rival99 drew Air Balloon.
+- Rival99 shuffled their deck.
+Rival99 attached Air Balloon to Genesect ex in the Active Spot.
+Rival99 attached Basic Metal Energy to Mega Excadrill ex on the Bench.
+Rival99's Genesect ex used Metallic Signal.
+- Rival99 drew 2 cards.
+   • Metagross, Metagross
+- Rival99 shuffled their deck.
+Rival99's Metang used Metal Maker.
+- Kimish17 shuffled their cards.
+Rival99's Metang used Metal Maker.
+- Rival99 attached Basic Metal Energy to Genesect ex in the Active Spot.
+- Kimish17 shuffled their cards.
+Rival99 played Genesect ex to the Bench.
+Rival99 ended their turn.
+
+Kimish17's Turn
+Kimish17 drew Special Red Card.
+Kimish17 played Rosa's Encouragement.
+- Kimish17 attached Basic Fire Energy to Dragapult ex in the Active Spot.
+- Kimish17 attached Basic Fire Energy to Dragapult ex in the Active Spot.
+Kimish17's Dragapult ex used Phantom Dive on Rival99’s Genesect ex for 200 damage.
+- Kimish17 put 4 damage counters on Kimish17's Metang.
+- Kimish17 put 2 damage counters on Kimish17's Mega Excadrill ex.
+Rival99's Genesect ex was Knocked Out!
+- 2 cards were discarded from Rival99's Genesect ex.
+   • Basic Metal Energy, Air Balloon
+Rival99's Mega Excadrill ex was Knocked Out!
+- 6 cards were discarded from Rival99's Mega Excadrill ex.
+   • Basic Metal Energy, Basic Metal Energy, Basic Metal Energy, Basic Metal Energy, Basic Metal Energy, Drilbur
+Kimish17 took 5 Prize cards.
+Lillie's Determination was added to Kimish17's hand.
+Duskull was added to Kimish17's hand.
+Buddy-Buddy Poffin was added to Kimish17's hand.
+Basic Psychic Energy was added to Kimish17's hand.
+Duskull was added to Kimish17's hand.
+All Prize cards taken. Kimish17 wins.
+

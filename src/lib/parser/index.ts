@@ -1,0 +1,5 @@
+export { gameStats, END_REASONS } from './stats'
+export type { GameStats } from './stats'
+export { LogError } from './parse'
+export { detectArchetype } from './archetype'
+export { cardSlug, detectMe } from './text'

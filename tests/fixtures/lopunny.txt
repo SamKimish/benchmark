@@ -1,0 +1,123 @@
+Setup
+Rival42 chose tails for the opening coin flip.
+Kimish17 won the coin toss.
+Kimish17 decided to go second.
+Rival42 drew 7 cards for the opening hand.
+- 7 drawn cards.
+Kimish17 drew 7 cards for the opening hand.
+- 7 drawn cards.
+   • Boss's Orders, Mew ex, Lillie's Determination, Lillie's Determination, Poké Pad, Bronzong, Lillie's Determination
+Rival42 played Mega Kangaskhan ex to the Active Spot.
+Kimish17 played Mew ex to the Active Spot.
+
+Rival42's Turn
+Rival42 drew a card.
+Rival42's Mega Kangaskhan ex used Run Errand.
+- Rival42 drew 2 cards.
+Rival42 played Slowpoke to the Bench.
+Rival42 attached Basic Psychic Energy to Slowpoke on the Bench.
+Rival42 played Poké Pad.
+- Rival42 drew Slowpoke.
+- Rival42 shuffled their deck.
+Rival42 played Slowpoke to the Bench.
+Rival42 ended their turn.
+
+Kimish17's Turn
+Kimish17 drew Mega Lopunny ex.
+Kimish17 played Poké Pad.
+- Kimish17 drew Budew.
+- Kimish17 shuffled their deck.
+Kimish17 played Budew to the Bench.
+Kimish17 played Lillie's Determination.
+- Kimish17 shuffled 5 cards into their deck.
+   • Boss's Orders, Lillie's Determination, Lillie's Determination, Bronzong, Mega Lopunny ex
+- Kimish17 drew 8 cards.
+   • Lillie's Determination, Poké Pad, Boss's Orders, Telepathic Psychic Energy, Lillie's Determination, Bronzor, Rare Candy, Switch
+Kimish17 played Bronzor to the Bench.
+Kimish17 attached Telepathic Psychic Energy to Mew ex in the Active Spot.
+Telepathic Psychic Energy was activated.
+- Kimish17 drew 2 cards and played them to the Bench.
+   • Duskull, Latias ex
+- Kimish17 shuffled their deck.
+Kimish17 played Poké Pad.
+- Kimish17 drew Buneary.
+- Kimish17 shuffled their deck.
+Kimish17 played Buneary to the Bench.
+Kimish17's Mew ex used Itchy Pollen on Rival42’s Mega Kangaskhan ex for 10 damage.
+
+Rival42's Turn
+Rival42 drew a card.
+Rival42 played Ciphermaniac's Codebreaking.
+- Rival42 shuffled their deck.
+Rival42's Mega Kangaskhan ex used Run Errand.
+- Rival42 drew 2 cards.
+Rival42 attached Telepathic Psychic Energy to Slowpoke on the Bench.
+Telepathic Psychic Energy was activated.
+- Rival42 drew 2 cards and played them to the Bench.
+   • Duskull, Slowpoke
+- Rival42 shuffled their deck.
+Rival42 played Latias ex to the Bench.
+Rival42 played Academy at Night to the Stadium spot.
+Rival42 evolved Slowpoke to Slowking on the Bench.
+Rival42 retreated Mega Kangaskhan ex to the Bench.
+Rival42's Slowking is now in the Active Spot.
+Rival42's Slowking used Seek Inspiration.
+- Rival42 discarded Telepathic Psychic Energy.
+
+Kimish17's Turn
+Kimish17 drew Duskull.
+Kimish17 played Lillie's Determination.
+- Kimish17 shuffled 5 cards into their deck.
+   • Lillie's Determination, Boss's Orders, Rare Candy, Switch, Duskull
+- Kimish17 drew 8 cards.
+   • Switch, Mega Kangaskhan ex, Lillie's Determination, Ultra Ball, Hilda, Hilda, Mega Lopunny ex, Duskull
+Kimish17 played Ultra Ball.
+- Kimish17 discarded 2 cards.
+   • Hilda, Mega Kangaskhan ex
+- Kimish17 drew Dusclops.
+- Kimish17 shuffled their deck.
+Kimish17 evolved Duskull to Dusclops on the Bench.
+Kimish17 evolved Buneary to Mega Lopunny ex on the Bench.
+Kimish17 retreated Mew ex to the Bench.
+Kimish17's Mega Lopunny ex is now in the Active Spot.
+Kimish17 played Switch.
+- Kimish17's Mew ex was switched with Kimish17's Mega Lopunny ex to become the Active Pokémon.
+Kimish17's Mew ex is now in the Active Spot.
+Kimish17's Mew ex used Gale Thrust on Rival42’s Slowking for 230 damage.
+- Damage breakdown:
+   • Base damage: 60 damage
+   • Damage: 170 damage
+   • Damage: 170 damage
+   • Total damage: 230 damage
+
+Rival42's Slowking was Knocked Out!
+- 3 cards were discarded from Rival42's Slowking.
+   • Basic Psychic Energy, Telepathic Psychic Energy, Slowpoke
+Kimish17 took a Prize card.
+Jamming Tower was added to Kimish17's hand.
+Rival42's Slowpoke is now in the Active Spot.
+
+Rival42's Turn
+Rival42 drew a card.
+Rival42 didn't take an action in time.
+
+Kimish17's Turn
+Kimish17 drew Meowth ex.
+Kimish17 played Hilda.
+- Kimish17 drew 2 cards.
+   • Bronzong, Enriching Energy
+- Kimish17 shuffled their deck.
+Kimish17 attached Enriching Energy to Mega Lopunny ex on the Bench.
+Enriching Energy was activated.
+- Kimish17 drew 4 cards.
+   • Dusknoir, Ultra Ball, Ultra Ball, Mega Lopunny ex
+Kimish17 evolved Bronzor to Bronzong on the Bench.
+Kimish17 evolved Dusclops to Dusknoir on the Bench.
+Kimish17 played Jamming Tower to the Stadium spot.
+- Rival42 discarded Academy at Night.
+Kimish17's Mew ex used Evolution Jammer on Rival42’s Slowpoke for 30 damage.
+
+Rival42's Turn
+Rival42 drew a card.
+Opponent was inactive for too long. Kimish17 wins.
+
