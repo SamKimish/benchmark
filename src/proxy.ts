@@ -4,6 +4,20 @@ import { NextResponse, type NextRequest } from 'next/server'
 const PUBLIC = ['/login', '/auth']
 
 export async function proxy(request: NextRequest) {
+  // Supabase sends sign-in links to the Site URL when the callback isn't an allowed redirect
+  const q = request.nextUrl.searchParams
+  if (!request.nextUrl.pathname.startsWith('/auth') && (q.get('code') || q.get('error_description'))) {
+    const url = request.nextUrl.clone()
+    url.search = ''
+    if (q.get('code')) {
+      url.pathname = '/auth/callback'
+      url.searchParams.set('code', q.get('code')!)
+    } else {
+      url.pathname = '/login'
+      url.searchParams.set('error', q.get('error_description')!)
+    }
+    return NextResponse.redirect(url)
+  }
   let response = NextResponse.next({ request })
   const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
     cookies: {
