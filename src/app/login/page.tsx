@@ -7,6 +7,12 @@ async function sendLink(form: FormData) {
   const email = String(form.get('email') ?? '').trim().toLowerCase()
   const allowed = (process.env.ALLOWED_EMAILS ?? '').split(',').map((e) => e.trim().toLowerCase()).filter(Boolean)
   // Say the same thing either way, so the form doesn't reveal who has an account
+  const password = String(form.get('password') ?? '')
+  if (password) {
+    if (allowed.length && !allowed.includes(email)) redirect('/login?error=Wrong+email+or+password')
+    const { error } = await (await supabaseServer()).auth.signInWithPassword({ email, password })
+    redirect(error ? '/login?error=Wrong+email+or+password' : '/')
+  }
   if (email && (!allowed.length || allowed.includes(email))) {
     const h = await headers()
     const origin = `${h.get('x-forwarded-proto') ?? 'https'}://${h.get('host')}`
@@ -27,7 +33,9 @@ export default async function Login({ searchParams }: { searchParams: Promise<{ 
       ) : (
         <form action={sendLink} className="form">
           <label>Email<input name="email" type="email" required autoComplete="email" /></label>
-          <button>Email me a link</button>
+          <label>Password <span className="small">(leave empty to get a sign-in link by email)</span>
+            <input name="password" type="password" autoComplete="current-password" /></label>
+          <button>Sign in</button>
         </form>
       )}
       {q.error && <p className="error">{q.error}</p>}
