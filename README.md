@@ -42,11 +42,7 @@ record it asks for at your DNS provider.
 
 ### Importing Training Court games
 
-Export your rows from Training Court's `logs` table as JSON, sign in to Benchmark once, then:
-
-```sh
-node --env-file=.env.local --import tsx scripts/import-training-court.ts --user <your auth user id> logs.json
-```
-
-The user id is in Supabase under Authentication > Users. Decks are created from
-`scripts/training-court-decks.json`; Training Court's hand-set result and opponent deck are kept.
+Drop a JSON export of Training Court's `logs` rows (an array with `log`, `created_at`, `archetype`,
+`opp_archetype`, `result`, `decklist_id`) on the upload page. Games keep Training Court's hand-set result and
+opponent deck, and are filed under the decks in `src/lib/training-court-decks.json`, which are created when
+missing. `scripts/import-training-court.ts` does the same from the command line with the service role key.

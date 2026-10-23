@@ -4,7 +4,8 @@ import Link from 'next/link'
 import { gameStats, LogError, type GameStats } from '@/lib/parser'
 import { deckLabel, prettyArch } from '@/lib/format'
 import type { Deck } from '@/lib/types'
-import { saveGames, type UploadItem } from './actions'
+import { isTcExport, tcDeckSpec, type TcLog } from '@/lib/training-court'
+import { ensureTrainingCourtDecks, saveGames, type UploadItem } from './actions'
 
 interface Pending extends UploadItem { key: string; name: string; stats?: GameStats; error?: string }
 
@@ -18,7 +19,8 @@ function pickDeck(decks: Deck[], archetype: string | null) {
   return (decks.find((d) => d.archetype && d.archetype === archetype) ?? decks[0])?.id ?? null
 }
 
-export default function UploadForm({ decks }: { decks: Deck[] }) {
+export default function UploadForm({ decks: initialDecks }: { decks: Deck[] }) {
+  const [decks, setDecks] = useState(initialDecks)
   const [items, setItems] = useState<Pending[]>([])
   const [paste, setPaste] = useState('')
   const [over, setOver] = useState(false)
@@ -42,10 +44,37 @@ export default function UploadForm({ decks }: { decks: Deck[] }) {
     ])
   }
 
+  /** A Training Court export: keeps its hand-set result and opponent deck, and files games under the matching deck. */
+  async function addTrainingCourt(rows: TcLog[]) {
+    const all = await ensureTrainingCourtDecks()
+    setDecks(all)
+    setDone(null)
+    setItems((prev) => [
+      ...prev,
+      ...rows.map((r, i): Pending => {
+        const at = Date.parse(r.created_at)
+        const base = { key: `tc-${r.id ?? i}`, name: `Training Court game ${i + 1}`, log: r.log, playedAt: localInput(at), source: 'training-court' as const, sourceId: r.id }
+        try {
+          const s = gameStats(r.log)
+          const spec = tcDeckSpec(r)
+          const deck = spec ? all.find((d) => d.name === spec.name && d.version === spec.version) : undefined
+          return { ...base, stats: s, deckId: deck?.id ?? pickDeck(all, s.my_archetype), oppArchetype: r.opp_archetype || s.opp_archetype, result: r.result ?? s.result }
+        } catch (e) {
+          return { ...base, deckId: null, oppArchetype: null, result: null, error: e instanceof LogError ? e.message : 'Could not read this log.' }
+        }
+      }),
+    ])
+  }
+
   async function addFiles(files: FileList | null) {
     if (!files) return
     const logs = []
     for (const f of Array.from(files)) {
+      if (f.name.endsWith('.json')) {
+        let rows: unknown = null
+        try { rows = JSON.parse(await f.text()) } catch { /* not JSON after all */ }
+        if (isTcExport(rows)) { await addTrainingCourt(rows); continue }
+      }
       const parts = splitLogs(await f.text())
       parts.forEach((log, i) => logs.push({ log, name: parts.length > 1 ? `${f.name} (${i + 1})` : f.name, at: f.lastModified }))
       if (!parts.length) logs.push({ log: await f.text(), name: f.name, at: f.lastModified })
@@ -60,9 +89,16 @@ export default function UploadForm({ decks }: { decks: Deck[] }) {
   async function submit() {
     setBusy(true)
     try {
-      const res = await saveGames(ready.map(({ log, playedAt, deckId, oppArchetype, result }) => ({
-        log, playedAt: new Date(playedAt).toISOString(), deckId, oppArchetype, result,
-      })))
+      // in batches, so a big import stays under the request size limit
+      const res = { saved: 0, duplicates: 0, errors: [] as string[] }
+      for (let i = 0; i < ready.length; i += 100) {
+        const r = await saveGames(ready.slice(i, i + 100).map(({ log, playedAt, deckId, oppArchetype, result, source, sourceId }) => ({
+          log, playedAt: new Date(playedAt).toISOString(), deckId, oppArchetype, result, source, sourceId,
+        })))
+        res.saved += r.saved
+        res.duplicates += r.duplicates
+        res.errors.push(...r.errors)
+      }
       setDone(res)
       if (!res.errors.length) setItems([])
     } finally {
@@ -83,7 +119,7 @@ export default function UploadForm({ decks }: { decks: Deck[] }) {
         onDrop={(e) => { e.preventDefault(); setOver(false); addFiles(e.dataTransfer.files) }}
       >
         <strong>Drop log files here</strong> <span className="muted">or click to choose</span>
-        <input ref={fileInput} type="file" accept=".txt,text/plain" multiple hidden onChange={(e) => { addFiles(e.target.files); e.target.value = '' }} />
+        <input ref={fileInput} type="file" accept=".txt,.json,text/plain,application/json" multiple hidden onChange={(e) => { addFiles(e.target.files); e.target.value = '' }} />
       </div>
       <div className="form" style={{ maxWidth: 'none' }}>
         <label>Or paste a log<textarea rows={6} value={paste} onChange={(e) => setPaste(e.target.value)} placeholder="Setup&#10;…" /></label>

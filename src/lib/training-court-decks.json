@@ -1,0 +1,108 @@
+{
+  "_comment": "Training Court (archetype, decklist id) -> Benchmark deck. decklist null = games logged before Training Court had decklists.",
+  "decks": [
+    {
+      "name": "Straight Dragapult",
+      "version": "v1",
+      "version_order": 1,
+      "archetype": "dragapult",
+      "basics": 12,
+      "match": [
+        [
+          "dragapult",
+          "5c84129f-0094-4a08-9339-b72e06569213"
+        ]
+      ]
+    },
+    {
+      "name": "Straight Dragapult",
+      "version": "v2",
+      "version_order": 2,
+      "archetype": "dragapult",
+      "basics": 13,
+      "match": [
+        [
+          "dragapult",
+          "2206a582-f4a8-4e91-8ee0-d619580591aa"
+        ]
+      ],
+      "decklist": "Pokémon: 20\n4 Dreepy ASC 247\n4 Drakloak ASC 248\n3 Dragapult ex PRE 165\n2 Munkidori SFA 72\n2 Budew ASC 221\n1 Fezandipiti ex ASC 288\n1 Lillie's Clefairy ex ASC 280\n1 Moltres PFL 14\n1 Meowth ex POR 121\n1 Psyduck ASC 226\n\nTrainer: 30\n4 Lillie's Determination MEG 169\n3 Boss's Orders ASC 256\n2 Crispin SCR 164\n1 Judge PAF 228\n1 Rosa's Encouragement POR 114\n4 Buddy-Buddy Poffin MEG 167\n4 Poké Pad POR 113\n3 Ultra Ball ASC 264\n3 Night Stretcher MEG 173\n1 Unfair Stamp TWM 165\n1 Special Red Card CRI 113\n2 Risky Ruins MEG 127\n1 Jamming Tower ASC 261\n\nEnergy: 10\n4 Basic {P} Energy SVE 5\n4 Basic {R} Energy SVE 2\n2 Basic {D} Energy MEE 15\n"
+    },
+    {
+      "name": "Straight Dragapult",
+      "version": "v3",
+      "version_order": 3,
+      "archetype": "dragapult",
+      "basics": 12,
+      "match": [
+        [
+          "dragapult",
+          "79b4cb62-7828-4d54-9dd1-5ffccd3540bc"
+        ]
+      ],
+      "decklist": "Straight Dragapult v3 (Sam, 2026-10-23). 12 Basics.\n\nPokémon: 19\n4 Dreepy\n4 Drakloak\n3 Dragapult ex\n2 Munkidori\n2 Budew\n1 Lillie's Clefairy ex JTG 184\n1 Chi-Yu TWM 39\n1 Meowth ex\n1 Fezandipiti ex\n\nTrainer: 32\n4 Buddy-Buddy Poffin\n4 Lillie's Determination\n2 Risky Ruins\n1 Judge\n1 Unfair Stamp\n1 Rosa's Encouragement\n4 Crushing Hammer\n3 Ultra Ball\n2 Crispin\n4 Poké Pad\n3 Boss's Orders\n3 Night Stretcher\n\nEnergy: 9\n2 Basic {D} Energy\n3 Basic {P} Energy\n4 Basic {R} Energy\n\nChanges from v2: -Moltres -Psyduck -Jamming Tower -Special Red Card -1 Psychic, +Chi-Yu +4 Crushing Hammer.\n"
+    },
+    {
+      "name": "Dragapult Dusknoir",
+      "version": "",
+      "version_order": 1,
+      "archetype": "dragapult,dusknoir",
+      "basics": 11,
+      "active": false,
+      "match": [
+        [
+          "dragapult,dusknoir",
+          null
+        ],
+        [
+          "dragapult,dusknoir",
+          "5b6e3a63-5d8f-48d9-9e85-eee9c3a84bda"
+        ]
+      ]
+    },
+    {
+      "name": "Mega Starmie Froslass",
+      "version": "Main list",
+      "version_order": 1,
+      "archetype": "starmie-mega,froslass-mega",
+      "basics": 11,
+      "active": false,
+      "match": [
+        [
+          "starmie-mega,froslass-mega",
+          null
+        ],
+        [
+          "starmie-mega,froslass-mega",
+          "c15c2b41-fe60-456f-9970-a466d30f44b2"
+        ]
+      ]
+    },
+    {
+      "name": "Mega Starmie Froslass",
+      "version": "Toucannon test",
+      "version_order": 2,
+      "archetype": "starmie-mega,froslass-mega",
+      "active": false,
+      "match": [
+        [
+          "starmie-mega,froslass-mega",
+          "da243c1a-22ad-443e-ab84-a73adc7575a9"
+        ]
+      ]
+    },
+    {
+      "name": "Mega Starmie Froslass",
+      "version": "Toucannon",
+      "version_order": 3,
+      "archetype": "starmie-mega,froslass-mega",
+      "active": false,
+      "match": [
+        [
+          "starmie-mega,froslass-mega",
+          "0267406e-7ead-4a9a-848d-d0c27c0232ea"
+        ]
+      ]
+    }
+  ]
+}

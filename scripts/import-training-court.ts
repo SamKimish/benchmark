@@ -4,7 +4,7 @@
  *   npx tsx scripts/import-training-court.ts --user <benchmark auth user id> logs.json [more.json ...]
  *
  * Each JSON file is an array of Training Court log rows (id, created_at, log, archetype, opp_archetype,
- * result, decklist_id). Decks are created from scripts/training-court-decks.json when missing.
+ * result, decklist_id). Decks are created from src/lib/training-court-decks.json when missing.
  * Training Court's own result and opponent deck labels are kept, since they were set by hand.
  * Re-running is safe: games already saved are skipped. Needs NEXT_PUBLIC_SUPABASE_URL and
  * SUPABASE_SERVICE_ROLE_KEY in the environment (e.g. `node --env-file=.env.local`).
@@ -23,7 +23,7 @@ const userId = args[ui + 1]
 const files = args.filter((_, i) => i !== ui && i !== ui + 1)
 const db = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, { auth: { persistSession: false } })
 
-const specs: DeckSpec[] = JSON.parse(readFileSync(new URL('./training-court-decks.json', import.meta.url), 'utf8')).decks
+const specs: DeckSpec[] = JSON.parse(readFileSync(new URL('../src/lib/training-court-decks.json', import.meta.url), 'utf8')).decks
 const { data: existing, error } = await db.from('decks').select('id, name, version').eq('user_id', userId)
 if (error) throw error
 const deckFor = new Map<string, { id: string; archetype: string }>()

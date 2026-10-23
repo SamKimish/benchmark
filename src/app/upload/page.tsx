@@ -10,7 +10,7 @@ export default async function Upload() {
       <h1>Upload games</h1>
       <p className="muted">
         In TCG Live, open a finished game&apos;s battle log and export it, then drop the files here (several at once is fine)
-        or paste the text. Games already saved are skipped.
+        or paste the text. A Training Court export (.json) works too. Games already saved are skipped.
       </p>
       <UploadForm decks={(data ?? []) as Deck[]} />
     </>
