@@ -1,31 +1,30 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { Jost } from 'next/font/google'
 import { supabaseServer } from '@/lib/supabase/server'
+import SiteNav from '@/components/SiteNav'
 import './globals.css'
 
+const jost = Jost({ subsets: ['latin'], weight: ['500', '600'], variable: '--font-display' })
+
 export const metadata: Metadata = {
-  title: 'Benchmark',
+  title: 'BenchMark',
   description: 'Upload Pokémon TCG Live game logs and see where games are won and lost.',
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const { data } = await (await supabaseServer()).auth.getUser()
   return (
-    <html lang="en-GB">
+    <html lang="en-GB" className={jost.variable}>
       <body>
-        <header className="top">
-          <Link href="/" className="brand">
-            <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" strokeWidth="2" /><path d="M2 12h7m6 0h7" stroke="currentColor" strokeWidth="2" /><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" strokeWidth="2" /></svg>
-            Benchmark
-          </Link>
-          {data.user && (
-            <nav>
-              <Link href="/">Match log</Link>
-              <Link href="/upload">Upload</Link>
-              <Link href="/decks">Decks</Link>
-              <form action="/auth/signout" method="post"><button className="link">Sign out</button></form>
-            </nav>
-          )}
+        <header className={`site-header${data.user ? '' : ' signed-out'}`}>
+          <div className="site-bar">
+            <Link href="/" className="brand" aria-label="BenchMark home">
+              <img src="/header/ball.png" alt="" className="brand-ball" />
+              <span className="brand-name">BenchMark</span>
+            </Link>
+            {data.user && <SiteNav />}
+          </div>
         </header>
         <main>{children}</main>
       </body>

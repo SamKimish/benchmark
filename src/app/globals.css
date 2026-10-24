@@ -1,24 +1,52 @@
 :root {
   --bg: #f6f7fb; --panel: #ffffff; --ink: #1b1f2a; --muted: #5d6475; --line: #e2e5ee;
   --accent: #d6342c; --accent-ink: #fff; --win: #1f8a4c; --win-bg: #e3f4ea; --loss: #b3261e; --loss-bg: #fbe5e3;
-  --tag: #eef0f6; --focus: #2f6fde;
+  --tag: #eef0f6; --focus: #2f6fde; --line-red: #d6342c;
 }
 @media (prefers-color-scheme: dark) {
   :root { --bg: #12141a; --panel: #1b1e27; --ink: #e8eaf0; --muted: #9aa1b2; --line: #2c303c;
-    --accent: #ef5a4f; --win: #5fd08f; --win-bg: #173525; --loss: #ff8a80; --loss-bg: #3a1a18; --tag: #262a35; --focus: #7aa7ff; }
+    --accent: #ef5a4f; --win: #5fd08f; --win-bg: #173525; --loss: #ff8a80; --loss-bg: #3a1a18; --tag: #262a35; --focus: #7aa7ff; --line-red: #e0473e; }
 }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 system-ui, -apple-system, 'Segoe UI', sans-serif; }
 a { color: inherit; }
 main { max-width: 1100px; margin: 0 auto; padding: 24px 16px 64px; }
-h1 { font-size: 1.6rem; margin: 0 0 16px; }
+h1 { font-size: 1.6rem; margin: 0 0 16px; font-family: var(--font-display), system-ui, sans-serif; font-weight: 600; }
 h2 { font-size: 1.15rem; margin: 28px 0 10px; }
-.top { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
-  padding: 12px 16px; background: var(--panel); border-bottom: 3px solid var(--accent); }
-.brand { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 1.1rem; text-decoration: none; }
-.top nav { display: flex; gap: 16px; align-items: center; }
-.top nav a { text-decoration: none; color: var(--muted); }
-.top nav a:hover { color: var(--ink); }
+/* header: artwork sits on the red line, labels hang underneath it */
+.site-header { background: var(--panel); margin-bottom: 64px; }
+.site-header.signed-out { margin-bottom: 24px; }
+.site-bar { max-width: 1500px; margin: 0 auto; padding: 14px 24px 0; display: flex; align-items: flex-end;
+  justify-content: space-between; gap: 16px; border-bottom: 5px solid var(--line-red); position: relative; }
+.site-header::after { content: ''; display: block; }
+.brand { display: flex; align-items: center; gap: 12px; text-decoration: none; padding-bottom: 14px; }
+.brand-ball { height: 56px; width: auto; }
+.brand-name { font-family: var(--font-display), system-ui, sans-serif; font-weight: 600; font-size: 2.3rem; letter-spacing: -.02em; line-height: 1; }
+.site-nav { display: flex; gap: clamp(12px, 3vw, 44px); align-items: flex-end; }
+.nav-item { position: relative; display: block; text-decoration: none; }
+.nav-item button { all: unset; cursor: pointer; display: block; }
+.nav-art { display: block; height: 96px; width: auto; margin-bottom: -2px; transition: transform .2s ease; transform-origin: 50% 100%; }
+.nav-item:hover .nav-art, .nav-item:focus-visible .nav-art { transform: translateY(-4px) rotate(-2deg); }
+.nav-label { position: absolute; top: calc(100% + 10px); left: 50%; transform: translateX(-50%); white-space: nowrap;
+  font-family: var(--font-display), system-ui, sans-serif; font-weight: 600; font-size: 1.35rem; text-transform: uppercase;
+  letter-spacing: -.01em; line-height: 1; }
+.nav-item.active .nav-label { text-decoration: underline; text-decoration-thickness: 3px; text-underline-offset: 6px; }
+.nav-matches .nav-label { color: #e8604c; }
+.nav-upload .nav-label { color: #d9587a; }
+.nav-decks .nav-label { color: #1f7fb5; }
+.nav-settings .nav-label { color: #e8964a; }
+.nav-logout .nav-label { color: #11806a; }
+@media (max-width: 760px) {
+  .brand-name { display: none; }
+  .brand-ball { height: 30px; }
+  .brand { padding-bottom: 10px; }
+  .site-bar { gap: 6px; padding: 8px 8px 0; }
+  .site-nav { gap: 4px; flex: 1; justify-content: space-between; min-width: 0; }
+  .nav-art { height: auto; width: 100%; max-height: 48px; object-fit: contain; }
+  .nav-item { flex: 1 1 0; min-width: 0; }
+  .nav-label { font-size: .62rem; top: calc(100% + 8px); }
+  .site-header { margin-bottom: 44px; }
+}
 .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
 .muted { color: var(--muted); }
 .small { font-size: .85rem; }
