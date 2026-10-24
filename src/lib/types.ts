@@ -2,6 +2,8 @@ import type { GameStats } from './parser'
 
 export interface Deck {
   id: string
+  /** versions of the same list share this */
+  line_id: string
   name: string
   version: string
   version_order: number

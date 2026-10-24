@@ -62,3 +62,20 @@ describe('lists without set codes', () => {
     expect(es[2]).toMatchObject({ name: 'Basic Fire Energy', t: 'E' })
   })
 })
+
+describe('versions and archetypes', () => {
+  it('lists what changed between two lists', async () => {
+    const { diffEntries } = await import('@/lib/decklist')
+    const v3 = V2.replace('1 Psyduck ASC 226', '1 Chi-Yu TWM 39').replace('1 Jamming Tower ASC 261', '4 Crushing Hammer POR 71')
+    const d = diffEntries(parseDecklist(V2, index), parseDecklist(v3, index))
+    expect(d.map((c) => `${c.to - c.from > 0 ? '+' : '−'}${Math.abs(c.to - c.from)} ${c.name}`))
+      .toEqual(['+4 Crushing Hammer', '+1 Chi-Yu', '−1 Jamming Tower', '−1 Psyduck'])
+  })
+
+  it('names a decklist after its Limitless archetype', async () => {
+    const { matchArchetypes } = await import('@/lib/archetypes')
+    expect(matchArchetypes(['Dreepy', 'Drakloak', 'Dragapult ex', 'Budew'])[0]).toMatchObject({ name: 'Dragapult', key: 'dragapult' })
+    expect(matchArchetypes(['Dreepy', 'Dragapult ex', 'Duskull', 'Dusclops', 'Dusknoir'])[0])
+      .toMatchObject({ name: 'Dragapult Dusknoir', key: 'dragapult,dusknoir' })
+  })
+})

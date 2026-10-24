@@ -3,6 +3,7 @@ import { cardImage, parseDecklist, resolvePrintings, total, type Card } from '@/
 import cardData from '../../../public/cards.json'
 
 const CARDS = cardData as Card[]
+import { archetypeName } from '@/lib/archetypes'
 import { prettyArch } from '@/lib/format'
 import type { Deck } from '@/lib/types'
 import DeleteDeck from './DeleteDeck'
@@ -28,7 +29,7 @@ export default function DeckGallery({ decks }: { decks: Deck[] }) {
               <div className="row" style={{ justifyContent: 'space-between', alignItems: 'start' }}>
                 <Link href={`/decks/${d.id}`} style={{ textDecoration: 'none' }}>
                   <strong>{d.name}{d.version ? ` ${d.version}` : ''}</strong>
-                  <div className="muted small">{prettyArch(d.archetype)} · {total(es)} cards{d.active ? '' : ' · retired'}</div>
+                  <div className="muted small">{archetypeName(d.archetype) ?? prettyArch(d.archetype)} · {total(es)} cards{d.active ? '' : ' · retired'}</div>
                 </Link>
                 <DeleteDeck id={d.id} name={d.name} />
               </div>

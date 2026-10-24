@@ -95,3 +95,21 @@ export function cardImage(set: string, no: string, size: 'XS' | 'SM' | 'LG' = 'S
 /** Basic Pokémon in a list: what mulligan odds depend on. */
 export const basics = (entries: Entry[], index: Map<string, Card>) =>
   entries.filter((e) => e.t === 'P' && /\bBasic\b/.test(lookup(index, e)?.st ?? '')).reduce((s, e) => s + e.count, 0)
+
+export interface Change { name: string; from: number; to: number }
+
+/** What changed between two lists, by card name: a different printing of the same card is not a change. */
+export function diffEntries(before: Entry[], after: Entry[]): Change[] {
+  const sum = (es: Entry[]) => {
+    const m = new Map<string, number>()
+    for (const e of es) m.set(e.name, (m.get(e.name) ?? 0) + e.count)
+    return m
+  }
+  const a = sum(before), b = sum(after)
+  const out: Change[] = []
+  for (const name of new Set([...a.keys(), ...b.keys()])) {
+    const [from, to] = [a.get(name) ?? 0, b.get(name) ?? 0]
+    if (from !== to) out.push({ name, from, to })
+  }
+  return out.sort((x, y) => (y.to - y.from) - (x.to - x.from) || x.name.localeCompare(y.name))
+}

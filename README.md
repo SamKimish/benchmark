@@ -8,8 +8,12 @@ built around one player's ladder games. Lives at benchmark.kimish.co.uk.
 - **Match log**: every game with deck, opponent deck, 1st/2nd, result, prizes and loss tags, plus matchup and
   loss-reason tables, filterable by deck and version.
 - **Game page**: the parsed summary, the raw log, and fixes for deck, opponent deck, result and notes.
-- **Decks**: a visual deckbuilder. A gallery of your lists, and an editor with card search, counts, and import/export
-  in TCG Live's format. Card images come from Limitless's CDN (keyed by TCG Live set code and number); the search
+- **Decks**: a visual deckbuilder. A gallery of your lists, and an editor with card search, counts, paste from the
+  clipboard, and import/export in TCG Live's format. A list starts at v1 and every change saves the next version,
+  retiring the one before it, so games keep the list they were played with; **History** shows the cards added and
+  removed between versions. The archetype is guessed from the Pokémon in the list against Limitless's deck list
+  (`src/lib/limitless-archetypes.json`, rebuilt with `node scripts/build-archetypes.mjs`) and confirmed by you, and
+  names an unnamed deck. Card images come from Limitless's CDN (keyed by TCG Live set code and number); the search
   index `public/cards.json` is built from PokemonTCG/pokemon-tcg-data with `node scripts/build-cards.mjs`.
 
 Stack: Next.js (App Router) on Vercel, Supabase for Postgres and email sign-in.

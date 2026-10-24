@@ -2,11 +2,15 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { basics, cardImage, cardKey, formatDecklist, lookup, parseDecklist, resolvePrintings, sortEntries, total, type Card, type Entry } from '@/lib/decklist'
-import { detectArchetype } from '@/lib/parser'
+import {
+  basics, cardImage, cardKey, diffEntries, formatDecklist, lookup, parseDecklist, resolvePrintings,
+  sortEntries, total, type Card, type Entry,
+} from '@/lib/decklist'
+import { archetypeName, matchArchetypes } from '@/lib/archetypes'
 import { prettyArch } from '@/lib/format'
 import type { Deck } from '@/lib/types'
-import { saveDeck } from './actions'
+import { deckHistory, saveDeck } from './actions'
+import DeckDiff from './DeckDiff'
 
 let cardsPromise: Promise<Card[]> | null = null
 const loadCards = () => (cardsPromise ??= fetch('/cards.json').then((r) => r.json() as Promise<Card[]>))
@@ -24,30 +28,37 @@ export default function DeckEditor({ deck }: { deck?: Deck }) {
   const router = useRouter()
   const [cards, setCards] = useState<Card[]>([])
   const index = useMemo(() => new Map(cards.map((c) => [cardKey(c.s, c.no), c])), [cards])
+  const [saved, setSaved] = useState<Deck | undefined>(deck)
   const [entries, setEntries] = useState<Entry[]>(() => parseDecklist(deck?.decklist ?? ''))
   const [name, setName] = useState(deck?.name ?? '')
-  const [version, setVersion] = useState(deck?.version ?? '')
-  const [order, setOrder] = useState(deck?.version_order ?? 1)
   const [archetype, setArchetype] = useState(deck?.archetype ?? '')
   const [active, setActive] = useState(deck?.active ?? true)
   const [query, setQuery] = useState('')
   const [importing, setImporting] = useState(!deck)
   const [importText, setImportText] = useState('')
+  const [history, setHistory] = useState<Deck[] | null>(null)
   const [status, setStatus] = useState<{ ok?: string; error?: string }>({})
   const [busy, setBusy] = useState(false)
 
   useEffect(() => {
     loadCards().then((cs) => {
       setCards(cs)
-      // fill in card types the saved text didn't carry
       const idx = new Map(cs.map((c) => [cardKey(c.s, c.no), c]))
       setEntries((es) => resolvePrintings(es, cs).map((e) => ({ ...e, t: lookup(idx, e)?.t ?? e.t })))
     })
   }, [])
 
   const sorted = useMemo(() => sortEntries(entries, index), [entries, index])
+  const text = useMemo(() => formatDecklist(sorted), [sorted])
   const count = total(entries)
-  const suggested = useMemo(() => detectArchetype(entries.filter((e) => e.t === 'P').map((e) => e.name)), [entries])
+  const savedEntries = useMemo(() => parseDecklist(saved?.decklist ?? ''), [saved])
+  const changed = diffEntries(savedEntries, sorted).length > 0
+  const nextVersion = saved ? `v${Number(saved.version.replace(/\D/g, '') || saved.version_order) + 1}` : 'v1'
+
+  const guesses = useMemo(() => matchArchetypes(entries.filter((e) => e.t === 'P').map((e) => e.name), 8), [entries])
+  const best = guesses[0]
+  const [dismissed, setDismissed] = useState(false)
+  const askArchetype = best && best.key !== archetype.trim() && !dismissed
 
   const results = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -56,11 +67,16 @@ export default function DeckEditor({ deck }: { deck?: Deck }) {
     const out: Card[] = []
     for (let i = cards.length - 1; i >= 0 && out.length < 60; i--) {
       const c = cards[i]
-      const hay = `${c.n} ${c.s} ${c.no}`.toLowerCase()
-      if (words.every((w) => hay.includes(w))) out.push(c)
+      if (words.every((w) => `${c.n} ${c.s} ${c.no}`.toLowerCase().includes(w))) out.push(c)
     }
     return out
   }, [query, cards])
+
+  const use = (a: { key: string; name: string }) => {
+    setArchetype(a.key)
+    setDismissed(true)
+    if (!name.trim()) setName(a.name)
+  }
 
   const change = (e: { name: string; set: string; no: string; t: Entry['t'] }, by: number) => {
     setStatus({})
@@ -71,23 +87,52 @@ export default function DeckEditor({ deck }: { deck?: Deck }) {
     })
   }
 
+  function useList(listText: string) {
+    const es = resolvePrintings(parseDecklist(listText, index), cards)
+    if (!es.length) return setStatus({ error: 'No cards found in that text.' })
+    setEntries(es)
+    setImportText('')
+    setImporting(false)
+    const guess = matchArchetypes(es.filter((e) => e.t === 'P').map((e) => e.name))[0]
+    if (guess) {
+      if (!archetype.trim()) setArchetype(guess.key)
+      if (!name.trim()) setName(guess.name)
+    }
+    setStatus({ ok: `Imported ${total(es)} cards` })
+  }
+
+  async function pasteList() {
+    try {
+      const t = await navigator.clipboard.readText()
+      if (t.trim()) return useList(t)
+      setStatus({ error: 'Your clipboard is empty.' })
+    } catch {
+      setImporting(true)
+      setStatus({ error: 'Your browser would not share the clipboard, so paste the list below.' })
+    }
+  }
+
   async function save() {
     setBusy(true)
     const res = await saveDeck({
-      id: deck?.id, name: name.trim(), version: version.trim(), version_order: order,
-      archetype: archetype.trim() || suggested, decklist: formatDecklist(sorted),
-      basics: cards.length ? basics(entries, index) : deck?.basics ?? null, active,
+      id: saved?.id,
+      name: (name.trim() || best?.name) ?? '',
+      archetype: archetype.trim() || best?.key || null,
+      decklist: text,
+      basics: cards.length ? basics(entries, index) : saved?.basics ?? null,
+      active,
     })
     setBusy(false)
     if (res.error) return setStatus({ error: res.error })
-    if (!archetype.trim() && suggested) setArchetype(suggested)
-    setStatus({ ok: 'Saved' })
-    if (!deck && res.id) router.replace(`/decks/${res.id}`)
+    if (!name.trim() && best) setName(best.name)
+    if (!archetype.trim() && best) setArchetype(best.key)
+    setStatus({ ok: res.newVersion ? `Saved as ${res.version}` : 'Saved' })
+    setHistory(null)
+    if (res.id !== saved?.id) router.replace(`/decks/${res.id}`)
     else router.refresh()
   }
 
   async function exportList() {
-    const text = formatDecklist(sorted)
     try {
       await navigator.clipboard.writeText(text)
       setStatus({ ok: 'Copied for TCG Live' })
@@ -101,25 +146,44 @@ export default function DeckEditor({ deck }: { deck?: Deck }) {
     <div className="builder">
       <section className="panel builder-deck">
         <div className="row">
-          <input className="grow" value={name} onChange={(e) => setName(e.target.value)} placeholder="Deck name" aria-label="Deck name" />
-          <input value={version} onChange={(e) => setVersion(e.target.value)} placeholder="Version" aria-label="Version" size={7} />
-          <button onClick={save} disabled={busy}>{busy ? 'Saving…' : 'Save'}</button>
+          <input className="grow" value={name} onChange={(e) => setName(e.target.value)} placeholder={best?.name ?? 'Deck name'} aria-label="Deck name" />
+          <span className="version" title={changed ? `Saving stores this as ${nextVersion}` : 'Current version'}>
+            {changed ? nextVersion : saved?.version ?? 'v1'}
+          </span>
+          <button onClick={save} disabled={busy || !count}>{busy ? 'Saving…' : changed && saved ? `Save as ${nextVersion}` : 'Save'}</button>
+          <button className="secondary" onClick={pasteList}>Paste list</button>
           <button className="secondary" onClick={() => setImporting((x) => !x)}>Import</button>
           <button className="secondary" onClick={exportList} disabled={!count}>Export</button>
+          {saved && <button className="secondary" onClick={async () => setHistory(history ? null : await deckHistory(saved.line_id))}>History</button>}
           <button className="secondary" onClick={() => { if (confirm('Remove every card?')) setEntries([]) }} disabled={!count}>Clear</button>
         </div>
+
         <div className="row small muted" style={{ marginTop: 10, alignItems: 'center' }}>
           <span className={count === 60 ? '' : 'error'}>Cards: {count}/60</span>
           {cards.length > 0 && <span>Basics: {basics(entries, index)}</span>}
-          <label className="inline">Archetype
-            <input value={archetype} onChange={(e) => setArchetype(e.target.value)} placeholder={suggested ?? 'dragapult'} size={16} title={prettyArch(archetype || suggested)} />
-          </label>
-          <label className="inline">Order<input type="number" value={order} onChange={(e) => setOrder(Number(e.target.value) || 1)} style={{ width: 60 }} /></label>
+          <span>Archetype: <strong>{archetypeName(archetype) ?? prettyArch(archetype) ?? 'none'}</strong></span>
           <label className="inline"><input type="checkbox" checked={active} onChange={(e) => setActive(e.target.checked)} /> Offer on upload</label>
           {status.ok && <span>{status.ok}</span>}
           {status.error && <span className="error">{status.error}</span>}
           <Link href="/decks" style={{ marginLeft: 'auto' }}>All decks</Link>
         </div>
+
+        {askArchetype && (
+          <div className="confirm">
+            <span>This looks like <strong>{best.name}</strong>.</span>
+            <button onClick={() => use(best)}>Use it</button>
+            {guesses.length > 1 && (
+              <select defaultValue="" aria-label="Another archetype"
+                onChange={(e) => { const g = guesses.find((x) => x.id === e.target.value); if (g) use(g) }}>
+                <option value="">Something else…</option>
+                {guesses.slice(1).map((g) => <option key={g.id} value={g.id}>{g.name}</option>)}
+              </select>
+            )}
+            <button className="secondary" onClick={() => setDismissed(true)}>Keep {archetypeName(archetype) ?? prettyArch(archetype)}</button>
+          </div>
+        )}
+
+        {history && <DeckDiff versions={history} current={{ version: changed ? nextVersion : saved!.version, entries: sorted }} onClose={() => setHistory(null)} />}
 
         {importing && (
           <div className="form" style={{ maxWidth: 'none', marginTop: 12 }}>
@@ -127,21 +191,14 @@ export default function DeckEditor({ deck }: { deck?: Deck }) {
               <textarea rows={10} value={importText} onChange={(e) => setImportText(e.target.value)} placeholder={'Pokémon: 20\n4 Dreepy TWM 128\n…'} />
             </label>
             <div className="row">
-              <button disabled={!importText.trim()} onClick={() => {
-                const es = resolvePrintings(parseDecklist(importText, index), cards)
-                if (!es.length) return setStatus({ error: 'No cards found in that text.' })
-                setEntries(es)
-                setImportText('')
-                setImporting(false)
-                setStatus({ ok: `Imported ${total(es)} cards` })
-              }}>Replace deck with this list</button>
+              <button disabled={!importText.trim()} onClick={() => useList(importText)}>Replace deck with this list</button>
               <button className="secondary" onClick={() => setImporting(false)}>Cancel</button>
             </div>
           </div>
         )}
 
         {count === 0 && !importing ? (
-          <p className="muted" style={{ marginTop: 24 }}>No cards yet. Search on the right, or import a list.</p>
+          <p className="muted" style={{ marginTop: 24 }}>No cards yet. Search on the right, paste a list, or import one.</p>
         ) : (
           <div className="card-grid">
             {sorted.map((e) => (
