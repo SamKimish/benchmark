@@ -5,14 +5,18 @@ import type { Deck } from '@/lib/types'
 /** What changed from each version of a list to the next, newest first. */
 export default function DeckDiff({ versions, current, onClose }: {
   versions: Deck[]
-  current: { version: string; entries: Entry[] }
+  /** the list in the editor, when it has unsaved changes */
+  current: { version: string; entries: Entry[]; from: string } | null
   onClose: () => void
 }) {
-  const lists = [
-    ...versions.map((v) => ({ version: v.version, when: v.created_at, entries: parseDecklist(v.decklist) })),
-    ...(current.version === versions[versions.length - 1]?.version ? [] : [{ version: current.version, when: '', entries: current.entries }]),
-  ]
-  const steps = lists.slice(1).map((v, i) => ({ ...v, changes: diffEntries(lists[i].entries, v.entries), from: lists[i].version })).reverse()
+  const lists = versions.map((v) => ({ version: v.version, when: v.created_at, entries: parseDecklist(v.decklist) }))
+  const steps = lists.slice(1).map((v, i) => ({ ...v, changes: diffEntries(lists[i].entries, v.entries), from: lists[i].version }))
+  if (current) {
+    // unsaved edits are compared with the version they started from
+    const base = lists.find((l) => l.version === current.from)
+    if (base) steps.push({ version: current.version, when: '', entries: current.entries, from: current.from, changes: diffEntries(base.entries, current.entries) })
+  }
+  steps.reverse()
 
   return (
     <div className="panel history">

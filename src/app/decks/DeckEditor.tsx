@@ -26,7 +26,11 @@ function CardImg({ e, size = 'SM' }: { e: { name: string; set: string; no: strin
   return <img className="card-img" src={src} alt={`${e.name} ${e.set} ${e.no}`} loading="lazy" onError={() => setBroken(true)} />
 }
 
-export default function DeckEditor({ deck }: { deck?: Deck }) {
+export default function DeckEditor({ deck, latest }: {
+  deck?: Deck
+  /** the newest version of this deck, when that isn't the one being edited */
+  latest?: { id: string; version: string; version_order: number }
+}) {
   const router = useRouter()
   const [cards, setCards] = useState<Card[]>([])
   const index = useMemo(() => new Map(cards.map((c) => [cardKey(c.s, c.no), c])), [cards])
@@ -55,7 +59,9 @@ export default function DeckEditor({ deck }: { deck?: Deck }) {
   const count = total(entries)
   const savedEntries = useMemo(() => parseDecklist(saved?.decklist ?? ''), [saved])
   const changed = diffEntries(savedEntries, sorted).length > 0
-  const nextVersion = saved ? `v${Number(saved.version.replace(/\D/g, '') || saved.version_order) + 1}` : 'v1'
+  const newestOrder = Math.max(latest?.version_order ?? 0, saved?.version_order ?? 0)
+  const nextVersion = saved ? `v${newestOrder + 1}` : 'v1'
+  const older = latest && saved && latest.id !== saved.id
 
   const guesses = useMemo(() => matchArchetypes(entries.filter((e) => e.t === 'P').map((e) => e.name), 8), [entries])
   const best = guesses[0]
@@ -176,6 +182,13 @@ export default function DeckEditor({ deck }: { deck?: Deck }) {
           <Link href="/decks" style={{ marginLeft: 'auto' }}>All decks</Link>
         </div>
 
+        {older && (
+          <div className="confirm">
+            <span>You&apos;re looking at <strong>{saved.version}</strong>, an older version. Saving changes here makes a new {nextVersion}.</span>
+            <Link href={`/decks/${latest.id}`} className="button secondary">Open {latest.version}, the current version</Link>
+          </div>
+        )}
+
         {askArchetype && (
           <div className="confirm">
             <span>This looks like <strong>{best.name}</strong>.</span>
@@ -191,7 +204,7 @@ export default function DeckEditor({ deck }: { deck?: Deck }) {
           </div>
         )}
 
-        {history && <DeckDiff versions={history} current={{ version: changed ? nextVersion : saved!.version, entries: sorted }} onClose={() => setHistory(null)} />}
+        {history && <DeckDiff versions={history} current={changed ? { version: nextVersion, entries: sorted, from: saved!.version } : null} onClose={() => setHistory(null)} />}
 
         {importing && (
           <div className="form" style={{ maxWidth: 'none', marginTop: 12 }}>

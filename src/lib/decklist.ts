@@ -33,9 +33,12 @@ export function parseDecklist(text: string, index?: Map<string, Card>): Entry[] 
     if (!m) continue
     const [count, name, set = '', no = ''] = [Number(m[1]), fromLive(m[2].trim()), m[3] ?? '', m[4] ?? '']
     const card = index && lookup(index, { name, set, no })
-    const prev = out.find((e) => e.name === name && e.set === set && e.no === no)
+    // the card data's spelling wins ('Poke Pad' and 'Poké Pad' are the same card)
+    const exact = set && index?.get(cardKey(set, no))
+    const nm = exact ? exact.n : name
+    const prev = out.find((e) => e.name === nm && e.set === set && e.no === no)
     if (prev) prev.count += count
-    else out.push({ count, name, set, no, t: card?.t ?? section })
+    else out.push({ count, name: nm, set, no, t: card?.t ?? section })
   }
   return out
 }
@@ -98,18 +101,26 @@ export const basics = (entries: Entry[], index: Map<string, Card>) =>
 
 export interface Change { name: string; from: number; to: number }
 
+/** Card names compared loosely: case, accents and apostrophe styles don't matter. */
+const looseName = (n: string) => n.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[’‘]/g, "'").toLowerCase().trim()
+
 /** What changed between two lists, by card name: a different printing of the same card is not a change. */
 export function diffEntries(before: Entry[], after: Entry[]): Change[] {
+  const names = new Map<string, string>()
   const sum = (es: Entry[]) => {
     const m = new Map<string, number>()
-    for (const e of es) m.set(e.name, (m.get(e.name) ?? 0) + e.count)
+    for (const e of es) {
+      const k = looseName(e.name)
+      names.set(k, e.name)   // the later list's spelling is shown
+      m.set(k, (m.get(k) ?? 0) + e.count)
+    }
     return m
   }
   const a = sum(before), b = sum(after)
   const out: Change[] = []
-  for (const name of new Set([...a.keys(), ...b.keys()])) {
-    const [from, to] = [a.get(name) ?? 0, b.get(name) ?? 0]
-    if (from !== to) out.push({ name, from, to })
+  for (const k of new Set([...a.keys(), ...b.keys()])) {
+    const [from, to] = [a.get(k) ?? 0, b.get(k) ?? 0]
+    if (from !== to) out.push({ name: names.get(k)!, from, to })
   }
   return out.sort((x, y) => (y.to - y.from) - (x.to - x.from) || x.name.localeCompare(y.name))
 }

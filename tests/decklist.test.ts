@@ -79,3 +79,10 @@ describe('versions and archetypes', () => {
       .toMatchObject({ name: 'Dragapult Dusknoir', key: 'dragapult,dusknoir' })
   })
 })
+
+describe('change history', () => {
+  it('treats Poke Pad and Poké Pad as the same card', async () => {
+    const { diffEntries } = await import('@/lib/decklist')
+    expect(diffEntries(parseDecklist('4 Poke Pad\n3 Ultra Ball'), parseDecklist('4 Poké Pad\n4 Ultra Ball'))).toEqual([{ name: 'Ultra Ball', from: 3, to: 4 }])
+  })
+})

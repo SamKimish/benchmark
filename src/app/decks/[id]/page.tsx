@@ -9,5 +9,8 @@ export default async function DeckPage({ params }: { params: Promise<{ id: strin
   const { supabase } = await requireUser()
   const { data } = await supabase.from('decks').select('*').eq('id', id).maybeSingle()
   if (!data) notFound()
-  return <DeckEditor deck={data as Deck} />
+  const deck = data as Deck
+  const { data: newest } = await supabase.from('decks').select('id, version, version_order')
+    .eq('line_id', deck.line_id).order('version_order', { ascending: false }).limit(1).single()
+  return <DeckEditor deck={deck} latest={newest ?? undefined} />
 }
