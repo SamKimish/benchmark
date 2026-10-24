@@ -70,7 +70,13 @@ export default function UploadForm({ decks: initialDecks }: { decks: Deck[] }) {
   async function addFiles(files: FileList | null) {
     if (!files?.length) return
     setBusy(`Reading ${files.length} file${files.length === 1 ? '' : 's'}…`)
-    try { await readFiles(files) } finally { setBusy(null) }
+    try {
+      await readFiles(files)
+    } catch (e) {
+      setDone({ saved: 0, duplicates: 0, errors: [`Couldn't read those files: ${e instanceof Error ? e.message : 'unknown error'}`] })
+    } finally {
+      setBusy(null)
+    }
   }
 
   async function readFiles(files: FileList) {

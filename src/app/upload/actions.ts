@@ -22,7 +22,13 @@ export async function ensureTrainingCourtDecks(): Promise<Deck[]> {
   const { data: have } = await supabase.from('decks').select('name, version')
   const missing = TC_DECKS.filter((d) => !(have ?? []).some((h) => h.name === d.name && h.version === d.version))
   if (missing.length) {
-    const { error } = await supabase.from('decks').insert(missing.map(({ match: _, ...d }) => d))
+    // versions of one deck share a line, so the deck page shows them as one list's history
+    const lines = new Map<string, string>()
+    const rows = missing.map(({ match: _, ...d }) => {
+      if (!lines.has(d.name)) lines.set(d.name, crypto.randomUUID())
+      return { ...d, decklist: d.decklist ?? '', basics: d.basics ?? null, active: d.active ?? true, line_id: lines.get(d.name) }
+    })
+    const { error } = await supabase.from('decks').insert(rows)
     if (error) throw new Error(error.message)
     revalidatePath('/decks')
   }
