@@ -3,8 +3,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
 const ITEMS = [
-  { href: '/', label: 'Matches', art: 'matches', match: (p: string) => p === '/' || p.startsWith('/games') },
-  { href: '/upload', label: 'Upload', art: 'upload', match: (p: string) => p.startsWith('/upload') },
+  { href: '/', label: 'Matches', art: 'matches', match: (p: string) => p === '/' || p.startsWith('/games') || p.startsWith('/upload') },
   { href: '/decks', label: 'Decks', art: 'decks', match: (p: string) => p.startsWith('/decks') },
   { href: '/settings', label: 'Settings', art: 'settings', match: (p: string) => p.startsWith('/settings') },
 ]

@@ -25,14 +25,13 @@ h2 { font-size: 1.15rem; margin: 28px 0 10px; }
 .site-nav { display: flex; gap: clamp(12px, 3vw, 44px); align-items: flex-end; }
 .nav-item { position: relative; display: block; text-decoration: none; }
 .nav-item button { all: unset; cursor: pointer; display: block; }
-.nav-art { display: block; height: 96px; width: auto; margin-bottom: -2px; transition: transform .2s ease; transform-origin: 50% 100%; }
+.nav-art { display: block; height: 96px; width: auto; transition: transform .2s ease; transform-origin: 50% 100%; }
 .nav-item:hover .nav-art, .nav-item:focus-visible .nav-art { transform: translateY(-4px) rotate(-2deg); }
 .nav-label { position: absolute; top: calc(100% + 10px); left: 50%; transform: translateX(-50%); white-space: nowrap;
   font-family: var(--font-display), system-ui, sans-serif; font-weight: 600; font-size: 1.35rem; text-transform: uppercase;
   letter-spacing: -.01em; line-height: 1; }
 .nav-item.active .nav-label { text-decoration: underline; text-decoration-thickness: 3px; text-underline-offset: 6px; }
 .nav-matches .nav-label { color: #e8604c; }
-.nav-upload .nav-label { color: #d9587a; }
 .nav-decks .nav-label { color: #1f7fb5; }
 .nav-settings .nav-label { color: #e8964a; }
 .nav-logout .nav-label { color: #11806a; }

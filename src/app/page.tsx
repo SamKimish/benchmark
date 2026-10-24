@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Icon from '@/components/Icon'
 import { requireUser } from '@/lib/supabase/server'
 import { deckLabel, pct, prettyArch, shortDate } from '@/lib/format'
 import type { Deck } from '@/lib/types'
@@ -74,6 +75,7 @@ export default async function MatchLog({ searchParams }: { searchParams: Promise
             </label>
           )}
           <button className="secondary">Show</button>
+          <Link href="/upload" className="button"><Icon name="import" /> Upload games</Link>
         </form>
       </div>
 
