@@ -1,0 +1,97 @@
+/** TCG Live decklists: parse, format, and card images (Limitless's CDN, keyed by set code and number). */
+
+export interface Card {
+  n: string     // name
+  s: string     // TCG Live set code, 'TWM'
+  no: string    // collector number
+  t: 'P' | 'T' | 'E'
+  st: string    // subtypes, 'Basic' / 'Stage 1' / 'Supporter' / 'Item' / 'Pokémon Tool' / 'Stadium'
+  ef?: string   // evolves from
+}
+
+export interface Entry { count: number; name: string; set: string; no: string; t: Card['t'] | null }
+
+const SECTION: Record<string, Card['t']> = { pokemon: 'P', pokémon: 'P', trainer: 'T', energy: 'E' }
+const ENERGY_SYMBOL: Record<string, string> = { G: 'Grass', R: 'Fire', W: 'Water', L: 'Lightning', P: 'Psychic', F: 'Fighting', D: 'Darkness', M: 'Metal' }
+const SYMBOL = Object.fromEntries(Object.entries(ENERGY_SYMBOL).map(([k, v]) => [v, k]))
+
+export const cardKey = (set: string, no: string) => `${set}-${no.replace(/^0+(?=\d)/, '')}`
+
+/** 'Basic {P} Energy' (TCG Live) <-> 'Basic Psychic Energy' (card data) */
+const fromLive = (name: string) => name.replace(/^Basic \{(\w)\} Energy$/, (m, s) => (ENERGY_SYMBOL[s] ? `Basic ${ENERGY_SYMBOL[s]} Energy` : m))
+const toLive = (name: string) => name.replace(/^Basic (\w+) Energy$/, (m, s) => (SYMBOL[s] ? `Basic {${SYMBOL[s]}} Energy` : m))
+
+/** Parse a TCG Live (or Limitless) export. Lines look like '4 Dreepy TWM 128' under 'Pokémon: 20' headers. */
+export function parseDecklist(text: string, index?: Map<string, Card>): Entry[] {
+  const out: Entry[] = []
+  let section: Card['t'] | null = null
+  for (const raw of text.split(/\r?\n/)) {
+    const ln = raw.trim()
+    const h = ln.match(/^(Pok[ée]mon|Trainer|Energy)\s*[:(]/i)
+    if (h) { section = SECTION[h[1].toLowerCase()]; continue }
+    const m = ln.match(/^(\d+)\s+(.+?)\s+([A-Z0-9-]{2,6})\s+(\d+[a-z]?)$/) ?? ln.match(/^(\d+)\s+(.+)$/)
+    if (!m) continue
+    const [count, name, set = '', no = ''] = [Number(m[1]), fromLive(m[2].trim()), m[3] ?? '', m[4] ?? '']
+    const card = index && lookup(index, { name, set, no })
+    const prev = out.find((e) => e.name === name && e.set === set && e.no === no)
+    if (prev) prev.count += count
+    else out.push({ count, name, set, no, t: card?.t ?? section })
+  }
+  return out
+}
+
+/** The card data for an entry: its exact printing, or failing that any printing with the same name (older sets aren't indexed). */
+export function lookup(index: Map<string, Card>, e: { name: string; set: string; no: string }): Card | undefined {
+  const hit = index.get(cardKey(e.set, e.no))
+  if (hit) return hit
+  for (const c of index.values()) if (c.n === e.name) return c
+}
+
+/** For lists written without set codes: the newest set's regular (lowest-numbered) printing of each card. */
+export function resolvePrintings(entries: Entry[], cards: Card[]): Entry[] {
+  const best = new Map<string, Card>()
+  for (const c of cards) {   // cards.json runs oldest set to newest
+    const b = best.get(c.n)
+    if (!b || b.s !== c.s || parseInt(c.no) < parseInt(b.no)) best.set(c.n, c)
+  }
+  return entries.map((e) => {
+    if (e.set) return e
+    const c = best.get(e.name)
+    return c ? { ...e, set: c.s, no: c.no, t: e.t ?? c.t } : e
+  })
+}
+
+const ORDER: Record<string, number> = { P: 0, T: 1, E: 2 }
+const TRAINER_ORDER = ['Supporter', 'Item', 'Pokémon Tool', 'Stadium']
+
+/** Pokémon, then Trainers (Supporters, Items, Tools, Stadiums), then Energy; keeps the list's own order within a group. */
+export function sortEntries(entries: Entry[], index: Map<string, Card>): Entry[] {
+  const rank = (e: Entry) => {
+    const sub = lookup(index, e)?.st ?? ''
+    const tr = TRAINER_ORDER.findIndex((x) => sub.includes(x))
+    return (ORDER[e.t ?? 'T'] ?? 1) * 10 + (e.t === 'T' ? (tr < 0 ? 4 : tr) : 0)
+  }
+  return entries.map((e, i) => ({ e, i })).sort((a, b) => rank(a.e) - rank(b.e) || a.i - b.i).map((x) => x.e)
+}
+
+export function formatDecklist(entries: Entry[]): string {
+  const groups: [string, Card['t']][] = [['Pokémon', 'P'], ['Trainer', 'T'], ['Energy', 'E']]
+  return groups.map(([label, t]) => {
+    const es = entries.filter((e) => (e.t ?? 'T') === t)
+    if (!es.length) return ''
+    const total = es.reduce((s, e) => s + e.count, 0)
+    return `${label}: ${total}\n` + es.map((e) => `${e.count} ${toLive(e.name)}${e.set ? ` ${e.set} ${e.no}` : ''}`).join('\n')
+  }).filter(Boolean).join('\n\n') + '\n'
+}
+
+export const total = (entries: Entry[]) => entries.reduce((s, e) => s + e.count, 0)
+
+export function cardImage(set: string, no: string, size: 'XS' | 'SM' | 'LG' = 'SM'): string | null {
+  const n = no.match(/^(\d+)([a-z]?)$/)
+  if (!set || !n) return null
+  return `https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/tpci/${set}/${set}_${n[1].padStart(3, '0')}${n[2]}_R_EN_${size}.png`
+}
+
+/** Basic Pokémon in a list: what mulligan odds depend on. */
+export const basics = (entries: Entry[], index: Map<string, Card>) =>
+  entries.filter((e) => e.t === 'P' && /\bBasic\b/.test(lookup(index, e)?.st ?? '')).reduce((s, e) => s + e.count, 0)

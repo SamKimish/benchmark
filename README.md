@@ -8,7 +8,9 @@ built around one player's ladder games. Lives at benchmark.kimish.co.uk.
 - **Match log**: every game with deck, opponent deck, 1st/2nd, result, prizes and loss tags, plus matchup and
   loss-reason tables, filterable by deck and version.
 - **Game page**: the parsed summary, the raw log, and fixes for deck, opponent deck, result and notes.
-- **Decks**: each version of a list is its own deck, grouped by name.
+- **Decks**: a visual deckbuilder. A gallery of your lists, and an editor with card search, counts, and import/export
+  in TCG Live's format. Card images come from Limitless's CDN (keyed by TCG Live set code and number); the search
+  index `public/cards.json` is built from PokemonTCG/pokemon-tcg-data with `node scripts/build-cards.mjs`.
 
 Stack: Next.js (App Router) on Vercel, Supabase for Postgres and email sign-in.
 
