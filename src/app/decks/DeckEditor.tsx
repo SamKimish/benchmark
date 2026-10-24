@@ -12,6 +12,7 @@ import type { Deck } from '@/lib/types'
 import { deckHistory, saveDeck } from './actions'
 import DeckDiff from './DeckDiff'
 import Pokeball from '@/components/Pokeball'
+import Icon from '@/components/Icon'
 
 let cardsPromise: Promise<Card[]> | null = null
 const loadCards = () => (cardsPromise ??= fetch('/cards.json').then((r) => r.json() as Promise<Card[]>))
@@ -33,7 +34,6 @@ export default function DeckEditor({ deck }: { deck?: Deck }) {
   const [entries, setEntries] = useState<Entry[]>(() => parseDecklist(deck?.decklist ?? ''))
   const [name, setName] = useState(deck?.name ?? '')
   const [archetype, setArchetype] = useState(deck?.archetype ?? '')
-  const [active, setActive] = useState(deck?.active ?? true)
   const [query, setQuery] = useState('')
   const [importing, setImporting] = useState(!deck)
   const [importText, setImportText] = useState('')
@@ -122,7 +122,7 @@ export default function DeckEditor({ deck }: { deck?: Deck }) {
       archetype: archetype.trim() || best?.key || null,
       decklist: text,
       basics: cards.length ? basics(entries, index) : saved?.basics ?? null,
-      active,
+      active: saved?.active ?? true,
     })
     setBusy(false)
     if (res.error) return setStatus({ error: res.error })
@@ -152,23 +152,25 @@ export default function DeckEditor({ deck }: { deck?: Deck }) {
           <span className="version" title={changed ? `Saving stores this as ${nextVersion}` : 'Current version'}>
             {changed ? nextVersion : saved?.version ?? 'v1'}
           </span>
-          <button onClick={save} disabled={busy || !count}>{busy ? <Pokeball size={18} label="Saving…" /> : changed && saved ? `Save as ${nextVersion}` : 'Save'}</button>
-          <button className="secondary" onClick={pasteList}>Paste list</button>
-          <button className="secondary" onClick={() => setImporting((x) => !x)}>Import</button>
-          <button className="secondary" onClick={exportList} disabled={!count}>Export</button>
+          <button onClick={save} disabled={busy || !count}>
+            {busy ? <Pokeball size={18} label="Saving…" /> : <><Icon name="save" /> {changed && saved ? `Save as ${nextVersion}` : 'Save'}</>}
+          </button>
+          <button className="secondary" onClick={pasteList} title="Import a decklist straight from your clipboard"><Icon name="paste" /> Paste</button>
+          <button className={importing && importText.trim() ? '' : 'secondary'} title="Type or paste a decklist to import"
+            onClick={() => (importing && importText.trim() ? useList(importText) : setImporting((x) => !x))}><Icon name="import" /> Import</button>
+          <button className="secondary" onClick={exportList} disabled={!count} title="Copy this list for TCG Live"><Icon name="export" /> Export</button>
           {saved && <button className="secondary" disabled={loadingHistory} onClick={async () => {
             if (history) return setHistory(null)
             setLoadingHistory(true)
             try { setHistory(await deckHistory(saved.line_id)) } finally { setLoadingHistory(false) }
-          }}>{loadingHistory ? <Pokeball size={18} label="History" /> : 'History'}</button>}
-          <button className="secondary" onClick={() => { if (confirm('Remove every card?')) setEntries([]) }} disabled={!count}>Clear</button>
+          }} title="See the cards added and removed in each version">{loadingHistory ? <Pokeball size={18} label="History" /> : <><Icon name="history" /> History</>}</button>}
+          <button className="secondary" onClick={() => { if (confirm('Remove every card?')) setEntries([]) }} disabled={!count} title="Remove every card"><Icon name="clear" /> Clear</button>
         </div>
 
         <div className="row small muted" style={{ marginTop: 10, alignItems: 'center' }}>
           <span className={count === 60 ? '' : 'error'}>Cards: {count}/60</span>
           {cards.length > 0 && <span>Basics: {basics(entries, index)}</span>}
           <span>Archetype: <strong>{archetypeName(archetype) ?? prettyArch(archetype) ?? 'none'}</strong></span>
-          <label className="inline"><input type="checkbox" checked={active} onChange={(e) => setActive(e.target.checked)} /> Offer on upload</label>
           {status.ok && <span>{status.ok}</span>}
           {status.error && <span className="error">{status.error}</span>}
           <Link href="/decks" style={{ marginLeft: 'auto' }}>All decks</Link>
@@ -194,17 +196,19 @@ export default function DeckEditor({ deck }: { deck?: Deck }) {
         {importing && (
           <div className="form" style={{ maxWidth: 'none', marginTop: 12 }}>
             <label>Paste a decklist exported from TCG Live or Limitless
-              <textarea rows={10} value={importText} onChange={(e) => setImportText(e.target.value)} placeholder={'Pokémon: 20\n4 Dreepy TWM 128\n…'} />
+              <textarea rows={10} value={importText} autoFocus onChange={(e) => setImportText(e.target.value)} placeholder={'Pokémon: 20\n4 Dreepy TWM 128\n…'} />
             </label>
             <div className="row">
-              <button disabled={!importText.trim()} onClick={() => useList(importText)}>Replace deck with this list</button>
-              <button className="secondary" onClick={() => setImporting(false)}>Cancel</button>
+              <button disabled={!importText.trim()} onClick={() => useList(importText)}>
+                <Icon name="import" /> {count ? `Replace all ${count} cards` : 'Import list'}
+              </button>
+              {count > 0 && <button className="secondary" onClick={() => setImporting(false)}>Cancel</button>}
             </div>
           </div>
         )}
 
         {count === 0 && !importing ? (
-          <p className="muted" style={{ marginTop: 24 }}>No cards yet. Search on the right, paste a list, or import one.</p>
+          <p className="muted" style={{ marginTop: 24 }}>No cards yet. Search on the right to add cards, or paste or import a list.</p>
         ) : (
           <div className="card-grid">
             {sorted.map((e) => (

@@ -139,3 +139,6 @@ button .pokeball-label { color: inherit; }
 .overlay { position: fixed; inset: 0; display: grid; place-items: center; background: color-mix(in srgb, var(--bg) 80%, transparent); z-index: 50; }
 .overlay .panel { display: grid; justify-items: center; gap: 12px; padding: 28px 36px; }
 button .pokeball-wrap { gap: 6px; }
+
+button .icon, .button .icon { vertical-align: -3px; }
+button:has(> .icon) { display: inline-flex; align-items: center; gap: 6px; }

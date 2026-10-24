@@ -54,9 +54,10 @@ export async function saveDeck(d: DeckInput): Promise<{ id?: string; version?: s
   return { id: data.id, version: data.version, newVersion: true }
 }
 
-export async function deleteDeck(id: string) {
+/** Deletes a deck and all its versions. Its games are kept, without a deck. */
+export async function deleteDeck(lineId: string) {
   const { supabase } = await requireUser()
-  await supabase.from('decks').delete().eq('id', id)
+  await supabase.from('decks').delete().eq('line_id', lineId)
   refresh()
 }
 
