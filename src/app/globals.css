@@ -35,6 +35,8 @@ h2 { font-size: 1.15rem; margin: 28px 0 10px; }
 .nav-decks .nav-label { color: #1f7fb5; }
 .nav-settings .nav-label { color: #e8964a; }
 .nav-logout .nav-label { color: #11806a; }
+/* Snorlax's arm hangs over the line */
+.nav-logout .nav-art { margin-bottom: -10px; }
 @media (max-width: 760px) {
   .brand-name { display: none; }
   .brand-ball { height: 30px; }
@@ -43,6 +45,7 @@ h2 { font-size: 1.15rem; margin: 28px 0 10px; }
   .site-nav { gap: 4px; flex: 1; justify-content: space-between; min-width: 0; }
   .nav-art { height: auto; width: 100%; max-height: 48px; object-fit: contain; }
   .nav-item { flex: 1 1 0; min-width: 0; }
+  .nav-logout .nav-art { margin-bottom: -5px; }
   .nav-label { font-size: .62rem; top: calc(100% + 8px); }
   .site-header { margin-bottom: 44px; }
 }
