@@ -5,6 +5,7 @@ import { requireUser } from '@/lib/supabase/server'
 import { gameRow } from '@/lib/games'
 import { deckLabel, prettyArch, shortDate } from '@/lib/format'
 import type { Deck, Game } from '@/lib/types'
+import SubmitButton from '@/components/SubmitButton'
 
 async function save(form: FormData) {
   'use server'
@@ -90,7 +91,7 @@ export default async function GamePage({ params }: { params: Promise<{ id: strin
             </select>
           </label>
           <label>Notes<textarea name="notes" rows={3} defaultValue={game.notes} style={{ fontFamily: 'inherit' }} /></label>
-          <div className="row"><button>Save</button></div>
+          <div className="row"><SubmitButton pending="Saving…">Save</SubmitButton></div>
         </form>
       </div>
 
@@ -98,7 +99,7 @@ export default async function GamePage({ params }: { params: Promise<{ id: strin
       <pre className="log">{game.log}</pre>
       <form action={remove}>
         <input type="hidden" name="id" value={game.id} />
-        <button className="secondary">Delete this game</button>
+        <SubmitButton className="secondary" pending="Deleting…">Delete this game</SubmitButton>
       </form>
     </>
   )

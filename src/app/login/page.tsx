@@ -1,6 +1,7 @@
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { supabaseServer } from '@/lib/supabase/server'
+import SubmitButton from '@/components/SubmitButton'
 
 async function sendLink(form: FormData) {
   'use server'
@@ -35,7 +36,7 @@ export default async function Login({ searchParams }: { searchParams: Promise<{ 
           <label>Email<input name="email" type="email" required autoComplete="email" /></label>
           <label>Password <span className="small">(leave empty to get a sign-in link by email)</span>
             <input name="password" type="password" autoComplete="current-password" /></label>
-          <button>Sign in</button>
+          <SubmitButton pending="Signing in…">Sign in</SubmitButton>
         </form>
       )}
       {q.error && <p className="error">{q.error}</p>}

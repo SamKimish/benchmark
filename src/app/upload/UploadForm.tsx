@@ -3,6 +3,7 @@ import { useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
 import { gameStats, LogError, type GameStats } from '@/lib/parser'
 import { deckLabel, prettyArch } from '@/lib/format'
+import Pokeball from '@/components/Pokeball'
 import type { Deck } from '@/lib/types'
 import { isTcExport, tcDeckSpec, type TcLog } from '@/lib/training-court'
 import { ensureTrainingCourtDecks, saveGames, type UploadItem } from './actions'
@@ -24,7 +25,7 @@ export default function UploadForm({ decks: initialDecks }: { decks: Deck[] }) {
   const [items, setItems] = useState<Pending[]>([])
   const [paste, setPaste] = useState('')
   const [over, setOver] = useState(false)
-  const [busy, setBusy] = useState(false)
+  const [busy, setBusy] = useState<string | null>(null)
   const [done, setDone] = useState<Awaited<ReturnType<typeof saveGames>> | null>(null)
   const fileInput = useRef<HTMLInputElement>(null)
 
@@ -67,13 +68,18 @@ export default function UploadForm({ decks: initialDecks }: { decks: Deck[] }) {
   }
 
   async function addFiles(files: FileList | null) {
-    if (!files) return
+    if (!files?.length) return
+    setBusy(`Reading ${files.length} file${files.length === 1 ? '' : 's'}…`)
+    try { await readFiles(files) } finally { setBusy(null) }
+  }
+
+  async function readFiles(files: FileList) {
     const logs = []
     for (const f of Array.from(files)) {
       if (f.name.endsWith('.json')) {
         let rows: unknown = null
         try { rows = JSON.parse(await f.text()) } catch { /* not JSON after all */ }
-        if (isTcExport(rows)) { await addTrainingCourt(rows); continue }
+        if (isTcExport(rows)) { setBusy(`Importing ${rows.length} Training Court games…`); await addTrainingCourt(rows); continue }
       }
       const parts = splitLogs(await f.text())
       parts.forEach((log, i) => logs.push({ log, name: parts.length > 1 ? `${f.name} (${i + 1})` : f.name, at: f.lastModified }))
@@ -87,7 +93,7 @@ export default function UploadForm({ decks: initialDecks }: { decks: Deck[] }) {
   const needResult = ready.some((x) => !x.result)
 
   async function submit() {
-    setBusy(true)
+    setBusy(`Saving ${ready.length} game${ready.length === 1 ? '' : 's'}…`)
     try {
       // in batches, so a big import stays under the request size limit
       const res = { saved: 0, duplicates: 0, errors: [] as string[] }
@@ -98,11 +104,12 @@ export default function UploadForm({ decks: initialDecks }: { decks: Deck[] }) {
         res.saved += r.saved
         res.duplicates += r.duplicates
         res.errors.push(...r.errors)
+        if (ready.length > 100) setBusy(`Saved ${Math.min(i + 100, ready.length)} of ${ready.length} games…`)
       }
       setDone(res)
       if (!res.errors.length) setItems([])
     } finally {
-      setBusy(false)
+      setBusy(null)
     }
   }
 
@@ -169,13 +176,14 @@ export default function UploadForm({ decks: initialDecks }: { decks: Deck[] }) {
           </div>
           <p className="muted small">Opponent decks are guessed from the Pokémon they played (Limitless-style names such as <code>dragapult,dusknoir</code>); fix any that look wrong.</p>
           <div className="row">
-            <button onClick={submit} disabled={busy || !ready.length || needResult}>
-              {busy ? 'Saving…' : `Save ${ready.length} game${ready.length === 1 ? '' : 's'}`}
+            <button onClick={submit} disabled={!!busy || !ready.length || needResult}>
+              {`Save ${ready.length} game${ready.length === 1 ? '' : 's'}`}
             </button>
             {needResult && <span className="muted small">Some logs were cut off before the end, so pick their result.</span>}
           </div>
         </>
       )}
+      {busy && <div className="overlay"><div className="panel"><Pokeball size={72} /><span>{busy}</span></div></div>}
       {done && (
         <p className="panel">
           Saved {done.saved} game{done.saved === 1 ? '' : 's'}{done.duplicates ? `, skipped ${done.duplicates} already saved` : ''}.{' '}

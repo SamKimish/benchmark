@@ -11,6 +11,7 @@ import { prettyArch } from '@/lib/format'
 import type { Deck } from '@/lib/types'
 import { deckHistory, saveDeck } from './actions'
 import DeckDiff from './DeckDiff'
+import Pokeball from '@/components/Pokeball'
 
 let cardsPromise: Promise<Card[]> | null = null
 const loadCards = () => (cardsPromise ??= fetch('/cards.json').then((r) => r.json() as Promise<Card[]>))
@@ -39,6 +40,7 @@ export default function DeckEditor({ deck }: { deck?: Deck }) {
   const [history, setHistory] = useState<Deck[] | null>(null)
   const [status, setStatus] = useState<{ ok?: string; error?: string }>({})
   const [busy, setBusy] = useState(false)
+  const [loadingHistory, setLoadingHistory] = useState(false)
 
   useEffect(() => {
     loadCards().then((cs) => {
@@ -150,11 +152,15 @@ export default function DeckEditor({ deck }: { deck?: Deck }) {
           <span className="version" title={changed ? `Saving stores this as ${nextVersion}` : 'Current version'}>
             {changed ? nextVersion : saved?.version ?? 'v1'}
           </span>
-          <button onClick={save} disabled={busy || !count}>{busy ? 'Saving…' : changed && saved ? `Save as ${nextVersion}` : 'Save'}</button>
+          <button onClick={save} disabled={busy || !count}>{busy ? <Pokeball size={18} label="Saving…" /> : changed && saved ? `Save as ${nextVersion}` : 'Save'}</button>
           <button className="secondary" onClick={pasteList}>Paste list</button>
           <button className="secondary" onClick={() => setImporting((x) => !x)}>Import</button>
           <button className="secondary" onClick={exportList} disabled={!count}>Export</button>
-          {saved && <button className="secondary" onClick={async () => setHistory(history ? null : await deckHistory(saved.line_id))}>History</button>}
+          {saved && <button className="secondary" disabled={loadingHistory} onClick={async () => {
+            if (history) return setHistory(null)
+            setLoadingHistory(true)
+            try { setHistory(await deckHistory(saved.line_id)) } finally { setLoadingHistory(false) }
+          }}>{loadingHistory ? <Pokeball size={18} label="History" /> : 'History'}</button>}
           <button className="secondary" onClick={() => { if (confirm('Remove every card?')) setEntries([]) }} disabled={!count}>Clear</button>
         </div>
 
@@ -220,7 +226,7 @@ export default function DeckEditor({ deck }: { deck?: Deck }) {
 
       <aside className="panel builder-search">
         <input type="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search cards: boss, dreepy, TWM 128" aria-label="Search cards" />
-        {!cards.length && <p className="muted small">Loading cards…</p>}
+        {!cards.length && <Pokeball size={32} label="Loading cards…" />}
         {query.trim().length >= 2 && cards.length > 0 && !results.length && <p className="muted small">No cards match.</p>}
         <div className="result-grid">
           {results.map((c) => {
