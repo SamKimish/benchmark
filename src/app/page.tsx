@@ -1,8 +1,9 @@
 import Link from 'next/link'
 import Icon from '@/components/Icon'
 import { requireUser } from '@/lib/supabase/server'
-import { dayKey, dayLabel, deckLabel, pct, prettyArch, timeOnly } from '@/lib/format'
+import { dayKey, dayLabel, pct, prettyArch, timeOnly } from '@/lib/format'
 import Sprites from '@/components/Sprites'
+import QuickPaste from '@/components/QuickPaste'
 import type { Deck } from '@/lib/types'
 
 interface Row {
@@ -56,7 +57,8 @@ export default async function MatchLog({ searchParams }: { searchParams: Promise
   for (const r of done) if (r.result === 'L') for (const t of r.tags) tagCounts.set(t, (tagCounts.get(t) ?? 0) + 1)
   const losses = done.length - wins(done)
 
-  const myArch = (r: Row) => (r.deck_id ? deckById.get(r.deck_id)?.archetype : null) ?? null
+  const deck = (r: Row) => (r.deck_id ? deckById.get(r.deck_id) : undefined)
+  const myArch = (r: Row) => deck(r)?.archetype ?? null
   const days: [string, Row[]][] = []
   for (const r of rows) {
     const d = dayKey(r.played_at)
@@ -66,40 +68,40 @@ export default async function MatchLog({ searchParams }: { searchParams: Promise
 
   return (
     <>
-      <div className="row" style={{ justifyContent: 'space-between' }}>
+      <div className="page-head">
         <h1>Match log</h1>
-        <form className="row" method="get">
-          <label>Deck
-            <select name="deck" defaultValue={q.deck ?? ''}>
-              <option value="">All decks</option>
-              {names.map((n) => <option key={n}>{n}</option>)}
+        <div className="page-actions">
+          <QuickPaste decks={decks} lastDeckId={rows[0]?.deck_id ?? null} />
+          <Link href="/upload" className="button secondary"><Icon name="import" /> Upload files</Link>
+        </div>
+      </div>
+      <form className="row filters" method="get">
+        <label>Deck
+          <select name="deck" defaultValue={q.deck ?? ''}>
+            <option value="">All decks</option>
+            {names.map((n) => <option key={n}>{n}</option>)}
+          </select>
+        </label>
+        {q.deck && versions.length > 1 && (
+          <label>Version
+            <select name="v" defaultValue={q.v ?? ''}>
+              <option value="">All versions</option>
+              {versions.map((d) => <option key={d.id} value={d.id}>{d.version || 'Unnamed'}</option>)}
             </select>
           </label>
-          {q.deck && versions.length > 1 && (
-            <label>Version
-              <select name="v" defaultValue={q.v ?? ''}>
-                <option value="">All versions</option>
-                {versions.map((d) => <option key={d.id} value={d.id}>{d.version || 'Unnamed'}</option>)}
-              </select>
-            </label>
-          )}
-          <button className="secondary">Show</button>
-          <Link href="/upload" className="button"><Icon name="import" /> Upload games</Link>
-        </form>
-      </div>
+        )}
+        <button className="secondary">Show</button>
+      </form>
 
       {!rows.length ? (
-        <p className="panel">No games yet. <Link href="/upload">Upload some logs</Link> to get started.</p>
+        <p className="panel">No games yet. Copy a game log in TCG Live and press <strong>Paste game</strong>, or <Link href="/upload">upload log files</Link>.</p>
       ) : (
         <>
           <div className="tiles">
-            <div className="panel tile"><div className="muted small">Games</div><div className="n">{rows.length}</div></div>
-            <div className="panel tile"><div className="muted small">Win rate</div><div className="n">{pct(wins(done), done.length)}</div>
-              <div className="muted small">{wins(done)}–{done.length - wins(done)}</div></div>
-            <div className="panel tile"><div className="muted small">Going 1st</div><div className="n">{pct(wins(first), first.length)}</div>
-              <div className="muted small">{first.length} games</div></div>
-            <div className="panel tile"><div className="muted small">Going 2nd</div><div className="n">{pct(wins(second), second.length)}</div>
-              <div className="muted small">{second.length} games</div></div>
+            <Stat label="Games" value={String(rows.length)} sub={`${wins(done)} W · ${done.length - wins(done)} L`} />
+            <Stat label="Win rate" w={wins(done)} n={done.length} />
+            <Stat label="Going 1st" w={wins(first)} n={first.length} />
+            <Stat label="Going 2nd" w={wins(second)} n={second.length} />
           </div>
 
           <h2>Matches</h2>
@@ -112,6 +114,7 @@ export default async function MatchLog({ searchParams }: { searchParams: Promise
                   <span className="day-date">{dayLabel(day)}</span>
                   <span className="day-decks">{decksPlayed.map((k) => <Sprites key={k} arch={k} />)}</span>
                   <span className="day-record"><strong>{w}-{l}</strong><span className="muted small">{xs.length} total</span></span>
+                  <span className="chevron" aria-hidden><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6" /></svg></span>
                 </summary>
                 <ul className="matches">
                   {xs.map((r) => (
@@ -120,9 +123,13 @@ export default async function MatchLog({ searchParams }: { searchParams: Promise
                         <Sprites arch={myArch(r)} />
                         <span className="match-main">
                           <strong>{r.result === 'W' ? 'Win' : r.result === 'L' ? 'Loss' : 'Unknown'} vs {prettyArch(r.opp_archetype)}</strong>
-                          <span className="muted small">{timeOnly(r.played_at)} · {deckLabel(r.deck_id ? deckById.get(r.deck_id) : null)} · prizes {r.prizes_taken}–{r.prizes_given}</span>
-                          {r.result === 'L' && r.tags.length > 0 && <span>{r.tags.map((t) => <span key={t} className="pill">{t}</span>)}</span>}
+                          <span className="match-meta">
+                            <span className="muted">{timeOnly(r.played_at)}</span>
+                            {deck(r) ? <span className="deck-name">{deck(r)!.name}{deck(r)!.version && <span className="ver">{deck(r)!.version}</span>}</span> : <span className="muted">No deck</span>}
+                            <span className="muted">prizes {r.prizes_taken}–{r.prizes_given}</span>
+                          </span>
                         </span>
+                        <span className="match-tags">{r.result === 'L' && r.tags.map((t) => <span key={t} className="pill">{t}</span>)}</span>
                         <span className="match-order">{r.went_first === null ? '–' : r.went_first ? '1st' : '2nd'}</span>
                         <Sprites arch={r.opp_archetype} />
                       </Link>
@@ -170,5 +177,21 @@ export default async function MatchLog({ searchParams }: { searchParams: Promise
         </>
       )}
     </>
+  )
+}
+
+/** A headline number: a count, or a win rate drawn as a bar of wins against losses. */
+function Stat({ label, value, sub, w, n }: { label: string; value?: string; sub?: string; w?: number; n?: number }) {
+  const rate = n ? (w ?? 0) / n : null
+  const tone = rate === null ? '' : rate >= 0.55 ? ' good' : rate < 0.45 ? ' bad' : ''
+  return (
+    <div className={`panel stat${tone}`}>
+      <div className="stat-label">{label}</div>
+      <div className="stat-n">{value ?? pct(w ?? 0, n ?? 0)}</div>
+      {rate !== null && (
+        <div className="stat-bar" aria-hidden><span style={{ width: `${Math.round(rate * 100)}%` }} /></div>
+      )}
+      <div className="stat-sub">{sub ?? `${w}–${(n ?? 0) - (w ?? 0)} · ${n} games`}</div>
+    </div>
   )
 }
