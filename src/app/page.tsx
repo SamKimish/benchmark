@@ -1,7 +1,8 @@
 import Link from 'next/link'
 import Icon from '@/components/Icon'
 import { requireUser } from '@/lib/supabase/server'
-import { deckLabel, pct, prettyArch, shortDate } from '@/lib/format'
+import { dayKey, dayLabel, deckLabel, pct, prettyArch, timeOnly } from '@/lib/format'
+import Sprites from '@/components/Sprites'
 import type { Deck } from '@/lib/types'
 
 interface Row {
@@ -55,6 +56,14 @@ export default async function MatchLog({ searchParams }: { searchParams: Promise
   for (const r of done) if (r.result === 'L') for (const t of r.tags) tagCounts.set(t, (tagCounts.get(t) ?? 0) + 1)
   const losses = done.length - wins(done)
 
+  const myArch = (r: Row) => (r.deck_id ? deckById.get(r.deck_id)?.archetype : null) ?? null
+  const days: [string, Row[]][] = []
+  for (const r of rows) {
+    const d = dayKey(r.played_at)
+    if (days.at(-1)?.[0] === d) days.at(-1)![1].push(r)
+    else days.push([d, [r]])
+  }
+
   return (
     <>
       <div className="row" style={{ justifyContent: 'space-between' }}>
@@ -93,24 +102,36 @@ export default async function MatchLog({ searchParams }: { searchParams: Promise
               <div className="muted small">{second.length} games</div></div>
           </div>
 
-          <div className="table-wrap">
-            <table>
-              <thead><tr><th>Played</th><th>Deck</th><th>Opponent deck</th><th>Order</th><th>Result</th><th>Prizes</th><th>Tags</th></tr></thead>
-              <tbody>
-                {rows.map((r) => (
-                  <tr key={r.id}>
-                    <td><Link href={`/games/${r.id}`}>{shortDate(r.played_at)}</Link></td>
-                    <td>{deckLabel(r.deck_id ? deckById.get(r.deck_id) : null)}</td>
-                    <td>{prettyArch(r.opp_archetype)}</td>
-                    <td>{r.went_first === null ? '–' : r.went_first ? '1st' : '2nd'}</td>
-                    <td><span className={`badge ${r.result ?? 'none'}`}>{r.result === 'W' ? 'Win' : r.result === 'L' ? 'Loss' : '?'}</span></td>
-                    <td>{r.prizes_taken}–{r.prizes_given}</td>
-                    <td className="wrap">{r.result === 'L' && r.tags.map((t) => <span key={t} className="pill">{t}</span>)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <h2>Matches</h2>
+          {days.map(([day, xs], i) => {
+            const w = wins(xs), l = xs.filter((r) => r.result === 'L').length
+            const decksPlayed = [...new Set(xs.map((r) => myArch(r)).filter(Boolean))].slice(0, 2)
+            return (
+              <details key={day} className="day" open={i === 0}>
+                <summary>
+                  <span className="day-date">{dayLabel(day)}</span>
+                  <span className="day-decks">{decksPlayed.map((k) => <Sprites key={k} arch={k} />)}</span>
+                  <span className="day-record"><strong>{w}-{l}</strong><span className="muted small">{xs.length} total</span></span>
+                </summary>
+                <ul className="matches">
+                  {xs.map((r) => (
+                    <li key={r.id}>
+                      <Link href={`/games/${r.id}`} className={`match ${r.result ?? 'none'}`}>
+                        <Sprites arch={myArch(r)} />
+                        <span className="match-main">
+                          <strong>{r.result === 'W' ? 'Win' : r.result === 'L' ? 'Loss' : 'Unknown'} vs {prettyArch(r.opp_archetype)}</strong>
+                          <span className="muted small">{timeOnly(r.played_at)} · {deckLabel(r.deck_id ? deckById.get(r.deck_id) : null)} · prizes {r.prizes_taken}–{r.prizes_given}</span>
+                          {r.result === 'L' && r.tags.length > 0 && <span>{r.tags.map((t) => <span key={t} className="pill">{t}</span>)}</span>}
+                        </span>
+                        <span className="match-order">{r.went_first === null ? '–' : r.went_first ? '1st' : '2nd'}</span>
+                        <Sprites arch={r.opp_archetype} />
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </details>
+            )
+          })}
 
           <div className="grid2">
             <div>
@@ -123,7 +144,7 @@ export default async function MatchLog({ searchParams }: { searchParams: Promise
                       const f = xs.filter((r) => r.went_first === true), s = xs.filter((r) => r.went_first === false)
                       return (
                         <tr key={opp}>
-                          <td>{prettyArch(opp)}</td><td>{xs.length}</td><td>{pct(wins(xs), xs.length)}</td>
+                          <td><span className="row" style={{ gap: 8, flexWrap: 'nowrap' }}><Sprites arch={opp} />{prettyArch(opp)}</span></td><td>{xs.length}</td><td>{pct(wins(xs), xs.length)}</td>
                           <td>{pct(wins(f), f.length)}</td><td>{pct(wins(s), s.length)}</td>
                         </tr>
                       )

@@ -1,11 +1,11 @@
 :root {
   --bg: #f6f7fb; --panel: #ffffff; --ink: #1b1f2a; --muted: #5d6475; --line: #e2e5ee;
   --accent: #d6342c; --accent-ink: #fff; --win: #1f8a4c; --win-bg: #e3f4ea; --loss: #b3261e; --loss-bg: #fbe5e3;
-  --tag: #eef0f6; --focus: #2f6fde; --line-red: #d6342c;
+  --tag: #eef0f6; --focus: #2f6fde; --line-red: #d6342c; --win-row: #d3f5e2; --loss-row: #fbdcdc;
 }
 @media (prefers-color-scheme: dark) {
   :root { --bg: #12141a; --panel: #1b1e27; --ink: #e8eaf0; --muted: #9aa1b2; --line: #2c303c;
-    --accent: #ef5a4f; --win: #5fd08f; --win-bg: #173525; --loss: #ff8a80; --loss-bg: #3a1a18; --tag: #262a35; --focus: #7aa7ff; --line-red: #e0473e; }
+    --accent: #ef5a4f; --win: #5fd08f; --win-bg: #173525; --loss: #ff8a80; --loss-bg: #3a1a18; --tag: #262a35; --focus: #7aa7ff; --line-red: #e0473e; --win-row: #1a3a29; --loss-row: #3d1f1f; }
 }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 system-ui, -apple-system, 'Segoe UI', sans-serif; }
@@ -174,3 +174,27 @@ button .icon, .button .icon { vertical-align: -3px; }
 button:has(> .icon) { display: inline-flex; align-items: center; gap: 6px; }
 
 .save-bar { position: sticky; top: 0; z-index: 5; background: var(--bg); padding: 10px 0; }
+/* match log: one collapsible group per day, rows coloured by result */
+.sprites { display: inline-flex; gap: 2px; min-width: 76px; align-items: center; }
+.sprites img { width: 36px; height: 36px; object-fit: contain; image-rendering: auto; }
+details.day { border-bottom: 1px solid var(--line); }
+details.day > summary { display: flex; align-items: center; gap: 16px; padding: 14px 4px; cursor: pointer; list-style: none; }
+details.day > summary::-webkit-details-marker { display: none; }
+details.day > summary::after { content: '▾'; color: var(--muted); transition: transform .15s; }
+details.day:not([open]) > summary::after { transform: rotate(-90deg); }
+.day-date { font-weight: 600; flex: 1; }
+.day-decks { display: flex; gap: 8px; }
+.day-record { display: flex; flex-direction: column; align-items: flex-end; line-height: 1.2; min-width: 64px; }
+.matches { list-style: none; margin: 0 0 12px; padding: 0; display: grid; gap: 6px; }
+.match { display: flex; align-items: center; gap: 14px; padding: 10px 16px; border-radius: 10px; text-decoration: none; color: var(--ink); background: var(--tag); }
+.match.W { background: var(--win-row); }
+.match.L { background: var(--loss-row); }
+.match:hover { filter: brightness(.97); }
+.match-main { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.match-order { width: 40px; text-align: center; color: var(--muted); font-size: .9rem; }
+.match > .sprites:last-child { justify-content: flex-end; }
+@media (max-width: 600px) {
+  .match { gap: 8px; padding: 8px 10px; }
+  .match > .sprites:first-child { display: none; }
+  .day-decks { display: none; }
+}
