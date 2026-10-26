@@ -15,7 +15,11 @@ const SECTION: Record<string, Card['t']> = { pokemon: 'P', pokémon: 'P', traine
 const ENERGY_SYMBOL: Record<string, string> = { G: 'Grass', R: 'Fire', W: 'Water', L: 'Lightning', P: 'Psychic', F: 'Fighting', D: 'Darkness', M: 'Metal' }
 const SYMBOL = Object.fromEntries(Object.entries(ENERGY_SYMBOL).map(([k, v]) => [v, k]))
 
-export const cardKey = (set: string, no: string) => `${set}-${no.replace(/^0+(?=\d)/, '')}`
+/** TCG Live writes promos as PR-SV / PR-ME; the card data and Limitless use SVP / MEP. */
+const SET_ALIAS: Record<string, string> = { 'PR-SV': 'SVP', 'PR-ME': 'MEP' }
+export const setCode = (set: string) => SET_ALIAS[set] ?? set
+
+export const cardKey = (set: string, no: string) => `${setCode(set)}-${no.replace(/^0+(?=\d)/, '')}`
 
 /** 'Basic {P} Energy' (TCG Live) <-> 'Basic Psychic Energy' (card data) */
 const fromLive = (name: string) => name.replace(/^Basic \{(\w)\} Energy$/, (m, s) => (ENERGY_SYMBOL[s] ? `Basic ${ENERGY_SYMBOL[s]} Energy` : m))
@@ -92,6 +96,7 @@ export const total = (entries: Entry[]) => entries.reduce((s, e) => s + e.count,
 export function cardImage(set: string, no: string, size: 'XS' | 'SM' | 'LG' = 'SM'): string | null {
   const n = no.match(/^(\d+)([a-z]?)$/)
   if (!set || !n) return null
+  set = setCode(set)
   return `https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/tpci/${set}/${set}_${n[1].padStart(3, '0')}${n[2]}_R_EN_${size}.png`
 }
 
