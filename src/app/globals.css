@@ -10,13 +10,18 @@
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 system-ui, -apple-system, 'Segoe UI', sans-serif; }
 a { color: inherit; }
-main { max-width: 1100px; margin: 0 auto; padding: 24px 16px 64px; }
+/* page width grows with the screen, so big and ultra-wide monitors aren't mostly margin */
+:root { --page: 1200px; --gutter: clamp(16px, 2.5vw, 48px); }
+@media (min-width: 1700px) { :root { --page: 1560px; } }
+@media (min-width: 2200px) { :root { --page: 2000px; } }
+@media (min-width: 2900px) { :root { --page: 2600px; } }
+main { max-width: calc(var(--page) + 2 * var(--gutter)); margin: 0 auto; padding: 24px var(--gutter) 48px; }
 h1 { font-size: 1.6rem; margin: 0 0 16px; font-family: var(--font-display), system-ui, sans-serif; font-weight: 600; }
 h2 { font-size: 1.15rem; margin: 28px 0 10px; }
 /* header: artwork sits on the red line, labels hang underneath it */
 .site-header { background: var(--panel); margin-bottom: 64px; }
 .site-header.signed-out { margin-bottom: 24px; }
-.site-bar { max-width: 1500px; margin: 0 auto; padding: 14px 24px 0; display: flex; align-items: flex-end;
+.site-bar { max-width: calc(var(--page) + 2 * var(--gutter)); margin: 0 auto; padding: 14px var(--gutter) 0; display: flex; align-items: flex-end;
   justify-content: space-between; gap: 16px; border-bottom: 5px solid var(--line-red); position: relative; }
 .site-header::after { content: ''; display: block; }
 .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; padding-bottom: 14px; }
@@ -89,7 +94,7 @@ dl.kv dd { margin: 0; }
 label.inline { display: flex; flex-direction: row; align-items: center; gap: 6px; }
 button.icon { background: none; color: var(--muted); padding: 4px; }
 button.icon:hover { color: var(--loss); }
-.deck-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+.deck-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: clamp(16px, 1.4vw, 28px); }
 .deck-tile { display: grid; gap: 8px; text-decoration: none; }
 .mosaic { display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; align-content: start; aspect-ratio: 16 / 10;
   overflow: hidden; background: var(--tag); border-radius: 10px; padding: 10px; text-decoration: none; }
@@ -100,7 +105,7 @@ button.icon:hover { color: var(--loss); }
   border: 1px solid var(--line); border-radius: 4px; aspect-ratio: 63 / 88; padding: 4px; overflow: hidden; }
 .builder { display: grid; grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr); gap: 16px; align-items: start; }
 @media (max-width: 860px) { .builder { grid-template-columns: 1fr; } }
-main:has(.builder) { max-width: 1500px; }
+
 .builder-search { position: sticky; top: 12px; max-height: calc(100vh - 24px); overflow: auto; display: grid; gap: 12px; }
 .builder-search input[type=search] { width: 100%; }
 .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 10px; margin-top: 16px; }
@@ -235,3 +240,4 @@ details.day:not([open]) .chevron { transform: rotate(-90deg); }
 .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 10px 18px; border-radius: 99px; z-index: 60; box-shadow: 0 8px 24px rgba(0, 0, 0, .2); }
 .match.modal-match { grid-template-columns: 80px minmax(0, 1fr) 80px; height: auto; min-height: 64px; padding: 8px 16px; }
 .match.modal-match > .sprites:first-child { display: inline-flex; }
+main:has(.builder) { max-width: max(1500px, calc(var(--page) + 2 * var(--gutter))); }
