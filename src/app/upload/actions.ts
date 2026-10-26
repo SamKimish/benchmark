@@ -19,11 +19,11 @@ export interface UploadItem {
 /** Make sure the decks that Training Court games are filed under exist, and return all decks. */
 export async function ensureTrainingCourtDecks(): Promise<Deck[]> {
   const { supabase } = await requireUser()
-  const { data: have } = await supabase.from('decks').select('name, version')
+  const { data: have } = await supabase.from('decks').select('name, version, line_id')
   const missing = TC_DECKS.filter((d) => !(have ?? []).some((h) => h.name === d.name && h.version === d.version))
   if (missing.length) {
     // versions of one deck share a line, so the deck page shows them as one list's history
-    const lines = new Map<string, string>()
+    const lines = new Map<string, string>((have ?? []).filter((h) => h.line_id).map((h) => [h.name, h.line_id]))
     const rows = missing.map(({ match: _, ...d }) => {
       if (!lines.has(d.name)) lines.set(d.name, crypto.randomUUID())
       return { ...d, decklist: d.decklist ?? '', basics: d.basics ?? null, active: d.active ?? true, line_id: lines.get(d.name) }

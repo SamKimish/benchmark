@@ -2,7 +2,7 @@
   "_comment": "Training Court (archetype, decklist id) -> Benchmark deck. decklist null = games logged before Training Court had decklists.",
   "decks": [
     {
-      "name": "Straight Dragapult",
+      "name": "Straight Pult",
       "version": "v1",
       "version_order": 1,
       "archetype": "dragapult",
@@ -17,7 +17,7 @@
       "active": false
     },
     {
-      "name": "Straight Dragapult",
+      "name": "Straight Pult",
       "version": "v2",
       "version_order": 2,
       "archetype": "dragapult",
@@ -32,7 +32,7 @@
       "active": false
     },
     {
-      "name": "Straight Dragapult",
+      "name": "Straight Pult",
       "version": "v3",
       "version_order": 3,
       "archetype": "dragapult",
@@ -48,8 +48,8 @@
     },
     {
       "name": "Dragapult Dusknoir",
-      "version": "v1",
-      "version_order": 1,
+      "version": "v2",
+      "version_order": 2,
       "archetype": "dragapult,dusknoir",
       "basics": 11,
       "active": false,
@@ -64,55 +64,6 @@
         ]
       ],
       "decklist": ""
-    },
-    {
-      "name": "Mega Starmie Froslass",
-      "version": "v1",
-      "version_order": 1,
-      "archetype": "starmie-mega,froslass-mega",
-      "basics": 11,
-      "active": false,
-      "match": [
-        [
-          "starmie-mega,froslass-mega",
-          null
-        ],
-        [
-          "starmie-mega,froslass-mega",
-          "c15c2b41-fe60-456f-9970-a466d30f44b2"
-        ]
-      ],
-      "decklist": ""
-    },
-    {
-      "name": "Mega Starmie Froslass",
-      "version": "v2",
-      "version_order": 2,
-      "archetype": "starmie-mega,froslass-mega",
-      "active": false,
-      "match": [
-        [
-          "starmie-mega,froslass-mega",
-          "da243c1a-22ad-443e-ab84-a73adc7575a9"
-        ]
-      ],
-      "decklist": "",
-      "basics": null
-    },
-    {
-      "name": "Mega Starmie Froslass",
-      "version": "v3",
-      "version_order": 3,
-      "archetype": "starmie-mega,froslass-mega",
-      "active": false,
-      "match": [
-        [
-          "starmie-mega,froslass-mega",
-          "0267406e-7ead-4a9a-848d-d0c27c0232ea"
-        ]
-      ],
-      "decklist": "",
-      "basics": null
     },
     {
       "name": "Gardevoir Jellicent",
@@ -191,6 +142,30 @@
         [
           "lucario-mega",
           null
+        ]
+      ]
+    },
+    {
+      "name": "Starmie Froslass",
+      "version": "v1",
+      "version_order": 1,
+      "archetype": "starmie-mega,froslass",
+      "match": [
+        [
+          "starmie-mega,froslass-mega",
+          null
+        ],
+        [
+          "starmie-mega,froslass-mega",
+          "c15c2b41-fe60-456f-9970-a466d30f44b2"
+        ],
+        [
+          "starmie-mega,froslass-mega",
+          "da243c1a-22ad-443e-ab84-a73adc7575a9"
+        ],
+        [
+          "starmie-mega,froslass-mega",
+          "0267406e-7ead-4a9a-848d-d0c27c0232ea"
         ]
       ]
     }
