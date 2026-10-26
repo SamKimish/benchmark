@@ -180,7 +180,9 @@ button:has(> .icon) { display: inline-flex; align-items: center; gap: 6px; }
 .save-bar { position: sticky; top: 0; z-index: 5; background: var(--bg); padding: 10px 0; }
 /* match log: one collapsible group per day, rows coloured by result */
 .sprites { display: inline-flex; gap: 2px; min-width: 76px; align-items: center; }
-.sprites img { width: 36px; height: 36px; object-fit: contain; image-rendering: auto; }
+/* a fixed slot per Pokémon; the bitmap keeps its own size inside it, so small sprites stay sharp */
+.sprite { width: 38px; height: 40px; display: grid; place-items: center; flex: none; }
+.sprite img { max-width: 100%; max-height: 100%; width: auto; height: auto; display: block; }
 details.day { border-bottom: 1px solid var(--line); }
 details.day > summary { display: flex; align-items: center; gap: 16px; padding: 14px 4px; cursor: pointer; list-style: none; }
 details.day > summary::-webkit-details-marker { display: none; }

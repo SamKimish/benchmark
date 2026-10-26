@@ -94,7 +94,7 @@ export default function DeckPicker({ value, onChange, label }: { value: string; 
                   {first && <div className="picker-head">{o.kind === 'deck' ? (q ? 'Decks' : 'Most played decks') : 'Pokémon'}</div>}
                   <button type="button" role="option" aria-selected={i === active} className={i === active ? 'on' : ''}
                     onMouseEnter={() => setActive(i)} onClick={() => choose(o)}>
-                    {o.kind === 'deck' ? <Sprites arch={o.key} /> : <span className="sprites"><img src={spriteUrl(o.key)} alt="" width={36} height={36} onError={(e) => { e.currentTarget.style.visibility = 'hidden' }} /></span>}
+                    {o.kind === 'deck' ? <Sprites arch={o.key} /> : <span className="sprites"><span className="sprite"><img src={spriteUrl(o.key)} alt="" onError={(e) => { e.currentTarget.style.visibility = 'hidden' }} /></span></span>}
                     <span>{o.name}</span>
                   </button>
                 </li>
