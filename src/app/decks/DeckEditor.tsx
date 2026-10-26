@@ -22,11 +22,12 @@ const SECTIONS: [Entry['t'], string][] = [['P', 'Pokémon'], ['T', 'Trainers'], 
 const same = (a: Entry, b: { set: string; no: string; name: string }) => a.set === b.set && a.no === b.no && a.name === b.name
 
 function CardImg({ e, cards, size = 'SM' }: { e: { name: string; set: string; no: string }; cards: Card[]; size?: 'SM' | 'LG' }) {
-  const [broken, setBroken] = useState(false)
   const shown = displayPrinting(e, cards)
   const src = cardImage(shown.set, shown.no, size)
-  if (!src || broken) return <div className="noimg card-img">{e.name}<span className="muted small">{e.set} {e.no}</span></div>
-  return <img className="card-img" src={src} alt={`${e.name} ${e.set} ${e.no}`} loading="lazy" onError={() => setBroken(true)} />
+  // remembered per image, so a printing that failed before the card data loaded gets another go
+  const [broken, setBroken] = useState<string | null>(null)
+  if (!src || broken === src) return <div className="noimg card-img">{e.name}<span className="muted small">{e.set} {e.no}</span></div>
+  return <img className="card-img" src={src} alt={`${e.name} ${e.set} ${e.no}`} loading="lazy" onError={() => setBroken(src)} />
 }
 
 export default function DeckEditor({ deck, latest }: {

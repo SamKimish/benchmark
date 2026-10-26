@@ -70,6 +70,10 @@ export function resolvePrintings(entries: Entry[], cards: Card[]): Entry[] {
 
 /** Promo and energy sets Limitless has images for, beyond the sets in the card data. */
 const EXTRA_IMAGE_SETS = ['SVP', 'MEP', 'SVE', 'MEE']
+/** Special printings TCG Live gives their own codes; drawn as the card they are a version of. */
+const PRINTING_ALIAS: Record<string, { set: string; no: string }> = {
+  'MEALT 2': { set: 'MEP', no: '10' },   // Pokémon Center stamped Riolu
+}
 const knownSets = new WeakMap<Card[], Set<string>>()
 
 /**
@@ -77,6 +81,8 @@ const knownSets = new WeakMap<Card[], Set<string>>()
  * (e.g. 'Riolu MEALT 2'); those are drawn as the card's regular printing instead.
  */
 export function displayPrinting<T extends { name: string; set: string; no: string }>(e: T, cards: Card[]): T {
+  const known = PRINTING_ALIAS[`${e.set} ${e.no.replace(/^0+(?=\d)/, '')}`]
+  if (known) return { ...e, ...known }
   if (!cards.length || !e.set) return e
   let sets = knownSets.get(cards)
   if (!sets) knownSets.set(cards, (sets = new Set([...cards.map((c) => c.s), ...EXTRA_IMAGE_SETS])))
