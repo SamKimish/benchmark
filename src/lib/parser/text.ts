@@ -2,10 +2,12 @@
 
 export const esc = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 
-/** Line endings to \n, and fill in the "[playerName]'s Turn" headers some TCG Live exports have. */
+/** Line endings to \n, newer "Turn # 3 - Name's Turn" headers to the older "Name's Turn",
+ * and fill in the "[playerName]'s Turn" headers some TCG Live exports have. */
 export function normalize(raw: string): string {
   const lines = raw.replace(/\r\n/g, '\n').replace(/\r/g, '').split('\n')
   for (let i = 0; i < lines.length; i++) {
+    lines[i] = lines[i].replace(/^Turn # \d+ - (?=.+'s Turn$)/, '')
     if (lines[i] === "[playerName]'s Turn") {
       const nxt = lines.slice(i + 1).find((l) => l.trim()) ?? ''
       const m = nxt.match(/^(\S+?)(?:'s)? /)

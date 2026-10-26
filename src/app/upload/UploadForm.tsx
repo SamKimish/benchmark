@@ -3,6 +3,7 @@ import { useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
 import { gameStats, LogError, type GameStats } from '@/lib/parser'
 import { deckLabel, prettyArch } from '@/lib/format'
+import Icon from '@/components/Icon'
 import Pokeball from '@/components/Pokeball'
 import type { Deck } from '@/lib/types'
 import { isTcExport, tcDeckSpec, type TcLog } from '@/lib/training-court'
@@ -114,6 +115,8 @@ export default function UploadForm({ decks: initialDecks }: { decks: Deck[] }) {
       }
       setDone(res)
       if (!res.errors.length) setItems([])
+    } catch (e) {
+      setDone({ saved: 0, duplicates: 0, errors: [`Saving failed: ${e instanceof Error ? e.message : 'unknown error'}. Games already saved stay saved; press Save again to retry the rest.`] })
     } finally {
       setBusy(null)
     }
@@ -145,6 +148,14 @@ export default function UploadForm({ decks: initialDecks }: { decks: Deck[] }) {
 
       {items.length > 0 && (
         <>
+          <div className="row save-bar">
+            <button onClick={submit} disabled={!!busy || !ready.length || needResult}>
+              <Icon name="save" /> {`Save ${ready.length} game${ready.length === 1 ? '' : 's'}`}
+            </button>
+            {needResult
+              ? <span className="muted small">Some logs were cut off before the end, so pick their result below.</span>
+              : <span className="muted small">Nothing is saved until you press Save. Check the games below first if you like.</span>}
+          </div>
           <div className="table-wrap">
             <table>
               <thead><tr><th>Game</th><th>Played</th><th>Deck</th><th>Opponent deck</th><th>Order</th><th>Result</th><th>Prizes</th><th /></tr></thead>
@@ -181,12 +192,6 @@ export default function UploadForm({ decks: initialDecks }: { decks: Deck[] }) {
             </table>
           </div>
           <p className="muted small">Opponent decks are guessed from the Pokémon they played (Limitless-style names such as <code>dragapult,dusknoir</code>); fix any that look wrong.</p>
-          <div className="row">
-            <button onClick={submit} disabled={!!busy || !ready.length || needResult}>
-              {`Save ${ready.length} game${ready.length === 1 ? '' : 's'}`}
-            </button>
-            {needResult && <span className="muted small">Some logs were cut off before the end, so pick their result.</span>}
-          </div>
         </>
       )}
       {busy && <div className="overlay"><div className="panel"><Pokeball size={72} /><span>{busy}</span></div></div>}

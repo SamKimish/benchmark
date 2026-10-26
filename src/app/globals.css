@@ -172,3 +172,5 @@ button .pokeball-wrap { gap: 6px; }
 
 button .icon, .button .icon { vertical-align: -3px; }
 button:has(> .icon) { display: inline-flex; align-items: center; gap: 6px; }
+
+.save-bar { position: sticky; top: 0; z-index: 5; background: var(--bg); padding: 10px 0; }

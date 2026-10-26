@@ -35,6 +35,14 @@ describe('gameStats', () => {
     expect(gameStats(log).result).toBeNull()
   })
 
+  it('reads the newer "Turn # N - Name\'s Turn" headers with CRLF line endings', () => {
+    const old = fixture('pult-win.txt')
+    let n = 0
+    const numbered = old.split(/\r?\n/).map((l) => (/^\S+'s Turn$/.test(l) ? `Turn # ${++n} - ${l}` : l)).join('\r\n')
+    expect(n).toBeGreaterThan(0)
+    expect(gameStats(numbered)).toEqual(gameStats(old))
+  })
+
   it('rejects text that is not a game log', () => {
     expect(() => gameStats('hello')).toThrow(LogError)
   })
