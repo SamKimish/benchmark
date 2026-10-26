@@ -8,6 +8,7 @@ import { saveGames } from '@/app/upload/actions'
 import Icon from './Icon'
 import Pokeball from './Pokeball'
 import Sprites from './Sprites'
+import DeckPicker from './DeckPicker'
 
 interface Draft { log: string; stats: GameStats; deckId: string; oppArchetype: string; result: 'W' | 'L' | null }
 
@@ -120,9 +121,7 @@ export default function QuickPaste({ decks, lastDeckId }: { decks: Deck[]; lastD
                       {choices.map((d) => <option key={d.id} value={d.id}>{deckLabel(d)}</option>)}
                     </select>
                   </label>
-                  <label>Opponent&apos;s deck <span className="muted small">{prettyArch(draft.oppArchetype)}</span>
-                    <input value={draft.oppArchetype} onChange={(e) => setDraft({ ...draft, oppArchetype: e.target.value })} />
-                  </label>
+                  <DeckPicker label="Opponent's deck" value={draft.oppArchetype} onChange={(k) => setDraft({ ...draft, oppArchetype: k })} />
                   <div className="seg" role="group" aria-label="Result">
                     {(['W', 'L'] as const).map((r) => (
                       <button key={r} type="button" className={draft.result === r ? `on ${r}` : ''} onClick={() => setDraft({ ...draft, result: r })}>{r === 'W' ? 'Win' : 'Loss'}</button>

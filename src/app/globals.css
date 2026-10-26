@@ -246,3 +246,19 @@ main:has(.builder) { max-width: max(1500px, calc(var(--page) + 2 * var(--gutter)
 .deck-section h3 { margin: 18px 0 0; font-size: .95rem; font-family: var(--font-display), system-ui, sans-serif; font-weight: 600;
   display: flex; gap: 8px; align-items: baseline; padding-bottom: 6px; border-bottom: 1px solid var(--line); }
 .deck-section .card-grid { margin-top: 10px; }
+/* deck picker: search Limitless decks or Pokémon */
+.picker { position: relative; display: grid; gap: 4px; }
+.picker-label { font-size: inherit; }
+.picker-value { display: flex; gap: 8px; }
+.picker-current { flex: 1; display: flex; align-items: center; gap: 10px; text-align: left; background: var(--panel); color: var(--ink);
+  border: 1px solid var(--line); padding: 6px 12px; min-height: 50px; }
+.picker-current:hover { border-color: var(--muted); }
+.picker-change { margin-left: auto; }
+.picker-add { white-space: nowrap; }
+.picker-pop { position: absolute; top: 100%; left: 0; right: 0; margin-top: 4px; z-index: 70; padding: 8px; box-shadow: 0 12px 32px rgba(0, 0, 0, .18); }
+.picker-pop input { width: 100%; }
+.picker-pop ul { list-style: none; margin: 8px 0 0; padding: 0; max-height: 320px; overflow: auto; }
+.picker-pop li button { width: 100%; display: flex; align-items: center; gap: 10px; background: none; color: var(--ink); padding: 4px 8px; text-align: left; }
+.picker-pop li button.on { background: var(--tag); }
+.picker-head { font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); padding: 8px 8px 2px; font-weight: 600; }
+.picker-empty { padding: 8px; }
