@@ -48,7 +48,8 @@ export default function UploadForm({ decks: initialDecks }: { decks: Deck[] }) {
 
   /** A Training Court export: keeps its hand-set result and opponent deck, and files games under the matching deck. */
   async function addTrainingCourt(rows: TcLog[]) {
-    const all = await ensureTrainingCourtDecks()
+    const used = [...new Set(rows.map((r) => tcDeckSpec(r)).filter((d) => d).map((d) => `${d!.name}|${d!.version}`))]
+    const all = await ensureTrainingCourtDecks(used)
     setDecks(all)
     setDone(null)
     setItems((prev) => [

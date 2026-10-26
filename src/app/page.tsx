@@ -28,7 +28,15 @@ export default async function MatchLog({ searchParams }: { searchParams: Promise
   const { data: deckData } = await supabase.from('decks').select('*').order('name').order('version_order')
   const decks = (deckData ?? []) as Deck[]
   const deckById = new Map(decks.map((d) => [d.id, d]))
+  // decks listed by when they were last played, newest first; never-played decks last
+  const lastPlayed = new Map<string, string>()
+  await Promise.all(decks.map(async (d) => {
+    const { data } = await supabase.from('games').select('played_at').eq('deck_id', d.id).order('played_at', { ascending: false }).limit(1)
+    const at = data?.[0]?.played_at as string | undefined
+    if (at && at > (lastPlayed.get(d.name) ?? '')) lastPlayed.set(d.name, at)
+  }))
   const names = [...new Set(decks.map((d) => d.name))]
+    .sort((a, b) => (lastPlayed.get(b) ?? '').localeCompare(lastPlayed.get(a) ?? '') || a.localeCompare(b))
   const versions = decks.filter((d) => d.name === q.deck)
 
   const ids = q.v ? [q.v] : q.deck ? versions.map((d) => d.id) : null
