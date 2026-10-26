@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import {
-  basics, cardImage, cardKey, diffEntries, formatDecklist, lookup, parseDecklist, resolvePrintings,
+  basics, cardImage, cardKey, diffEntries, displayPrinting, formatDecklist, lookup, parseDecklist, resolvePrintings,
   sortEntries, total, type Card, type Entry,
 } from '@/lib/decklist'
 import { archetypeName, matchArchetypes } from '@/lib/archetypes'
@@ -17,11 +17,14 @@ import Icon from '@/components/Icon'
 let cardsPromise: Promise<Card[]> | null = null
 const loadCards = () => (cardsPromise ??= fetch('/cards.json').then((r) => r.json() as Promise<Card[]>))
 
+const SECTIONS: [Entry['t'], string][] = [['P', 'Pokémon'], ['T', 'Trainers'], ['E', 'Energy']]
+
 const same = (a: Entry, b: { set: string; no: string; name: string }) => a.set === b.set && a.no === b.no && a.name === b.name
 
-function CardImg({ e, size = 'SM' }: { e: { name: string; set: string; no: string }; size?: 'SM' | 'LG' }) {
+function CardImg({ e, cards, size = 'SM' }: { e: { name: string; set: string; no: string }; cards: Card[]; size?: 'SM' | 'LG' }) {
   const [broken, setBroken] = useState(false)
-  const src = cardImage(e.set, e.no, size)
+  const shown = displayPrinting(e, cards)
+  const src = cardImage(shown.set, shown.no, size)
   if (!src || broken) return <div className="noimg card-img">{e.name}<span className="muted small">{e.set} {e.no}</span></div>
   return <img className="card-img" src={src} alt={`${e.name} ${e.set} ${e.no}`} loading="lazy" onError={() => setBroken(true)} />
 }
@@ -109,15 +112,18 @@ export default function DeckEditor({ deck, latest }: {
     setStatus({ ok: `Imported ${total(es)} cards` })
   }
 
-  async function pasteList() {
-    try {
-      const t = await navigator.clipboard.readText()
-      if (t.trim()) return useList(t)
-      setStatus({ error: 'Your clipboard is empty.' })
-    } catch {
+  /** Import: take a decklist straight from the clipboard, or open the box to paste one by hand. */
+  async function importList() {
+    if (importing) return importText.trim() ? useList(importText) : setImporting(false)
+    let t = ''
+    try { t = await navigator.clipboard.readText() } catch { /* no clipboard permission */ }
+    const looksLikeList = parseDecklist(t, index).length > 0
+    if (!looksLikeList) {
       setImporting(true)
-      setStatus({ error: 'Your browser would not share the clipboard, so paste the list below.' })
+      return setStatus({ ok: 'Paste a decklist below.' })
     }
+    if (count && !confirm(`Replace all ${count} cards with the list on your clipboard?`)) return
+    useList(t)
   }
 
   async function save() {
@@ -151,6 +157,8 @@ export default function DeckEditor({ deck, latest }: {
   }
 
   return (
+    <>
+    <Link href="/decks" className="button secondary back-link"><Icon name="back" /> All decks</Link>
     <div className="builder">
       <section className="panel builder-deck">
         <div className="row">
@@ -161,9 +169,8 @@ export default function DeckEditor({ deck, latest }: {
           <button onClick={save} disabled={busy || !count}>
             {busy ? <Pokeball size={18} label="Saving…" /> : <><Icon name="save" /> {changed && saved ? `Save as ${nextVersion}` : 'Save'}</>}
           </button>
-          <button className="secondary" onClick={pasteList} title="Import a decklist straight from your clipboard"><Icon name="paste" /> Paste</button>
-          <button className={importing && importText.trim() ? '' : 'secondary'} title="Type or paste a decklist to import"
-            onClick={() => (importing && importText.trim() ? useList(importText) : setImporting((x) => !x))}><Icon name="import" /> Import</button>
+          <button className={importing && importText.trim() ? '' : 'secondary'} onClick={importList}
+            title="Import a decklist copied from TCG Live or Limitless (or paste one by hand)"><Icon name="import" /> Import</button>
           <button className="secondary" onClick={exportList} disabled={!count} title="Copy this list for TCG Live"><Icon name="export" /> Export</button>
           {saved && <button className="secondary" disabled={loadingHistory} onClick={async () => {
             if (history) return setHistory(null)
@@ -179,7 +186,6 @@ export default function DeckEditor({ deck, latest }: {
           <span>Archetype: <strong>{archetypeName(archetype) ?? prettyArch(archetype) ?? 'none'}</strong></span>
           {status.ok && <span>{status.ok}</span>}
           {status.error && <span className="error">{status.error}</span>}
-          <Link href="/decks" style={{ marginLeft: 'auto' }}>All decks</Link>
         </div>
 
         {older && (
@@ -221,23 +227,34 @@ export default function DeckEditor({ deck, latest }: {
         )}
 
         {count === 0 && !importing ? (
-          <p className="muted" style={{ marginTop: 24 }}>No cards yet. Search on the right to add cards, or paste or import a list.</p>
+          <p className="muted" style={{ marginTop: 24 }}>No cards yet. Search to add cards, or press Import to bring in a list you've copied.</p>
         ) : (
-          <div className="card-grid">
-            {sorted.map((e) => (
-              <div key={`${e.name}|${e.set}|${e.no}`} className="deck-card">
-                <button className="card-hit" onClick={() => change(e, 1)} title={`Add a ${e.name}`}
-                  onContextMenu={(ev) => { ev.preventDefault(); change(e, -1) }}>
-                  <CardImg e={e} />
-                </button>
-                <span className="count">{e.count}</span>
-                <div className="adjust">
-                  <button onClick={() => change(e, -1)} aria-label={`Remove a ${e.name}`}>−</button>
-                  <button onClick={() => change(e, 1)} aria-label={`Add a ${e.name}`}>+</button>
+          <>
+            {SECTIONS.map(([t, label]) => {
+              const es = sorted.filter((e) => (e.t ?? 'P') === t)
+              if (!es.length) return null
+              return (
+                <div key={t} className="deck-section">
+                  <h3>{label} <span className="muted">{total(es)}</span></h3>
+                  <div className="card-grid">
+                    {es.map((e) => (
+                      <div key={`${e.name}|${e.set}|${e.no}`} className="deck-card">
+                        <button className="card-hit" onClick={() => change(e, 1)} title={`Add a ${e.name}`}
+                          onContextMenu={(ev) => { ev.preventDefault(); change(e, -1) }}>
+                          <CardImg e={e} cards={cards} />
+                        </button>
+                        <span className="count">{e.count}</span>
+                        <div className="adjust">
+                          <button onClick={() => change(e, -1)} aria-label={`Remove a ${e.name}`}>−</button>
+                          <button onClick={() => change(e, 1)} aria-label={`Add a ${e.name}`}>+</button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              )
+            })}
+          </>
         )}
       </section>
 
@@ -251,7 +268,7 @@ export default function DeckEditor({ deck, latest }: {
             const n = entries.find((x) => same(x, e))?.count ?? 0
             return (
               <button key={`${c.s}-${c.no}`} className="card-hit result" onClick={() => change(e, 1)} title={`${c.n} ${c.s} ${c.no}`}>
-                <CardImg e={e} />
+                <CardImg e={e} cards={cards} />
                 {n > 0 && <span className="count">{n}</span>}
               </button>
             )
@@ -260,5 +277,6 @@ export default function DeckEditor({ deck, latest }: {
         <p className="muted small">Click a card to add it. In your deck, click to add one more and right-click (or −) to take one out.</p>
       </aside>
     </div>
+    </>
   )
 }

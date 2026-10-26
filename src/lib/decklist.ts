@@ -68,6 +68,23 @@ export function resolvePrintings(entries: Entry[], cards: Card[]): Entry[] {
   })
 }
 
+/** Promo and energy sets Limitless has images for, beyond the sets in the card data. */
+const EXTRA_IMAGE_SETS = ['SVP', 'MEP', 'SVE', 'MEE']
+const knownSets = new WeakMap<Card[], Set<string>>()
+
+/**
+ * The printing to show a card as. TCG Live sometimes writes set codes Limitless has no images for
+ * (e.g. 'Riolu MEALT 2'); those are drawn as the card's regular printing instead.
+ */
+export function displayPrinting<T extends { name: string; set: string; no: string }>(e: T, cards: Card[]): T {
+  if (!cards.length || !e.set) return e
+  let sets = knownSets.get(cards)
+  if (!sets) knownSets.set(cards, (sets = new Set([...cards.map((c) => c.s), ...EXTRA_IMAGE_SETS])))
+  if (sets.has(setCode(e.set))) return e
+  const [alt] = resolvePrintings([{ count: 1, name: e.name, set: '', no: '', t: null }], cards)
+  return alt.set ? { ...e, set: alt.set, no: alt.no } : e
+}
+
 const ORDER: Record<string, number> = { P: 0, T: 1, E: 2 }
 const TRAINER_ORDER = ['Supporter', 'Item', 'Pokémon Tool', 'Stadium']
 

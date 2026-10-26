@@ -8,6 +8,7 @@ const PATHS = {
   clear: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM9 9l6 6M15 9l-6 6',
   trash: 'M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13',
   plus: 'M12 5v14M5 12h14',
+  back: 'M19 12H5M12 19l-7-7 7-7',
 } as const
 
 export type IconName = keyof typeof PATHS

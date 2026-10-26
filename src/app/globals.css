@@ -241,3 +241,8 @@ details.day:not([open]) .chevron { transform: rotate(-90deg); }
 .match.modal-match { grid-template-columns: 80px minmax(0, 1fr) 80px; height: auto; min-height: 64px; padding: 8px 16px; }
 .match.modal-match > .sprites:first-child { display: inline-flex; }
 main:has(.builder) { max-width: max(1500px, calc(var(--page) + 2 * var(--gutter))); }
+.back-link { margin-bottom: 14px; }
+.deck-section + .deck-section { margin-top: 18px; }
+.deck-section h3 { margin: 18px 0 0; font-size: .95rem; font-family: var(--font-display), system-ui, sans-serif; font-weight: 600;
+  display: flex; gap: 8px; align-items: baseline; padding-bottom: 6px; border-bottom: 1px solid var(--line); }
+.deck-section .card-grid { margin-top: 10px; }

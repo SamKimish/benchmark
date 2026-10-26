@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { cardImage, parseDecklist, resolvePrintings, total, type Card } from '@/lib/decklist'
+import { cardImage, displayPrinting, parseDecklist, resolvePrintings, total, type Card } from '@/lib/decklist'
 import cardData from '../../../public/cards.json'
 
 const CARDS = cardData as Card[]
@@ -33,7 +33,8 @@ export default function DeckGallery({ decks }: { decks: Deck[] }) {
             <div key={d.id} className="deck-tile">
               <Link href={`/decks/${d.id}`} className="mosaic">
                 {es.slice(0, 24).map((e, i) => {
-                  const src = cardImage(e.set, e.no, 'XS')
+                  const shown = displayPrinting(e, CARDS)
+                  const src = cardImage(shown.set, shown.no, 'XS')
                   return src ? <img key={i} src={src} alt={e.name} loading="lazy" /> : <span key={i} className="noimg">{e.name}</span>
                 })}
               </Link>
