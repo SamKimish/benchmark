@@ -155,18 +155,6 @@
       ]
     },
     {
-      "name": "Hydreigon Pidgeot",
-      "version": "v1",
-      "version_order": 1,
-      "archetype": "hydreigon,pidgeot",
-      "match": [
-        [
-          "hydreigon,pidgeot",
-          null
-        ]
-      ]
-    },
-    {
       "name": "Hydreigon",
       "version": "v1",
       "version_order": 1,
@@ -174,6 +162,10 @@
       "match": [
         [
           "hydreigon",
+          null
+        ],
+        [
+          "hydreigon,pidgeot",
           null
         ]
       ]
