@@ -12,6 +12,8 @@ export interface UploadItem {
   deckId: string | null
   oppArchetype: string | null
   result: 'W' | 'L' | null
+  /** loss reasons chosen by the user; the parser's guesses when left out */
+  tags?: string[]
   source?: 'upload' | 'training-court'
   sourceId?: string
 }
@@ -55,6 +57,7 @@ export async function saveGames(items: UploadItem[]): Promise<{ saved: number; d
         played_at: new Date(it.playedAt).toISOString(),
         result: it.result ?? r.result,
         opp_archetype: it.oppArchetype?.trim() || r.opp_archetype,
+        ...(it.tags ? { tags: it.tags } : {}),
         source: it.source ?? 'upload',
         source_id: it.sourceId ?? null,
       })

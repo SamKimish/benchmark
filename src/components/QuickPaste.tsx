@@ -2,15 +2,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { gameStats, LogError, type GameStats } from '@/lib/parser'
-import { deckLabel, prettyArch } from '@/lib/format'
+import { prettyArch } from '@/lib/format'
 import type { Deck } from '@/lib/types'
 import { saveGames } from '@/app/upload/actions'
 import Icon from './Icon'
-import Pokeball from './Pokeball'
-import Sprites from './Sprites'
-import DeckPicker from './DeckPicker'
+import GameDialog, { type GameFields } from './GameDialog'
 
-interface Draft { log: string; stats: GameStats; deckId: string; oppArchetype: string; result: 'W' | 'L' | null }
+interface Draft { log: string; stats: GameStats; key: number }
 
 /** The deck a pasted game was most likely played with: the newest active version of a matching
  * archetype, else whatever the last game was played with. */
@@ -24,28 +22,26 @@ function guessDeck(decks: Deck[], arch: string | null, lastDeckId: string | null
  * Adding the game you just played: copy the log in TCG Live, press "Paste game" (or Ctrl+V anywhere
  * on the page), check the guesses, save.
  */
-export default function QuickPaste({ decks, lastDeckId }: { decks: Deck[]; lastDeckId: string | null }) {
+export default function QuickPaste({ decks, lastDeckId, knownTags }: { decks: Deck[]; lastDeckId: string | null; knownTags: string[] }) {
   const router = useRouter()
   const [draft, setDraft] = useState<Draft | null>(null)
   const [manual, setManual] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [saving, setSaving] = useState(false)
   const [toast, setToast] = useState<string | null>(null)
   const text = useRef<HTMLTextAreaElement>(null)
-  const choices = decks.filter((d) => d.active || d.id === draft?.deckId)
 
   const load = useCallback((log: string) => {
     setError(null)
     try {
       const stats = gameStats(log)
-      setDraft({ log, stats, deckId: guessDeck(decks, stats.my_archetype, lastDeckId), oppArchetype: stats.opp_archetype ?? '', result: stats.result })
+      setDraft({ log, stats, key: Date.now() })
       setManual(false)
     } catch (e) {
       setDraft(null)
       setManual(true)
       setError(e instanceof LogError ? `That doesn't look like a TCG Live game log: ${e.message}` : "That doesn't look like a TCG Live game log.")
     }
-  }, [decks, lastDeckId])
+  }, [])
 
   async function fromClipboard() {
     try {
@@ -77,20 +73,13 @@ export default function QuickPaste({ decks, lastDeckId }: { decks: Deck[]; lastD
 
   const close = () => { setDraft(null); setManual(false); setError(null) }
 
-  async function save() {
-    if (!draft || !draft.result) return
-    setSaving(true)
-    try {
-      const r = await saveGames([{ log: draft.log, playedAt: new Date().toISOString(), deckId: draft.deckId || null, oppArchetype: draft.oppArchetype || null, result: draft.result }])
-      if (r.errors.length) { setError(r.errors[0]); return }
-      setToast(r.duplicates ? 'That game was already saved.' : `Saved: ${draft.result === 'W' ? 'win' : 'loss'} vs ${prettyArch(draft.oppArchetype)}.`)
-      close()
-      router.refresh()
-    } catch (e) {
-      setError(`Couldn't save: ${e instanceof Error ? e.message : 'unknown error'}`)
-    } finally {
-      setSaving(false)
-    }
+  async function save(f: GameFields) {
+    if (!draft || !f.result) return
+    const r = await saveGames([{ log: draft.log, playedAt: new Date().toISOString(), deckId: f.deckId || null, oppArchetype: f.oppArchetype || null, result: f.result, tags: f.result === 'L' ? f.tags : [] }])
+    if (r.errors.length) return r.errors[0]
+    setToast(r.duplicates ? 'That game was already saved.' : `Saved: ${f.result === 'W' ? 'win' : 'loss'} vs ${prettyArch(f.oppArchetype)}.`)
+    close()
+    router.refresh()
   }
 
   const open = draft || manual
@@ -100,53 +89,28 @@ export default function QuickPaste({ decks, lastDeckId }: { decks: Deck[]; lastD
         <Icon name="paste" size={18} /> Paste game
       </button>
       {toast && <div className="toast" role="status">{toast}</div>}
-      {open && (
-        <div className="modal-back" onMouseDown={(e) => e.target === e.currentTarget && close()}
-          onKeyDown={(e) => { if (e.key === 'Escape') close(); if (e.key === 'Enter' && draft && !(e.target as HTMLElement).closest('textarea')) save() }}>
+      {draft && (
+        <GameDialog key={draft.key} title="Add game" saveLabel="Save game" decks={decks} knownTags={knownTags}
+          myArch={draft.stats.my_archetype} onSave={save} onClose={close}
+          info={`vs ${draft.stats.opponent}${draft.stats.went_first === null ? '' : draft.stats.went_first ? ' · went 1st' : ' · went 2nd'} · prizes ${draft.stats.prizes_taken}–${draft.stats.prizes_given}`}
+          initial={{
+            deckId: guessDeck(decks, draft.stats.my_archetype, lastDeckId), oppArchetype: draft.stats.opp_archetype ?? '',
+            result: draft.stats.result, tags: draft.stats.result === 'L' ? draft.stats.tags : [],
+          }} />
+      )}
+      {manual && !draft && (
+        <div className="modal-back" onMouseDown={(e) => e.target === e.currentTarget && close()} onKeyDown={(e) => e.key === 'Escape' && close()}>
           <div className="modal panel" role="dialog" aria-label="Add a game">
-            {draft ? (
-              <>
-                <div className={`match ${draft.result ?? 'none'} modal-match`}>
-                  <Sprites arch={decks.find((d) => d.id === draft.deckId)?.archetype ?? draft.stats.my_archetype} />
-                  <span className="match-main">
-                    <strong>{draft.result === 'W' ? 'Win' : draft.result === 'L' ? 'Loss' : 'Result?'} vs {prettyArch(draft.oppArchetype)}</strong>
-                    <span className="muted small">vs {draft.stats.opponent} · {draft.stats.went_first === null ? '' : draft.stats.went_first ? 'went 1st · ' : 'went 2nd · '}prizes {draft.stats.prizes_taken}–{draft.stats.prizes_given}</span>
-                  </span>
-                  <Sprites arch={draft.oppArchetype} />
-                </div>
-                <div className="form modal-fields">
-                  <label>Your deck
-                    <select value={draft.deckId} onChange={(e) => setDraft({ ...draft, deckId: e.target.value })}>
-                      <option value="">No deck</option>
-                      {choices.map((d) => <option key={d.id} value={d.id}>{deckLabel(d)}</option>)}
-                    </select>
-                  </label>
-                  <DeckPicker label="Opponent's deck" value={draft.oppArchetype} onChange={(k) => setDraft({ ...draft, oppArchetype: k })} />
-                  <div className="seg" role="group" aria-label="Result">
-                    {(['W', 'L'] as const).map((r) => (
-                      <button key={r} type="button" className={draft.result === r ? `on ${r}` : ''} onClick={() => setDraft({ ...draft, result: r })}>{r === 'W' ? 'Win' : 'Loss'}</button>
-                    ))}
-                    {!draft.stats.result && <span className="muted small">The log was cut off, so pick the result.</span>}
-                  </div>
-                </div>
-              </>
-            ) : (
-              <div className="form">
-                <label>Paste the game log
-                  <textarea ref={text} rows={8} placeholder="In TCG Live, open the game in your history and copy the log, then paste it here." onPaste={(e) => {
-                    const t = e.clipboardData.getData('text'); if (t.trim()) { e.preventDefault(); load(t) }
-                  }} />
-                </label>
-              </div>
-            )}
+            <div className="form">
+              <label>Paste the game log
+                <textarea ref={text} rows={8} placeholder="In TCG Live, open the game in your history and copy the log, then paste it here." onPaste={(e) => {
+                  const t = e.clipboardData.getData('text'); if (t.trim()) { e.preventDefault(); load(t) }
+                }} />
+              </label>
+            </div>
             {error && <p className="error">{error}</p>}
             <div className="row" style={{ justifyContent: 'flex-end', marginTop: 12 }}>
               <button className="secondary" onClick={close}>Cancel</button>
-              {draft && (
-                <button onClick={save} disabled={saving || !draft.result} autoFocus>
-                  {saving ? <Pokeball size={18} label="Saving…" /> : <><Icon name="save" /> Save game</>}
-                </button>
-              )}
             </div>
           </div>
         </div>

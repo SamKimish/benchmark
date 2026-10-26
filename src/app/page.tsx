@@ -4,6 +4,8 @@ import { requireUser } from '@/lib/supabase/server'
 import { dayKey, dayLabel, pct, prettyArch, timeOnly } from '@/lib/format'
 import Sprites from '@/components/Sprites'
 import QuickPaste from '@/components/QuickPaste'
+import { MatchEditor, RowActions } from '@/components/MatchEditor'
+import { LOSS_TAGS } from '@/lib/tags'
 import type { Deck } from '@/lib/types'
 
 interface Row {
@@ -65,6 +67,10 @@ export default async function MatchLog({ searchParams }: { searchParams: Promise
   for (const r of done) if (r.result === 'L') for (const t of r.tags) tagCounts.set(t, (tagCounts.get(t) ?? 0) + 1)
   const losses = done.length - wins(done)
 
+  // loss reasons for the edit pop-up, most used first
+  const tagUse = new Map(LOSS_TAGS.map((t) => [t, 0]))
+  for (const r of rows) if (r.result === 'L') for (const t of r.tags) tagUse.set(t, (tagUse.get(t) ?? 0) + 1)
+  const knownTags = [...tagUse.entries()].sort((a, b) => b[1] - a[1]).map(([t]) => t)
   const deck = (r: Row) => (r.deck_id ? deckById.get(r.deck_id) : undefined)
   const myArch = (r: Row) => deck(r)?.archetype ?? null
   const days: [string, Row[]][] = []
@@ -79,7 +85,7 @@ export default async function MatchLog({ searchParams }: { searchParams: Promise
       <div className="page-head">
         <h1>Match log</h1>
         <div className="page-actions">
-          <QuickPaste decks={decks} lastDeckId={rows[0]?.deck_id ?? null} />
+          <QuickPaste decks={decks} lastDeckId={rows[0]?.deck_id ?? null} knownTags={knownTags} />
           <Link href="/upload" className="button secondary"><Icon name="import" /> Upload files</Link>
         </div>
       </div>
@@ -113,6 +119,7 @@ export default async function MatchLog({ searchParams }: { searchParams: Promise
           </div>
 
           <h2>Matches</h2>
+          <MatchEditor decks={decks} knownTags={knownTags}>
           {days.map(([day, xs], i) => {
             const w = wins(xs), l = xs.filter((r) => r.result === 'L').length
             const decksPlayed = [...new Set(xs.map((r) => myArch(r)).filter(Boolean))].slice(0, 2)
@@ -126,7 +133,7 @@ export default async function MatchLog({ searchParams }: { searchParams: Promise
                 </summary>
                 <ul className="matches">
                   {xs.map((r) => (
-                    <li key={r.id}>
+                    <li key={r.id} className="match-row">
                       <Link href={`/games/${r.id}`} className={`match ${r.result ?? 'none'}`}>
                         <Sprites arch={myArch(r)} />
                         <span className="match-main">
@@ -141,12 +148,14 @@ export default async function MatchLog({ searchParams }: { searchParams: Promise
                         <span className="match-order">{r.went_first === null ? '–' : r.went_first ? '1st' : '2nd'}</span>
                         <Sprites arch={r.opp_archetype} />
                       </Link>
+                      <RowActions row={r} />
                     </li>
                   ))}
                 </ul>
               </details>
             )
           })}
+          </MatchEditor>
 
           <div className="grid2">
             <div>
