@@ -113,6 +113,94 @@
       ],
       "decklist": "",
       "basics": null
+    },
+    {
+      "name": "Gardevoir Jellicent",
+      "version": "v1",
+      "version_order": 1,
+      "archetype": "gardevoir,jellicent",
+      "match": [
+        [
+          "gardevoir,jellicent",
+          null
+        ],
+        [
+          "gardevoir,frillish",
+          null
+        ]
+      ]
+    },
+    {
+      "name": "Rocket's Mewtwo",
+      "version": "v1",
+      "version_order": 1,
+      "archetype": "mewtwo,spidops",
+      "match": [
+        [
+          "mewtwo,spidops",
+          null
+        ]
+      ]
+    },
+    {
+      "name": "Flareon Noctowl",
+      "version": "v1",
+      "version_order": 1,
+      "archetype": "flareon,noctowl",
+      "match": [
+        [
+          "flareon,noctowl",
+          null
+        ]
+      ]
+    },
+    {
+      "name": "Hydreigon Pidgeot",
+      "version": "v1",
+      "version_order": 1,
+      "archetype": "hydreigon,pidgeot",
+      "match": [
+        [
+          "hydreigon,pidgeot",
+          null
+        ]
+      ]
+    },
+    {
+      "name": "Hydreigon",
+      "version": "v1",
+      "version_order": 1,
+      "archetype": "hydreigon",
+      "match": [
+        [
+          "hydreigon",
+          null
+        ]
+      ]
+    },
+    {
+      "name": "Bronzong",
+      "version": "v1",
+      "version_order": 1,
+      "archetype": "bronzong",
+      "match": [
+        [
+          "bronzong",
+          "d020f010-1417-4133-a895-f8671d3aac61"
+        ]
+      ]
+    },
+    {
+      "name": "Mega Lucario",
+      "version": "v1",
+      "version_order": 1,
+      "archetype": "lucario-mega",
+      "match": [
+        [
+          "lucario-mega",
+          null
+        ]
+      ]
     }
   ]
 }
