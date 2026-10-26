@@ -24,7 +24,7 @@ async function save(form: FormData) {
     // a different deck can mean a different game plan, so the stats are worked out again
     const { data: deck } = deckId ? await supabase.from('decks').select('archetype').eq('id', deckId).single() : { data: null }
     const r = gameRow(game.log, deck?.archetype)
-    Object.assign(patch, { stats: r.stats, tags: r.tags, my_archetype: r.my_archetype })
+    Object.assign(patch, { stats: r.stats, tags: r.tags, win_tags: r.win_tags, my_archetype: r.my_archetype })
   }
   await supabase.from('games').update(patch).eq('id', id)
   revalidatePath('/')
@@ -58,7 +58,10 @@ export default async function GamePage({ params }: { params: Promise<{ id: strin
         {deckLabel(deck)} vs {prettyArch(game.opp_archetype)}
       </h1>
       <p className="muted">{shortDate(game.played_at)} · vs {game.opponent ?? 'unknown'} · went {s.went_first ? 'first' : 'second'} · {s.end_reason}</p>
-      {game.result === 'L' && <p>{game.tags.map((t) => <span key={t} className="pill">{t}</span>)}</p>}
+      {(game.win_tags.length > 0 || game.tags.length > 0) && <p>
+        {game.win_tags.map((t) => <span key={`w-${t}`} className="pill good">{t}</span>)}
+        {game.tags.map((t) => <span key={`l-${t}`} className="pill bad">{t}</span>)}
+      </p>}
 
       <div className="grid2">
         <div className="panel">

@@ -1,9 +1,16 @@
 import { limitlessArchetype } from './archetypes'
+import { baseArchetype, HAMMER, isHammer } from './parser'
 
 /** A deck key's name on Limitless ('dhelmise,banette' -> 'Dhelmise'), else spelled out:
- * 'dragapult,dusknoir' -> 'Dragapult / Dusknoir', 'starmie-mega' -> 'Mega Starmie'. */
+ * 'dragapult,dusknoir' -> 'Dragapult / Dusknoir', 'starmie-mega' -> 'Mega Starmie'. With Crushing Hammer in
+ * it, the hammer version: 'dragapult,crushing-hammer' -> 'Hammer Pult', else 'Gardevoir Hammers'. */
 export function prettyArch(slug: string | null | undefined): string {
   if (!slug) return 'Unknown'
+  if (slug === HAMMER) return 'Crushing Hammer'
+  if (isHammer(slug)) {
+    const base = baseArchetype(slug)
+    return base === 'dragapult' ? 'Hammer Pult' : `${prettyArch(base)} Hammers`
+  }
   const named = limitlessArchetype(slug)?.name
   if (named) return named
   const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)

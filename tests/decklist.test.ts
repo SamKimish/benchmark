@@ -86,3 +86,14 @@ describe('change history', () => {
     expect(diffEntries(parseDecklist('4 Poke Pad\n3 Ultra Ball'), parseDecklist('4 Poké Pad\n4 Ultra Ball'))).toEqual([{ name: 'Ultra Ball', from: 3, to: 4 }])
   })
 })
+
+describe('Hammer decks', () => {
+  it('are named and drawn as the hammer version', async () => {
+    const { prettyArch } = await import('@/lib/format')
+    const { deckSprites, matchArchetypes } = await import('@/lib/archetypes')
+    expect(prettyArch('dragapult,crushing-hammer')).toBe('Hammer Pult')
+    expect(prettyArch('dragapult')).toBe('Dragapult')
+    expect(deckSprites('dragapult,crushing-hammer')).toEqual(['dragapult', 'crushing-hammer'])
+    expect(matchArchetypes(['Dreepy', 'Drakloak', 'Dragapult ex'], 6, true)[0].name).toBe('Hammer Pult')
+  })
+})

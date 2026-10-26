@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { cardSlug } from '@/lib/parser'
+import { cardSlug, HAMMER, isHammer, withHammer } from '@/lib/parser'
 import { LIMITLESS, spriteUrl } from '@/lib/archetypes'
 import { prettyArch } from '@/lib/format'
 import type { Card } from '@/lib/decklist'
@@ -10,7 +10,7 @@ let pokemonPromise: Promise<string[]> | null = null
 /** Every Pokémon slug in the card data ('dragapult', 'starmie-mega'), for building a deck by hand. */
 const loadPokemon = () => (pokemonPromise ??= fetch('/cards.json')
   .then((r) => r.json() as Promise<Card[]>)
-  .then((cs) => [...new Set(cs.filter((c) => c.t === 'P').map((c) => cardSlug(c.n)))].sort()))
+  .then((cs) => [...new Set(cs.filter((c) => c.t === 'P').map((c) => cardSlug(c.n)))].sort().concat(HAMMER)))
 
 type Option = { kind: 'deck'; key: string; name: string } | { kind: 'mon'; key: string; name: string }
 
@@ -45,19 +45,22 @@ export default function DeckPicker({ value, onChange, label }: { value: string; 
       .filter((a) => !ws.length || hit(`${a.name} ${a.key.replace(/[,-]/g, ' ')}`.toLowerCase(), ws))
       .slice(0, ws.length ? 5 : 12)
       .map((a) => ({ kind: 'deck', key: a.key, name: a.name }))
+    // a two-Pokémon deck can still take a hammer; with nothing typed yet, offer the hammer first
+    if (adding && (parts.length > 1 || !ws.length)) return [{ kind: 'mon', key: HAMMER, name: prettyArch(HAMMER) }]
     const mons: Option[] = !ws.length ? [] : pokemon
       .filter((p) => hit(p.replace(/-/g, ' '), ws))
       .sort((a, b) => Number(!a.startsWith(ws[0])) - Number(!b.startsWith(ws[0])) || a.length - b.length)
       .slice(0, 8)
       .map((p) => ({ kind: 'mon', key: p, name: prettyArch(p) }))
     return [...decks, ...mons]
-  }, [q, pokemon, adding])
+  }, [q, pokemon, adding, parts.length])
 
   useEffect(() => setActive(0), [q, adding])
 
   function close() { setOpen(false); setAdding(false); setQ('') }
   function choose(o: Option) {
-    if (o.kind === 'mon' && adding && parts.length === 1 && parts[0] !== o.key) onChange(`${parts[0]},${o.key}`)
+    if (o.kind === 'mon' && adding && o.key === HAMMER) onChange(withHammer(value))
+    else if (o.kind === 'mon' && adding && parts.length === 1 && parts[0] !== o.key) onChange(`${parts[0]},${o.key}`)
     else onChange(o.key)
     close()
   }
@@ -72,8 +75,8 @@ export default function DeckPicker({ value, onChange, label }: { value: string; 
             {value && parts.map(prettyArch).join(' + ') !== prettyArch(value) && <span className="muted small"> · {parts.map(prettyArch).join(' + ')}</span>}</span>
           <span className="muted small picker-change">Change</span>
         </button>
-        {parts.length === 1 && (
-          <button type="button" className="secondary picker-add" onClick={() => { setAdding(true); setOpen(true) }} title="Add a second Pokémon">+ Pokémon</button>
+        {value && !isHammer(value) && parts.length <= 2 && (
+          <button type="button" className="secondary picker-add" onClick={() => { setAdding(true); setOpen(true) }} title="Add a second Pokémon, or Crushing Hammer for the Hammer version">+ Add</button>
         )}
       </div>
       {open && (
@@ -85,7 +88,7 @@ export default function DeckPicker({ value, onChange, label }: { value: string; 
           else if (e.key === 'Enter' && options[active]) { e.preventDefault(); choose(options[active]) }
         }}>
           <input ref={input} type="search" value={q} onChange={(e) => setQ(e.target.value)}
-            placeholder={adding ? `Add a Pokémon to ${prettyArch(parts[0])}…` : 'Search decks or Pokémon: dhelmise, gardevoir…'} />
+            placeholder={adding ? `Add a Pokémon or Crushing Hammer to ${prettyArch(value)}…` : 'Search decks or Pokémon: dhelmise, gardevoir…'} />
           <ul role="listbox">
             {options.map((o, i) => {
               const first = i === 0 || options[i - 1].kind !== o.kind

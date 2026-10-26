@@ -12,8 +12,9 @@ export interface UploadItem {
   deckId: string | null
   oppArchetype: string | null
   result: 'W' | 'L' | null
-  /** loss reasons chosen by the user; the parser's guesses when left out */
+  /** loss and win reasons chosen by the user; the parser's guesses when left out */
   tags?: string[]
+  winTags?: string[]
   source?: 'upload' | 'training-court'
   sourceId?: string
 }
@@ -58,6 +59,7 @@ export async function saveGames(items: UploadItem[]): Promise<{ saved: number; d
         result: it.result ?? r.result,
         opp_archetype: it.oppArchetype?.trim() || r.opp_archetype,
         ...(it.tags ? { tags: it.tags } : {}),
+        ...(it.winTags ? { win_tags: it.winTags } : {}),
         source: it.source ?? 'upload',
         source_id: it.sourceId ?? null,
       })

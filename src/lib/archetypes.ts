@@ -1,6 +1,6 @@
 /** Naming a deck after the Limitless archetype it matches (play.limitlesstcg.com/decks). */
 import data from './limitless-archetypes.json'
-import { cardSlug } from './parser'
+import { baseArchetype, cardSlug, HAMMER, isHammer, withHammer } from './parser'
 
 export interface Archetype { id: string; name: string; key: string; count: number }
 export const LIMITLESS: Archetype[] = data
@@ -14,6 +14,7 @@ export const archetypeName = (key: string | null | undefined) => (key ? byKey.ge
  */
 export function limitlessArchetype(key: string | null | undefined): Archetype | undefined {
   if (!key) return undefined
+  if (isHammer(key)) return limitlessArchetype(baseArchetype(key))   // Hammer Pult is still Dragapult to Limitless
   const exact = byKey.get(key)
   if (exact) return exact
   // Mega and regular forms count as the same Pokémon here: Training Court's 'froslass-mega' is Limitless's Starmie Froslass
@@ -26,20 +27,29 @@ export function limitlessArchetype(key: string | null | undefined): Archetype | 
     .sort((x, y) => y.key.split(',').length - x.key.split(',').length || exactHits(y) - exactHits(x) || y.count - x.count)[0]
 }
 
-/** The Pokémon to draw for a deck: its Limitless archetype's icons, else the first two in its key. */
-export const deckSprites = (key: string | null | undefined): string[] =>
-  key ? (limitlessArchetype(key)?.key ?? key).split(',').slice(0, 2) : []
+/** The Pokémon to draw for a deck: its Limitless archetype's icons, else the first two in its key. A Hammer
+ * deck is its main Pokémon and a hammer. */
+export function deckSprites(key: string | null | undefined): string[] {
+  if (!key) return []
+  if (isHammer(key)) return [...deckSprites(baseArchetype(key)).slice(0, 1), HAMMER]
+  return (limitlessArchetype(key)?.key ?? key).split(',').slice(0, 2)
+}
 
-export const spriteUrl = (slug: string) => `https://r2.limitlesstcg.net/pokemon/gen9/${slug}.png`
+export const spriteUrl = (slug: string) =>
+  slug === HAMMER ? '/sprites/crushing-hammer.png' : `https://r2.limitlesstcg.net/pokemon/gen9/${slug}.png`
 
 /**
  * The Limitless archetypes a decklist's Pokémon could be, best first. An archetype matches when every
  * Pokémon it is named after is in the list; the one naming the most Pokémon wins, then the most played.
+ * A list with Crushing Hammer in it gets the Hammer versions first ('Hammer Pult' before 'Dragapult').
  */
-export function matchArchetypes(pokemonNames: string[], limit = 6): Archetype[] {
+export function matchArchetypes(pokemonNames: string[], limit = 6, hammer = false): Archetype[] {
   const seen = new Set(pokemonNames.map(cardSlug))
-  return LIMITLESS
+  const hits = LIMITLESS
     .filter((a) => a.key.split(',').every((p) => seen.has(p)))
     .sort((x, y) => y.key.split(',').length - x.key.split(',').length || y.count - x.count)
     .slice(0, limit)
+  if (!hammer) return hits
+  const hammered = hits.map((a) => ({ ...a, id: `${a.id}-hammer`, key: withHammer(a.key), name: a.key === 'dragapult' ? 'Hammer Pult' : `${a.name} Hammers` }))
+  return [...hammered, ...hits].slice(0, limit)
 }

@@ -2,7 +2,8 @@ import { createHash } from 'node:crypto'
 import { gameStats } from './parser'
 import { normalize } from './parser/text'
 
-export const PARSER_VERSION = 1
+/** Bump when the parser's output changes, so saved games can be analysed again (2: win reasons, Hammer decks). */
+export const PARSER_VERSION = 2
 
 export const logHash = (log: string) => createHash('sha256').update(normalize(log).trim()).digest('hex')
 
@@ -20,6 +21,7 @@ export function gameRow(log: string, archetype?: string | null) {
     opp_archetype: s.opp_archetype,
     end_reason: s.end_reason,
     tags: s.tags,
+    win_tags: s.win_tags,
     stats: s,
     parser_version: PARSER_VERSION,
   }

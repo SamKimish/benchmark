@@ -27,6 +27,7 @@ export interface Game {
   opp_archetype: string | null
   end_reason: string | null
   tags: string[]
+  win_tags: string[]
   stats: GameStats
   source: string
   notes: string

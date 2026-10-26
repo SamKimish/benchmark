@@ -7,10 +7,14 @@ import Pokeball from './Pokeball'
 import Sprites from './Sprites'
 import DeckPicker from './DeckPicker'
 
-export interface GameFields { deckId: string; oppArchetype: string; result: 'W' | 'L' | null; tags: string[] }
+export interface GameFields { deckId: string; oppArchetype: string; result: 'W' | 'L' | null; tags: string[]; winTags: string[] }
+/** The reasons offered in the pop-up, most used first. */
+export interface KnownTags { loss: string[]; win: string[] }
 
-/** Loss reasons as toggles (most used first), plus a small "+ New" to add one of your own. */
-function TagPicker({ value, known, onChange }: { value: string[]; known: string[]; onChange: (tags: string[]) => void }) {
+/** Reasons as toggles (most used first), plus a small "+ New" to add one of your own. */
+function TagPicker({ value, known, onChange, good, label, example }: {
+  value: string[]; known: string[]; onChange: (tags: string[]) => void; good?: boolean; label: string; example: string
+}) {
   const [adding, setAdding] = useState(false)
   const [more, setMore] = useState(false)
   const [text, setText] = useState('')
@@ -26,13 +30,13 @@ function TagPicker({ value, known, onChange }: { value: string[]; known: string[
     setAdding(false)
   }
   return (
-    <div className="tag-picker" role="group" aria-label="Loss reasons">
+    <div className={`tag-picker${good ? ' good' : ''}`} role="group" aria-label={label}>
       {shown.map((t) => (
         <button key={t} type="button" className={`tag-toggle${value.includes(t) ? ' on' : ''}`} aria-pressed={value.includes(t)} onClick={() => toggle(t)}>{t}</button>
       ))}
       {hidden > 0 && <button type="button" className="tag-toggle tag-add" onClick={() => setMore(true)}>More ({hidden})</button>}
       {adding ? (
-        <input className="tag-new" autoFocus value={text} placeholder="e.g. Bad prizing" maxLength={40}
+        <input className="tag-new" autoFocus value={text} placeholder={example} maxLength={40}
           onChange={(e) => setText(e.target.value)} onBlur={add}
           onKeyDown={(e) => { e.stopPropagation(); if (e.key === 'Enter') { e.preventDefault(); add() } if (e.key === 'Escape') { setText(''); setAdding(false) } }} />
       ) : (
@@ -53,7 +57,7 @@ export default function GameDialog({ title, info, initial, myArch, decks, knownT
   initial: GameFields
   myArch?: string | null
   decks: Deck[]
-  knownTags: string[]
+  knownTags: KnownTags
   saveLabel: string
   onSave: (f: GameFields) => Promise<string | undefined>
   onClose: () => void
@@ -106,12 +110,14 @@ export default function GameDialog({ title, info, initial, myArch, decks, knownT
             ))}
             {!initial.result && <span className="muted small">The log was cut off, so pick the result.</span>}
           </div>
-          {f.result === 'L' && (
-            <div>
-              <span>Why you lost <span className="muted small">(pick any)</span></span>
-              <TagPicker value={f.tags} known={knownTags} onChange={(tags) => setF({ ...f, tags })} />
-            </div>
-          )}
+          <div>
+            <span className="reason-label good">What went right</span>
+            <TagPicker good label="Win reasons" example="e.g. Good prizing" value={f.winTags} known={knownTags.win} onChange={(winTags) => setF({ ...f, winTags })} />
+          </div>
+          <div>
+            <span className="reason-label">What went wrong</span>
+            <TagPicker label="Loss reasons" example="e.g. Bad prizing" value={f.tags} known={knownTags.loss} onChange={(tags) => setF({ ...f, tags })} />
+          </div>
           {children}
         </div>
         {error && <p className="error">{error}</p>}

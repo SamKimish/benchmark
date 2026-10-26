@@ -48,3 +48,11 @@ export function detectArchetype(pokemon: string[]): string | null {
   const tops = [...descendants(last)].filter((d) => !next.has(d))
   return tops.length === 1 ? tops[0] : last
 }
+
+/** Crushing Hammer counts as part of a deck, the way Training Court splits Hammer Pult from Straight Pult. */
+export const HAMMER = 'crushing-hammer'
+export const withHammer = (key: string) => (key.split(',').includes(HAMMER) ? key : `${key},${HAMMER}`)
+/** The deck's Pokémon without the hammer: 'dragapult,crushing-hammer' is 'dragapult'. */
+export const baseArchetype = (key: string | null | undefined) =>
+  key ? key.split(',').filter((p) => p !== HAMMER).join(',') || null : null
+export const isHammer = (key: string | null | undefined) => !!key && key.split(',').includes(HAMMER)

@@ -5,7 +5,9 @@ import { dayKey, dayLabel, pct, prettyArch, timeOnly } from '@/lib/format'
 import Sprites from '@/components/Sprites'
 import QuickPaste from '@/components/QuickPaste'
 import { MatchEditor, RowActions } from '@/components/MatchEditor'
-import { LOSS_TAGS } from '@/lib/tags'
+import Reanalyse from '@/components/Reanalyse'
+import { LOSS_TAGS, WIN_TAGS } from '@/lib/tags'
+import { PARSER_VERSION } from '@/lib/games'
 import type { Deck } from '@/lib/types'
 
 interface Row {
@@ -17,6 +19,7 @@ interface Row {
   opp_archetype: string | null
   opponent: string | null
   tags: string[]
+  win_tags: string[]
   end_reason: string | null
   prizes_taken: number
   prizes_given: number
@@ -45,7 +48,7 @@ export default async function MatchLog({ searchParams }: { searchParams: Promise
   const rows: Row[] = []
   for (let from = 0; ; from += PAGE) {
     let query = supabase.from('games')
-      .select('id, played_at, deck_id, result, went_first, opp_archetype, opponent, tags, end_reason, prizes_taken:stats->prizes_taken, prizes_given:stats->prizes_given')
+      .select('id, played_at, deck_id, result, went_first, opp_archetype, opponent, tags, win_tags, end_reason, prizes_taken:stats->prizes_taken, prizes_given:stats->prizes_given')
       .order('played_at', { ascending: false })
       .range(from, from + PAGE - 1)
     if (ids) query = query.in('deck_id', ids.length ? ids : ['00000000-0000-0000-0000-000000000000'])
@@ -66,11 +69,17 @@ export default async function MatchLog({ searchParams }: { searchParams: Promise
   const tagCounts = new Map<string, number>()
   for (const r of done) if (r.result === 'L') for (const t of r.tags) tagCounts.set(t, (tagCounts.get(t) ?? 0) + 1)
   const losses = done.length - wins(done)
+  const winCounts = new Map<string, number>()
+  for (const r of done) if (r.result === 'W') for (const t of r.win_tags) winCounts.set(t, (winCounts.get(t) ?? 0) + 1)
 
-  // loss reasons for the edit pop-up, most used first
-  const tagUse = new Map(LOSS_TAGS.map((t) => [t, 0]))
-  for (const r of rows) if (r.result === 'L') for (const t of r.tags) tagUse.set(t, (tagUse.get(t) ?? 0) + 1)
-  const knownTags = [...tagUse.entries()].sort((a, b) => b[1] - a[1]).map(([t]) => t)
+  // reasons for the edit pop-up, most used first
+  const byUse = (base: string[], pick: (r: Row) => string[]) => {
+    const use = new Map(base.map((t) => [t, 0]))
+    for (const r of rows) for (const t of pick(r)) use.set(t, (use.get(t) ?? 0) + 1)
+    return [...use.entries()].sort((a, b) => b[1] - a[1]).map(([t]) => t)
+  }
+  const knownTags = { loss: byUse(LOSS_TAGS, (r) => r.tags), win: byUse(WIN_TAGS, (r) => r.win_tags) }
+  const { count: outdated } = await supabase.from('games').select('id', { count: 'exact', head: true }).lt('parser_version', PARSER_VERSION)
   const deck = (r: Row) => (r.deck_id ? deckById.get(r.deck_id) : undefined)
   const myArch = (r: Row) => deck(r)?.archetype ?? null
   const days: [string, Row[]][] = []
@@ -119,6 +128,7 @@ export default async function MatchLog({ searchParams }: { searchParams: Promise
           </div>
 
           <h2>Matches</h2>
+          <Reanalyse outdated={outdated ?? 0} />
           <MatchEditor decks={decks} knownTags={knownTags}>
           {days.map(([day, xs], i) => {
             const w = wins(xs), l = xs.filter((r) => r.result === 'L').length
@@ -144,7 +154,10 @@ export default async function MatchLog({ searchParams }: { searchParams: Promise
                             <span className="muted">prizes {r.prizes_taken}–{r.prizes_given}</span>
                           </span>
                         </span>
-                        <span className="match-tags">{r.result === 'L' && r.tags.map((t) => <span key={t} className="pill">{t}</span>)}</span>
+                        <span className="match-tags">
+                          {r.win_tags.map((t) => <span key={`w-${t}`} className="pill good">{t}</span>)}
+                          {r.tags.map((t) => <span key={`l-${t}`} className="pill bad">{t}</span>)}
+                        </span>
                         <span className="match-order">{r.went_first === null ? '–' : r.went_first ? '1st' : '2nd'}</span>
                         <Sprites arch={r.opp_archetype} />
                       </Link>
@@ -184,7 +197,18 @@ export default async function MatchLog({ searchParams }: { searchParams: Promise
                   <thead><tr><th>Tag</th><th>Losses</th><th>Share</th></tr></thead>
                   <tbody>
                     {[...tagCounts.entries()].sort((a, b) => b[1] - a[1]).map(([t, n]) => (
-                      <tr key={t}><td>{t}</td><td>{n}</td><td>{pct(n, losses)}</td></tr>
+                      <tr key={t}><td><span className="pill bad">{t}</span></td><td>{n}</td><td>{pct(n, losses)}</td></tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <h2>What went right in wins</h2>
+              <div className="table-wrap">
+                <table>
+                  <thead><tr><th>Tag</th><th>Wins</th><th>Share</th></tr></thead>
+                  <tbody>
+                    {[...winCounts.entries()].sort((a, b) => b[1] - a[1]).map(([t, n]) => (
+                      <tr key={t}><td><span className="pill good">{t}</span></td><td>{n}</td><td>{pct(n, wins(done))}</td></tr>
                     ))}
                   </tbody>
                 </table>

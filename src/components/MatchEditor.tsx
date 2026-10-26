@@ -4,18 +4,18 @@ import { useRouter } from 'next/navigation'
 import { prettyArch } from '@/lib/format'
 import type { Deck } from '@/lib/types'
 import { deleteGame, updateGame } from '@/app/games/actions'
-import GameDialog, { ConfirmDialog } from './GameDialog'
+import GameDialog, { ConfirmDialog, type KnownTags } from './GameDialog'
 import Icon from './Icon'
 
 export interface EditRow {
-  id: string; deck_id: string | null; opp_archetype: string | null; result: 'W' | 'L' | null; tags: string[]
+  id: string; deck_id: string | null; opp_archetype: string | null; result: 'W' | 'L' | null; tags: string[]; win_tags: string[]
   went_first: boolean | null; opponent: string | null; prizes_taken: number; prizes_given: number
 }
 
 const Ctx = createContext<{ edit: (r: EditRow) => void; remove: (r: EditRow) => void } | null>(null)
 
 /** One edit pop-up and one delete confirmation shared by every row of the match log. */
-export function MatchEditor({ decks, knownTags, children }: { decks: Deck[]; knownTags: string[]; children: React.ReactNode }) {
+export function MatchEditor({ decks, knownTags, children }: { decks: Deck[]; knownTags: KnownTags; children: React.ReactNode }) {
   const router = useRouter()
   const [editing, setEditing] = useState<EditRow | null>(null)
   const [removing, setRemoving] = useState<EditRow | null>(null)
@@ -26,9 +26,9 @@ export function MatchEditor({ decks, knownTags, children }: { decks: Deck[]; kno
       {editing && (
         <GameDialog key={editing.id} title="Edit game" saveLabel="Save changes" decks={decks} knownTags={knownTags} onClose={() => setEditing(null)}
           info={`${editing.opponent ? `vs ${editing.opponent} · ` : ''}${editing.went_first === null ? '' : editing.went_first ? 'went 1st · ' : 'went 2nd · '}prizes ${editing.prizes_taken}–${editing.prizes_given}`}
-          initial={{ deckId: editing.deck_id ?? '', oppArchetype: editing.opp_archetype ?? '', result: editing.result, tags: editing.tags }}
+          initial={{ deckId: editing.deck_id ?? '', oppArchetype: editing.opp_archetype ?? '', result: editing.result, tags: editing.tags, winTags: editing.win_tags }}
           onSave={async (f) => {
-            const r = await updateGame(editing.id, { deckId: f.deckId || null, oppArchetype: f.oppArchetype || null, result: f.result!, tags: f.tags })
+            const r = await updateGame(editing.id, { deckId: f.deckId || null, oppArchetype: f.oppArchetype || null, result: f.result!, tags: f.tags, winTags: f.winTags })
             if (r.error) return r.error
             setEditing(null)
             router.refresh()

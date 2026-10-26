@@ -67,7 +67,7 @@ export default function DeckEditor({ deck, latest }: {
   const nextVersion = saved ? `v${newestOrder + 1}` : 'v1'
   const older = latest && saved && latest.id !== saved.id
 
-  const guesses = useMemo(() => matchArchetypes(entries.filter((e) => e.t === 'P').map((e) => e.name), 8), [entries])
+  const guesses = useMemo(() => matchArchetypes(entries.filter((e) => e.t === 'P').map((e) => e.name), 8, entries.some((e) => e.name === 'Crushing Hammer')), [entries])
   const best = guesses[0]
   const [dismissed, setDismissed] = useState(false)
   const askArchetype = best && best.key !== archetype.trim() && !dismissed
@@ -105,7 +105,7 @@ export default function DeckEditor({ deck, latest }: {
     setEntries(es)
     setImportText('')
     setImporting(false)
-    const guess = matchArchetypes(es.filter((e) => e.t === 'P').map((e) => e.name))[0]
+    const guess = matchArchetypes(es.filter((e) => e.t === 'P').map((e) => e.name), 6, es.some((e) => e.name === 'Crushing Hammer'))[0]
     if (guess) {
       if (!archetype.trim()) setArchetype(guess.key)
       if (!name.trim()) setName(guess.name)

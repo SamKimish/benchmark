@@ -1,7 +1,7 @@
 /** One flat row of stats and loss tags per game. Port of the ptcg-pipeline build.py. */
 import { parse, ParsedGame, TWO_PRIZERS_SUPPORT } from './parse'
 import { cardSlug, esc, normalize } from './text'
-import { detectArchetype } from './archetype'
+import { baseArchetype, detectArchetype, withHammer } from './archetype'
 
 // Per archetype: main attackers, the Basics that start those lines, and the line pieces that are liabilities early
 interface Plan { attackers: Set<string>; lineBasics: Set<string>; lineEarly: Set<string> }
@@ -22,7 +22,8 @@ const BASIC_ENERGY = /^Basic \w+ Energy$/
 const HAND_DISRUPTION = new Set(['Unfair Stamp', 'Judge', 'Iono', 'Roxanne', "Xerosic's Machinations", 'Eri', 'Marnie', 'Red Card', 'Special Red Card'])
 
 /** A plan for decks without one: the attackers are the Pokémon the archetype is named after. */
-function planFor(archetype: string | null, inPlay: string[]): Plan {
+function planFor(key: string | null, inPlay: string[]): Plan {
+  const archetype = baseArchetype(key)
   if (archetype && PLANS[archetype]) return PLANS[archetype]
   const parts = new Set((archetype ?? '').split(','))
   return { attackers: new Set(inPlay.filter((p) => parts.has(cardSlug(p)))), lineBasics: new Set(), lineEarly: new Set() }
@@ -103,7 +104,7 @@ function extras(text: string, me: string, opp: string | null) {
 
 /** Short labels for what went wrong (or was rough) in a game. A game can carry several. */
 function tags(g: ParsedGame, text: string, x: ReturnType<typeof extras>, slow: boolean, supportKod: string[], earlyLineKo: number, idle: number, lost: boolean) {
-  const opp = esc(g.opp ?? '__OPP__'), me = esc(g.me)
+  const opp = esc(g.opp ?? '__OPP__')
   const out: string[] = []
   if (g.myMulligans) out.push('Mulligan')
   if (slow && g.myTurns >= 3) out.push('Slow start')
@@ -111,22 +112,46 @@ function tags(g: ParsedGame, text: string, x: ReturnType<typeof extras>, slow: b
   if (supportKod.length) out.push("Support ex KO'd")
   if (x.firstGiven && x.firstGiven >= 2 && g.firstPrize === 'opp') out.push('Gave up first KO on ex')
   if ((text.match(new RegExp(`^${opp}'s Budew used Itchy Pollen`, 'gm')) ?? []).length >= 2) out.push('Item locked')
-  // energy knocked off my Pokémon by the opponent's trainers
-  const rePlayed = new RegExp(`^${opp} played (.+?)\\.$`)
-  const reDiscard = new RegExp(`^- .*Energy was discarded from ${me}'s`)
-  let last: string | null = null, denied = 0
+  const denied = g.opp ? energyDenied(text, g.opp, g.me) : 0
+  if (denied) out.push('Energy denied')
+  if ([...text.matchAll(new RegExp(`^${opp} played (.+?)\\.$`, 'gm'))].some((m) => HAND_DISRUPTION.has(m[1]))) out.push('Hand disrupted')
+  if (idle >= 2) out.push('Missed attacks')
+  if (g.endReason === 'deckout' && lost) out.push('Decked out')
+  if (g.endReason === 'i_conceded' && g.myTurns < 3) out.push('Early concede')
+  if (!out.length && lost) out.push('Outpaced')
+  return out
+}
+
+/** Energy the `by` player's trainers knocked off the other player's Pokémon. */
+function energyDenied(text: string, by: string, from: string) {
+  const rePlayed = new RegExp(`^${esc(by)} played (.+?)\\.$`)
+  const reDiscard = new RegExp(`^- .*Energy was discarded from ${esc(from)}'s`)
+  let last: string | null = null, n = 0
   for (const ln of text.split('\n')) {
     const m = ln.match(rePlayed)
     if (m) last = m[1]
     else if (!ln.startsWith('-')) last = null
-    if (last && reDiscard.test(ln)) denied++
+    if (last && reDiscard.test(ln)) n++
   }
-  if (denied) out.push('Energy denied')
-  if ([...text.matchAll(new RegExp(`^${opp} played (.+?)\\.$`, 'gm'))].some((m) => HAND_DISRUPTION.has(m[1]))) out.push('Hand disrupted')
-  if (idle >= 2) out.push('Missed attacks')
-  if (g.endReason === 'deckout') out.push('Decked out')
-  if (g.endReason === 'i_conceded' && g.myTurns < 3) out.push('Early concede')
-  if (!out.length && lost) out.push('Outpaced')
+  return n
+}
+
+/** The other side of the loss tags: short labels for what went right in a game. */
+function winTags(g: ParsedGame, text: string, x: ReturnType<typeof extras>, online: number | null, heads: number, won: boolean) {
+  const me = esc(g.me)
+  const out: string[] = []
+  if (online !== null && online <= 2) out.push('Fast setup')
+  if (g.openingActive === 'Budew') out.push('Budew open')
+  if (g.oppMulligans) out.push('Opp mulligan')
+  if (x.firstTaken && x.firstTaken >= 2 && g.firstPrize === 'me') out.push('Took first KO on ex')
+  if (g.kos.some((k) => k.side === 'opp' && SUPPORT_EX.has(k.mon))) out.push("KO'd their support ex")
+  if ((text.match(new RegExp(`^${me}'s Budew used Itchy Pollen`, 'gm')) ?? []).length >= 2) out.push('Item locked them')
+  if (heads >= 2) out.push('Hammers hit')
+  else if (g.opp && energyDenied(text, g.me, g.opp)) out.push('Energy denied them')
+  if ([...text.matchAll(new RegExp(`^${me} played (.+?)\\.$`, 'gm'))].some((m) => HAND_DISRUPTION.has(m[1]))) out.push('Disrupted their hand')
+  if (g.endReason === 'deckout' && won) out.push('Opp decked out')
+  if (g.endReason === 'opp_conceded' && g.oppTurns < 3) out.push('Opp early concede')
+  if (!out.length && won) out.push('Outpaced them')
   return out
 }
 
@@ -164,6 +189,7 @@ export interface GameStats {
   idle_turns_after_online: number
   end_reason: string
   tags: string[]
+  win_tags: string[]
   max_deficit: number
   first_given_prizes: number | null
   first_taken_prizes: number | null
@@ -185,8 +211,12 @@ export function gameStats(raw: string, opts: { me?: string; archetype?: string |
   const text = normalize(raw)
   const ins = enteredPlay(text, g.me)
   const myMons = [...ins.map(([, p]) => p), ...evolutions(text, g.me).map(([, p]) => p)]
-  const myArch = opts.archetype ?? detectArchetype(myMons)
   const oppMons = g.opp ? [...enteredPlay(text, g.opp), ...evolutions(text, g.opp)].map(([, p]) => p) : []
+  // a side that played Crushing Hammer is the hammer version of its deck (Hammer Pult)
+  const hammered = (who: string | null, key: string | null) =>
+    key && who && text.split('\n').includes(`${who} played Crushing Hammer.`) ? withHammer(key) : key
+  const myArch = opts.archetype ?? hammered(g.me, detectArchetype(myMons))
+  const oppArch = hammered(g.opp, detectArchetype(oppMons))
   const plan = planFor(myArch, myMons)
 
   const lineT1 = ins.filter(([t, p]) => plan.lineBasics.has(p) && t <= 1).length
@@ -219,7 +249,7 @@ export function gameStats(raw: string, opts: { me?: string; archetype?: string |
     went_first: g.wentFirst,
     won_flip: g.wonFlip,
     my_archetype: myArch,
-    opp_archetype: detectArchetype(oppMons),
+    opp_archetype: oppArch,
     opening_active: g.openingActive,
     opening_hand: g.openingHand,
     mulligans: g.myMulligans,
@@ -240,6 +270,7 @@ export function gameStats(raw: string, opts: { me?: string; archetype?: string |
     idle_turns_after_online: idle,
     end_reason: END_REASONS[g.endReason],
     tags: tags(g, text, x, slow, supportKod, earlyLineKo, idle, g.winnerIsMe === false),
+    win_tags: winTags(g, text, x, online, heads, win),
     max_deficit: x.maxDeficit,
     first_given_prizes: x.firstGiven,
     first_taken_prizes: x.firstTaken,

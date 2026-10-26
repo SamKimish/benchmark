@@ -17,6 +17,15 @@ describe('gameStats', () => {
     expect(s.opp_archetype).toBe('excadrill-mega')
   })
 
+  it('names a deck that played Crushing Hammer as its Hammer version, and tags what went right', () => {
+    const s = gameStats(fixture('pult-win.txt'))
+    expect(s.my_archetype).toBe('dragapult,crushing-hammer')
+    expect(s.first_attacker_turn).toBe(5)   // the Dragapult plan still applies to Hammer Pult
+    expect(s.win_tags).toEqual(['Item locked them', 'Disrupted their hand'])
+    expect(gameStats(fixture('lopunny.txt')).win_tags).toEqual(['Fast setup'])
+    expect(gameStats(fixture('pult-loss.txt')).win_tags).toEqual([])
+  })
+
   it('tags an early concede', () => {
     const s = gameStats(fixture('pult-loss.txt'))
     expect(s.my_archetype).toBe('dragapult')
