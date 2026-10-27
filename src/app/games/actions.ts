@@ -10,13 +10,28 @@ export interface GameEdit { deckId: string | null; oppArchetype: string | null; 
 /** Change what a saved game is filed as: deck, opponent's deck, result, and loss and win reasons. */
 export async function updateGame(id: string, edit: GameEdit): Promise<{ error?: string }> {
   const { supabase } = await requireUser()
-  const { error } = await supabase.from('games').update({
+  const patch: Record<string, unknown> = {
     deck_id: edit.deckId, opp_archetype: edit.oppArchetype?.trim() || null, result: edit.result,
     tags: edit.tags, win_tags: edit.winTags,
-  }).eq('id', id)
+  }
+  const { data: game } = await supabase.from('games').select('log, deck_id').eq('id', id).single()
+  if (game && game.deck_id !== edit.deckId) {
+    // a different deck can mean a different game plan, so the stats are worked out again
+    const { data: deck } = edit.deckId ? await supabase.from('decks').select('archetype').eq('id', edit.deckId).single() : { data: null }
+    const r = gameRow(game.log, deck?.archetype)
+    Object.assign(patch, { stats: r.stats, my_archetype: r.my_archetype })
+  }
+  const { error } = await supabase.from('games').update(patch).eq('id', id)
   if (error) return { error: error.message }
   revalidatePath('/')
+  revalidatePath(`/games/${id}`)
   return {}
+}
+
+export async function saveNotes(id: string, notes: string): Promise<{ error?: string }> {
+  const { supabase } = await requireUser()
+  const { error } = await supabase.from('games').update({ notes }).eq('id', id)
+  return error ? { error: error.message } : {}
 }
 
 export async function deleteGame(id: string): Promise<{ error?: string }> {

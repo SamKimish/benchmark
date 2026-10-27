@@ -290,3 +290,107 @@ button.danger { background: var(--loss); color: #fff; }
 .reason-label.good::before { background: var(--win); }
 .tag-add { background: none; border: 1px dashed var(--line); color: var(--muted); }
 .tag-new { width: 160px; padding: 4px 10px; border-radius: 99px; font-size: .82rem; }
+
+/* ---- game page ---- */
+.game-hero { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 24px;
+  padding: 22px 96px 22px 28px; border-radius: 14px; background: var(--tag); margin: 14px 0 10px; }
+.game-hero.W { background: var(--win-row); }
+.game-hero.L { background: var(--loss-row); }
+.game-hero .row-actions { right: 16px; }
+.hero-side { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.hero-side.opp { flex-direction: row-reverse; text-align: right; }
+.hero-deck { font-family: var(--font-display), system-ui, sans-serif; font-weight: 600; font-size: 1.3rem; display: flex; flex-direction: column; line-height: 1.2; min-width: 0; }
+.hero-deck .ver { font-family: system-ui, sans-serif; font-weight: 400; font-size: .85rem; color: var(--muted); }
+.hero-mid { text-align: center; }
+.hero-result { font-size: .8rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+.game-hero.W .hero-result { color: var(--win); }
+.game-hero.L .hero-result { color: var(--loss); }
+.hero-score { font-family: var(--font-display), system-ui, sans-serif; font-weight: 700; font-size: 3rem; line-height: 1.05; }
+.hero-score span { color: var(--muted); margin: 0 6px; font-weight: 400; }
+.hero-meta { font-size: .85rem; color: var(--muted); white-space: nowrap; }
+.hero-tags { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin: 0 0 18px; }
+.hero-tags .pill { margin: 0; font-size: .85rem; padding: 3px 12px; background: var(--panel); }
+.game-tiles { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+.game-stat .stat-n { font-size: 1.7rem; }
+.game-body { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 20px; align-items: start; }
+.game-side { display: grid; gap: 14px; position: sticky; top: 12px; }
+.game-side h3 { margin: 0 0 10px; font-size: .78rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+.hand { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.hand figure { margin: 0; position: relative; aspect-ratio: 63 / 88; border-radius: 5px; overflow: hidden; background: var(--tag); }
+.hand figure img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.hand figure.active { outline: 2px solid var(--focus); outline-offset: 1px; }
+.hand figcaption { position: absolute; bottom: 0; left: 0; right: 0; background: var(--focus); color: #fff; font-size: .65rem; font-weight: 700; text-align: center; }
+.hand-name { display: grid; place-content: center; height: 100%; padding: 4px; font-size: .65rem; text-align: center; }
+.kos { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.kos li { display: grid; grid-template-columns: 30px 38px minmax(0, 1fr) auto; align-items: center; gap: 6px; padding: 2px 8px; border-radius: 8px; }
+.kos li.good { background: var(--win-row); }
+.kos li.bad { background: var(--loss-row); }
+.ko-name { font-size: .88rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.their-mons { display: flex; flex-wrap: wrap; gap: 4px; }
+.notes { display: grid; gap: 4px; }
+.notes textarea { width: 100%; resize: vertical; }
+
+/* sprites by card name, at their own size in a fixed slot */
+.mon { display: inline-grid; place-items: center; min-width: 38px; height: 34px; flex: none; vertical-align: middle; }
+.mon img { max-width: none; }
+.mon.small { min-width: 30px; }
+
+/* timeline */
+.log-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin: 0 0 10px; }
+.log-head h2 { margin: 0; margin-right: auto; }
+.log-head .seg { margin: 0; }
+.log-head .seg button.on { background: var(--ink); color: var(--bg); }
+.small-btn { padding: 6px 12px; font-size: .85rem; }
+.turns { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.turn { background: var(--panel); border: 1px solid var(--line); border-left: 4px solid var(--line); border-radius: 10px; padding: 8px 14px 10px; }
+.turn.me { border-left-color: var(--focus); }
+.turn.opp { border-left-color: #e0a030; }
+.turn-head { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+.turn-n { font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.turn-who { font-weight: 700; }
+.turn.me .turn-who { color: var(--focus); }
+.turn.opp .turn-who { color: #c4841a; }
+.turn-head .score-chip { margin-left: auto; }
+.turn-quiet { margin: 2px 0 0; }
+.score-chip { font-size: .78rem; font-weight: 700; padding: 1px 8px; border-radius: 99px; background: var(--tag); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.evs { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.ev { padding: 3px 6px; border-radius: 8px; }
+.ev-main { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; min-height: 28px; }
+.ev-more { margin: 0 0 4px 44px; font-size: .8rem; color: var(--muted); }
+.ev-cards { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 3px; }
+.ev.draw, .ev.coin, .ev.other { color: var(--muted); font-size: .88rem; }
+.ev.ability { font-size: .9rem; }
+.ev.attack { background: var(--tag); }
+.ev.attack .dmg { margin-left: auto; font-family: var(--font-display), system-ui, sans-serif; font-weight: 700; font-size: 1.1rem; }
+.ev.ko.good, .ev.prize.good { background: var(--win-row); }
+.ev.ko.bad, .ev.prize.bad { background: var(--loss-row); }
+.ev.ko .ev-main, .ev.prize .ev-main { font-weight: 600; }
+.ev.prize .score-chip { margin-left: auto; background: var(--panel); }
+.prize-card { width: 14px; height: 19px; border-radius: 3px; background: linear-gradient(135deg, #f6d36b, #d9a72c); border: 1px solid rgba(0, 0, 0, .25); margin: 0 12px; }
+.arrow { color: var(--muted); }
+.log-end { text-align: center; font-weight: 600; margin: 12px 0; }
+.raw-log summary { cursor: pointer; color: var(--muted); font-size: .9rem; }
+
+/* cards named in the log; hover shows the card */
+.card-chip { position: relative; display: inline-flex; align-items: center; gap: 4px; padding: 1px 9px; border-radius: 6px; font-size: .85rem;
+  background: var(--tag); border-left: 3px solid var(--muted); white-space: nowrap; }
+.card-chip.supporter { border-left-color: #e8532f; font-weight: 600; }
+.card-chip.item { border-left-color: #3d8fe0; }
+.card-chip.tool { border-left-color: #9c5bd1; }
+.card-chip.stadium { border-left-color: #4caf50; font-weight: 600; }
+.card-chip.energy i { width: 10px; height: 10px; border-radius: 99px; display: inline-block; }
+.card-chip.energy { border-left: 0; }
+.card-chip.mon-chip { border-left: 0; padding-left: 2px; }
+.card-pop { display: none; position: absolute; left: 0; bottom: calc(100% + 6px); z-index: 20; pointer-events: none; }
+.card-pop img { width: 180px; border-radius: 8px; box-shadow: 0 8px 24px rgba(0, 0, 0, .3); display: block; }
+.card-chip:hover .card-pop, .card-chip:focus .card-pop { display: block; }
+@media (max-width: 1000px) {
+  .game-body { grid-template-columns: 1fr; }
+  .game-side { position: static; }
+}
+@media (max-width: 760px) {
+  .game-hero { grid-template-columns: 1fr; text-align: center; padding: 18px 16px 52px; }
+  .hero-side, .hero-side.opp { justify-content: center; flex-direction: row; text-align: left; }
+  .game-hero .row-actions { top: auto; bottom: 8px; transform: none; }
+  .ev-more { margin-left: 8px; }
+}

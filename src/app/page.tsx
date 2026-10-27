@@ -6,7 +6,7 @@ import Sprites from '@/components/Sprites'
 import QuickPaste from '@/components/QuickPaste'
 import { MatchEditor, RowActions } from '@/components/MatchEditor'
 import Reanalyse from '@/components/Reanalyse'
-import { LOSS_TAGS, WIN_TAGS } from '@/lib/tags'
+import { knownTagsFrom } from '@/lib/tags'
 import { PARSER_VERSION } from '@/lib/games'
 import type { Deck } from '@/lib/types'
 
@@ -73,12 +73,7 @@ export default async function MatchLog({ searchParams }: { searchParams: Promise
   for (const r of done) if (r.result === 'W') for (const t of r.win_tags) winCounts.set(t, (winCounts.get(t) ?? 0) + 1)
 
   // reasons for the edit pop-up, most used first
-  const byUse = (base: string[], pick: (r: Row) => string[]) => {
-    const use = new Map(base.map((t) => [t, 0]))
-    for (const r of rows) for (const t of pick(r)) use.set(t, (use.get(t) ?? 0) + 1)
-    return [...use.entries()].sort((a, b) => b[1] - a[1]).map(([t]) => t)
-  }
-  const knownTags = { loss: byUse(LOSS_TAGS, (r) => r.tags), win: byUse(WIN_TAGS, (r) => r.win_tags) }
+  const knownTags = knownTagsFrom(rows)
   const { count: outdated } = await supabase.from('games').select('id', { count: 'exact', head: true }).lt('parser_version', PARSER_VERSION)
   const deck = (r: Row) => (r.deck_id ? deckById.get(r.deck_id) : undefined)
   const myArch = (r: Row) => deck(r)?.archetype ?? null

@@ -72,3 +72,17 @@ describe('archetypes', () => {
     expect(detectArchetype(['Dreepy', 'Dragapult ex', 'Duskull', 'Dusclops', 'Dusknoir'])).toBe('dragapult,dusknoir')
   })
 })
+
+describe('timeline', () => {
+  it('splits a log into turns with attacks, Knockouts and the running score', async () => {
+    const { timeline, knockouts } = await import('@/lib/parser/timeline')
+    const tl = timeline(fixture('pult-win.txt'))
+    expect(tl.turns[0]).toMatchObject({ who: 'opp', n: 1 })
+    const attack = tl.turns[1].events.find((e) => e.kind === 'attack')
+    expect(attack).toMatchObject({ who: 'me', mon: 'Budew', card: 'Itchy Pollen', target: 'Shaymin', damage: 10 })
+    expect(attack?.text).toBe('Your Budew used Itchy Pollen on Rival99’s Shaymin for 10 damage.')
+    expect(knockouts(tl)[0]).toMatchObject({ who: 'me', mon: 'Drakloak', prizes: 1, score: [0, 1] })
+    expect(tl.turns.at(-1)?.score).toEqual([6, 4])
+    expect(tl.end).toBe('You won. All Prize cards taken.')
+  })
+})

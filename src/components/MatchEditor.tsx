@@ -15,7 +15,11 @@ export interface EditRow {
 const Ctx = createContext<{ edit: (r: EditRow) => void; remove: (r: EditRow) => void } | null>(null)
 
 /** One edit pop-up and one delete confirmation shared by every row of the match log. */
-export function MatchEditor({ decks, knownTags, children }: { decks: Deck[]; knownTags: KnownTags; children: React.ReactNode }) {
+export function MatchEditor({ decks, knownTags, afterDelete, children }: {
+  decks: Deck[]; knownTags: KnownTags; children: React.ReactNode
+  /** where to go once the game is deleted, when the current page is the game itself */
+  afterDelete?: string
+}) {
   const router = useRouter()
   const [editing, setEditing] = useState<EditRow | null>(null)
   const [removing, setRemoving] = useState<EditRow | null>(null)
@@ -41,7 +45,8 @@ export function MatchEditor({ decks, knownTags, children }: { decks: Deck[]; kno
             const r = await deleteGame(removing.id)
             if (r.error) return r.error
             setRemoving(null)
-            router.refresh()
+            if (afterDelete) router.push(afterDelete)
+            else router.refresh()
           }} />
       )}
     </Ctx.Provider>
