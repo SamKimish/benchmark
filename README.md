@@ -16,6 +16,12 @@ built around one player's ladder games. Lives at benchmark.kimish.co.uk.
   names an unnamed deck. Card images come from Limitless's CDN (keyed by TCG Live set code and number); the search
   index `public/cards.json` is built from PokemonTCG/pokemon-tcg-data with `node scripts/build-cards.mjs`.
 
+- **Tournaments**: log in-person events (Locals, League Challenge, League Cup, Regionals, Special Event,
+  Internationals, Worlds): name, dates, format, venue, the list you played (a saved deck, or paste a new list and it's
+  saved to Decks), where you finished, and each round's opponent deck and games (`WLW`, ties, byes and IDs). The
+  event page reads like a standings sheet; the list shows your overall match record and matchups across events.
+  Needs `supabase/migrations/20261031000000_tournaments.sql`.
+
 Stack: Next.js (App Router) on Vercel, Supabase for Postgres and email sign-in.
 
 ## The parser

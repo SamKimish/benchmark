@@ -5,11 +5,12 @@ import { usePathname } from 'next/navigation'
 const ITEMS = [
   { href: '/', label: 'Matches', art: 'matches', match: (p: string) => p === '/' || p.startsWith('/games') || p.startsWith('/upload') },
   { href: '/decks', label: 'Decks', art: 'decks', match: (p: string) => p.startsWith('/decks') },
+  { href: '/tournaments', label: 'Tournaments', art: 'tournaments.svg', match: (p: string) => p.startsWith('/tournaments') },
   { href: '/settings', label: 'Settings', art: 'settings', match: (p: string) => p.startsWith('/settings') },
 ]
 
 function Art({ name }: { name: string }) {
-  return <img className="nav-art" src={`/header/${name}.png`} alt="" />
+  return <img className="nav-art" src={`/header/${name.includes('.') ? name : `${name}.png`}`} alt="" />
 }
 
 /** The illustrated nav: each item's artwork sits on the red line with its label underneath. */
@@ -18,7 +19,7 @@ export default function SiteNav() {
   return (
     <nav className="site-nav" aria-label="Main">
       {ITEMS.map((it) => (
-        <Link key={it.href} href={it.href} className={`nav-item nav-${it.art}${it.match(path) ? ' active' : ''}`}
+        <Link key={it.href} href={it.href} className={`nav-item nav-${it.art.replace(/\..*/, '')}${it.match(path) ? ' active' : ''}`}
           aria-current={it.match(path) ? 'page' : undefined}>
           <Art name={it.art} />
           <span className="nav-label">{it.label}</span>

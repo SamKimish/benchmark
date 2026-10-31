@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="96" viewBox="0 0 120 96">
+  <!-- placeholder art for the Tournaments tab, in the spirit of the hand-drawn tiles beside it -->
+  <rect x="14" y="10" width="92" height="86" rx="12" fill="#bfe3f5" stroke="#2b2f3a" stroke-width="2.5"/>
+  <path d="M20 22l4-4M96 20l5 3M18 70l-4 3M100 64l5 2" stroke="#2b2f3a" stroke-width="2" stroke-linecap="round"/>
+  <g stroke="#2b2f3a" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M42 22h36v18c0 12-8 20-18 20s-18-8-18-20z" fill="#f7c948"/>
+    <path d="M42 28H32v4c0 7 5 12 12 12M78 28h10v4c0 7-5 12-12 12" fill="none"/>
+    <path d="M56 60h8v12h-8z" fill="#f7c948"/>
+    <path d="M44 72h32v10H44z" fill="#e8604c"/>
+    <path d="M38 82h44v12H38z" fill="#fff"/>
+  </g>
+  <path d="M50 28c-1 8 1 15 6 20" stroke="#fff" stroke-width="3" stroke-linecap="round" fill="none" opacity=".8"/>
+  <path d="M60 30l2.4 4.8 5.3.8-3.8 3.7.9 5.3-4.8-2.5-4.8 2.5.9-5.3-3.8-3.7 5.3-.8z" fill="#fff" stroke="#2b2f3a" stroke-width="1.5" stroke-linejoin="round"/>
+</svg>
