@@ -564,3 +564,8 @@ table.t-rounds-table { border-collapse: separate; border-spacing: 0 3px; font-si
   box-shadow: 0 2px 8px rgba(0, 0, 0, .15); }
 .tile-sprites .sprites { min-width: 0; }
 .deck-record { white-space: nowrap; }
+.deck-meta { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: end; margin-top: 12px; }
+.deck-meta > .picker:first-child { flex: 0 1 420px; min-width: 260px; }
+.deck-meta .picker-current > span:nth-child(2) .muted { display: none; }
+.deck-meta .picker-label { font-size: .85rem; color: var(--muted); }
+.deck-meta .sprite-picker { display: grid; gap: 4px; }

@@ -15,6 +15,7 @@ import Pokeball from '@/components/Pokeball'
 import Icon from '@/components/Icon'
 import Sprites from '@/components/Sprites'
 import SpritePicker from '@/components/SpritePicker'
+import DeckPicker from '@/components/DeckPicker'
 
 let cardsPromise: Promise<Card[]> | null = null
 const loadCards = () => (cardsPromise ??= fetch('/cards.json').then((r) => r.json() as Promise<Card[]>))
@@ -218,10 +219,14 @@ export default function DeckEditor({ deck, latest, gameCount = 0, stats }: {
         <div className="row small muted" style={{ marginTop: 10, alignItems: 'center' }}>
           <span className={count === 60 ? '' : 'error'}>Cards: {count}/60</span>
           {cards.length > 0 && <span>Basics: {basics(entries, index)}</span>}
-          <span>Archetype: <strong>{archetypeName(archetype) ?? prettyArch(archetype) ?? 'none'}</strong></span>
-          <SpritePicker value={sprites} suggested={archSprites} onChange={(x) => { setStatus({}); setChosenSprites(x) }} />
           {status.ok && <span>{status.ok}</span>}
           {status.error && <span className="error">{status.error}</span>}
+        </div>
+
+        <div className="deck-meta">
+          <DeckPicker label="Archetype" value={archetype.trim() || best?.key || ''}
+            onChange={(k) => { setStatus({}); setArchetype(k); setDismissed(true); if (!name.trim()) setName(archetypeName(k) ?? prettyArch(k)) }} />
+          <SpritePicker value={sprites} suggested={archSprites} onChange={(x) => { setStatus({}); setChosenSprites(x) }} />
         </div>
 
         {older && (
