@@ -6,7 +6,9 @@ import Sprites from '@/components/Sprites'
 import QuickPaste from '@/components/QuickPaste'
 import { MatchEditor, RowActions } from '@/components/MatchEditor'
 import Reanalyse from '@/components/Reanalyse'
+import Stat from '@/components/Stat'
 import { knownTagsFrom } from '@/lib/tags'
+import { gameSprites } from '@/lib/archetypes'
 import { PARSER_VERSION } from '@/lib/games'
 import type { Deck } from '@/lib/types'
 
@@ -14,6 +16,8 @@ interface Row {
   id: string
   played_at: string
   deck_id: string | null
+  my_sprites: string[]
+  my_archetype: string | null
   result: 'W' | 'L' | null
   went_first: boolean | null
   opp_archetype: string | null
@@ -48,7 +52,7 @@ export default async function MatchLog({ searchParams }: { searchParams: Promise
   const rows: Row[] = []
   for (let from = 0; ; from += PAGE) {
     let query = supabase.from('games')
-      .select('id, played_at, deck_id, result, went_first, opp_archetype, opponent, tags, win_tags, end_reason, prizes_taken:stats->prizes_taken, prizes_given:stats->prizes_given')
+      .select('id, played_at, deck_id, my_sprites, my_archetype, result, went_first, opp_archetype, opponent, tags, win_tags, end_reason, prizes_taken:stats->prizes_taken, prizes_given:stats->prizes_given')
       .order('played_at', { ascending: false })
       .range(from, from + PAGE - 1)
     if (ids) query = query.in('deck_id', ids.length ? ids : ['00000000-0000-0000-0000-000000000000'])
@@ -76,7 +80,7 @@ export default async function MatchLog({ searchParams }: { searchParams: Promise
   const knownTags = knownTagsFrom(rows)
   const { count: outdated } = await supabase.from('games').select('id', { count: 'exact', head: true }).lt('parser_version', PARSER_VERSION)
   const deck = (r: Row) => (r.deck_id ? deckById.get(r.deck_id) : undefined)
-  const myArch = (r: Row) => deck(r)?.archetype ?? null
+  const mySprites = (r: Row) => gameSprites(r, deck(r))
   const days: [string, Row[]][] = []
   for (const r of rows) {
     const d = dayKey(r.played_at)
@@ -127,12 +131,12 @@ export default async function MatchLog({ searchParams }: { searchParams: Promise
           <MatchEditor decks={decks} knownTags={knownTags}>
           {days.map(([day, xs], i) => {
             const w = wins(xs), l = xs.filter((r) => r.result === 'L').length
-            const decksPlayed = [...new Set(xs.map((r) => myArch(r)).filter(Boolean))].slice(0, 2)
+            const decksPlayed = [...new Map(xs.map((r) => mySprites(r)).filter((x) => x.length).map((x) => [x.join(','), x])).values()].slice(0, 2)
             return (
               <details key={day} className="day" open={i === 0}>
                 <summary>
                   <span className="day-date">{dayLabel(day)}</span>
-                  <span className="day-decks">{decksPlayed.map((k) => <Sprites key={k} arch={k} />)}</span>
+                  <span className="day-decks">{decksPlayed.map((k) => <Sprites key={k.join(',')} slugs={k} />)}</span>
                   <span className="day-record"><strong>{w}-{l}</strong><span className="muted small">{xs.length} total</span></span>
                   <span className="chevron" aria-hidden><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6" /></svg></span>
                 </summary>
@@ -140,7 +144,7 @@ export default async function MatchLog({ searchParams }: { searchParams: Promise
                   {xs.map((r) => (
                     <li key={r.id} className="match-row">
                       <Link href={`/games/${r.id}`} className={`match ${r.result ?? 'none'}`}>
-                        <Sprites arch={myArch(r)} />
+                        <Sprites slugs={mySprites(r)} />
                         <span className="match-main">
                           <strong>{r.result === 'W' ? 'Win' : r.result === 'L' ? 'Loss' : 'Unknown'} vs {prettyArch(r.opp_archetype)}</strong>
                           <span className="match-meta">
@@ -213,21 +217,5 @@ export default async function MatchLog({ searchParams }: { searchParams: Promise
         </>
       )}
     </>
-  )
-}
-
-/** A headline number: a count, or a win rate drawn as a bar of wins against losses. */
-function Stat({ label, value, sub, w, n }: { label: string; value?: string; sub?: string; w?: number; n?: number }) {
-  const rate = n ? (w ?? 0) / n : null
-  const tone = rate === null ? '' : rate >= 0.55 ? ' good' : rate < 0.45 ? ' bad' : ''
-  return (
-    <div className={`panel stat${tone}`}>
-      <div className="stat-label">{label}</div>
-      <div className="stat-n">{value ?? pct(w ?? 0, n ?? 0)}</div>
-      {rate !== null && (
-        <div className="stat-bar" aria-hidden><span style={{ width: `${Math.round(rate * 100)}%` }} /></div>
-      )}
-      <div className="stat-sub">{sub ?? `${w}–${(n ?? 0) - (w ?? 0)} · ${n} games`}</div>
-    </div>
   )
 }

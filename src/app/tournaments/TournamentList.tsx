@@ -5,10 +5,11 @@ import {
 } from '@/lib/tournaments'
 import type { Deck } from '@/lib/types'
 import Sprites from '@/components/Sprites'
+import { spritesOf } from '@/lib/archetypes'
 import Icon from '@/components/Icon'
 import { KindIcon } from './KindIcon'
 
-export type DeckName = Pick<Deck, 'id' | 'name' | 'version' | 'archetype'>
+export type DeckName = Pick<Deck, 'id' | 'name' | 'version' | 'archetype' | 'sprites'>
 
 /** Every event, newest first, with the overall record and how each opponent deck has gone. */
 export default function TournamentList({ ts, decks: deckList, error }: { ts: Tournament[]; decks: DeckName[]; error?: string }) {
@@ -64,7 +65,7 @@ export default function TournamentList({ ts, decks: deckList, error }: { ts: Tou
               return (
                 <li key={t.id}>
                   <Link href={`/tournaments/${t.id}`} className={`t-row ${t.rounds.length ? tone : 'none'}`}>
-                    <Sprites arch={d?.archetype ?? t.my_archetype} />
+                    <Sprites arch={d?.archetype ?? t.my_archetype} slugs={d ? spritesOf(d) : undefined} />
                     <span className="match-main">
                       <strong>{t.name}</strong>
                       <span className="match-meta">

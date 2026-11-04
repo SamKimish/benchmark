@@ -5,6 +5,7 @@ import type { Deck } from '@/lib/types'
 import Icon from './Icon'
 import Pokeball from './Pokeball'
 import Sprites from './Sprites'
+import { spritesOf } from '@/lib/archetypes'
 import DeckPicker from './DeckPicker'
 
 export interface GameFields { deckId: string; oppArchetype: string; result: 'W' | 'L' | null; tags: string[]; winTags: string[] }
@@ -67,7 +68,8 @@ export default function GameDialog({ title, info, initial, myArch, decks, knownT
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const choices = decks.filter((d) => d.active || d.id === f.deckId)
-  const arch = decks.find((d) => d.id === f.deckId)?.archetype ?? myArch
+  const chosen = decks.find((d) => d.id === f.deckId)
+  const arch = chosen?.archetype ?? myArch
 
   async function save() {
     if (!f.result || saving) return
@@ -89,7 +91,7 @@ export default function GameDialog({ title, info, initial, myArch, decks, knownT
       <div className="modal panel" role="dialog" aria-label={title ?? 'Game'}>
         {title && <h2 className="modal-title">{title}</h2>}
         <div className={`match ${f.result ?? 'none'} modal-match`}>
-          <Sprites arch={arch} />
+          <Sprites arch={arch} slugs={chosen ? spritesOf(chosen) : undefined} />
           <span className="match-main">
             <strong>{f.result === 'W' ? 'Win' : f.result === 'L' ? 'Loss' : 'Result?'} vs {prettyArch(f.oppArchetype)}</strong>
             <span className="muted small">{info}</span>

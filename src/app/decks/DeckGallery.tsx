@@ -3,8 +3,10 @@ import { cardImage, displayPrinting, parseDecklist, resolvePrintings, total, typ
 import cardData from '../../../public/cards.json'
 
 const CARDS = cardData as Card[]
-import { archetypeName } from '@/lib/archetypes'
-import { prettyArch } from '@/lib/format'
+import { archetypeName, spritesOf } from '@/lib/archetypes'
+import { pct, prettyArch } from '@/lib/format'
+import type { Tally } from '@/lib/deckstats'
+import Sprites from '@/components/Sprites'
 import type { Deck } from '@/lib/types'
 import DeleteDeck from './DeleteDeck'
 
@@ -19,7 +21,7 @@ function latestVersions(decks: Deck[]) {
   return [...lines.values()]
 }
 
-export default function DeckGallery({ decks }: { decks: Deck[] }) {
+export default function DeckGallery({ decks, records = {} }: { decks: Deck[]; records?: Record<string, Tally> }) {
   return (
     <>
       <div className="deck-gallery">
@@ -29,6 +31,8 @@ export default function DeckGallery({ decks }: { decks: Deck[] }) {
         </Link>
         {latestVersions(decks).map(({ deck: d, versions }) => {
           const es = resolvePrintings(parseDecklist(d.decklist), CARDS)
+          const rec = records[d.line_id]
+          const rate = rec && rec.wins + rec.losses ? rec.wins / (rec.wins + rec.losses) : null
           return (
             <div key={d.id} className="deck-tile">
               <Link href={`/decks/${d.id}`} className="mosaic">
@@ -37,14 +41,24 @@ export default function DeckGallery({ decks }: { decks: Deck[] }) {
                   const src = cardImage(shown.set, shown.no, 'XS')
                   return src ? <img key={i} src={src} alt={e.name} loading="lazy" /> : <span key={i} className="noimg">{e.name}</span>
                 })}
+                <span className="tile-sprites"><Sprites slugs={spritesOf(d)} /></span>
               </Link>
-              <div className="row" style={{ justifyContent: 'space-between', alignItems: 'start' }}>
-                <Link href={`/decks/${d.id}`} style={{ textDecoration: 'none' }}>
+              <div className="row" style={{ justifyContent: 'space-between', alignItems: 'start', flexWrap: 'nowrap' }}>
+                <Link href={`/decks/${d.id}`} className="deck-tile-info">
+                  <span>
                   <strong>{d.name}</strong> <span className="version small">{d.version}</span>
                   <div className="muted small">
                     {archetypeName(d.archetype) ?? prettyArch(d.archetype)} · {total(es)} cards
                     {versions > 1 ? ` · ${versions} versions` : ''}
                   </div>
+                  <div className="small deck-record">
+                    {rec ? <>
+                      <span>{rec.games} match{rec.games === 1 ? '' : 'es'}</span>
+                      <span>{rec.wins}–{rec.losses}</span>
+                      <strong className={rate === null ? '' : rate >= 0.55 ? 'good' : rate < 0.45 ? 'bad' : ''}>{pct(rec.wins, rec.wins + rec.losses)}</strong>
+                    </> : <span className="muted">No matches yet</span>}
+                  </div>
+                  </span>
                 </Link>
                 <DeleteDeck lineId={d.line_id} name={d.name} versions={versions} />
               </div>

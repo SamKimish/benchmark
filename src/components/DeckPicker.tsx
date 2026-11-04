@@ -8,7 +8,7 @@ import Sprites from './Sprites'
 
 let pokemonPromise: Promise<string[]> | null = null
 /** Every Pokémon slug in the card data ('dragapult', 'starmie-mega'), for building a deck by hand. */
-const loadPokemon = () => (pokemonPromise ??= fetch('/cards.json')
+export const loadPokemon = () => (pokemonPromise ??= fetch('/cards.json')
   .then((r) => r.json() as Promise<Card[]>)
   .then((cs) => [...new Set(cs.filter((c) => c.t === 'P').map((c) => cardSlug(c.n)))].sort().concat(HAMMER)))
 

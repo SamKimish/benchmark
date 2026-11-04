@@ -53,3 +53,15 @@ export function matchArchetypes(pokemonNames: string[], limit = 6, hammer = fals
   const hammered = hits.map((a) => ({ ...a, id: `${a.id}-hammer`, key: withHammer(a.key), name: a.key === 'dragapult' ? 'Hammer Pult' : `${a.name} Hammers` }))
   return [...hammered, ...hits].slice(0, limit)
 }
+
+/** The sprites a deck is drawn with: the ones chosen for it, else its archetype's. */
+export const spritesOf = (deck: { sprites?: string[] | null; archetype: string | null } | null | undefined): string[] =>
+  !deck ? [] : deck.sprites?.length ? deck.sprites.slice(0, 2) : deckSprites(deck.archetype)
+
+/** Your side of a game: the sprites it was saved with, else its deck's, else the Pokémon the parser saw. */
+export const gameSprites = (
+  game: { my_sprites?: string[] | null; my_archetype?: string | null },
+  deck: { sprites?: string[] | null; archetype: string | null } | null | undefined,
+): string[] => (game.my_sprites?.length ? game.my_sprites : deck ? spritesOf(deck) : deckSprites(game.my_archetype))
+
+export const sameSprites = (a: string[], b: string[]) => a.length === b.length && a.every((s, i) => s === b[i])
