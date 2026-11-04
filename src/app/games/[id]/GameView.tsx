@@ -4,6 +4,7 @@ import { cardInfo } from '@/lib/cardinfo'
 import { knockouts, timeline } from '@/lib/parser/timeline'
 import type { Deck, Game } from '@/lib/types'
 import Sprites from '@/components/Sprites'
+import { gameSprites } from '@/lib/archetypes'
 import Mon from '@/components/Mon'
 import GameLog from '@/components/GameLog'
 import GameNotes from '@/components/GameNotes'
@@ -50,7 +51,7 @@ export default function GameView({ game, decks, knownTags }: { game: Game; decks
 
       <div className={`game-hero ${game.result ?? 'none'}`}>
         <div className="hero-side">
-          <Sprites arch={myArch} />
+          <Sprites slugs={gameSprites(game, deck)} arch={myArch} />
           <span className="hero-deck">{deck ? <>{deck.name}<span className="ver">{deck.version}</span></> : prettyArch(myArch)}</span>
         </div>
         <div className="hero-mid">

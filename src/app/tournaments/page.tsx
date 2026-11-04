@@ -6,7 +6,7 @@ export default async function Tournaments() {
   const { supabase } = await requireUser()
   const [{ data, error }, { data: deckData }] = await Promise.all([
     supabase.from('tournaments').select('*').order('start_date', { ascending: false }).order('created_at', { ascending: false }),
-    supabase.from('decks').select('id, name, version, archetype'),
+    supabase.from('decks').select('id, name, version, archetype, sprites'),
   ])
   const ts = ((data ?? []) as Tournament[]).map((t) => ({ ...t, rounds: normaliseRounds(t.rounds) }))
   return <TournamentList ts={ts} decks={(deckData ?? []) as DeckName[]} error={error?.message} />

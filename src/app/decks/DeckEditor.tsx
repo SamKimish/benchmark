@@ -6,13 +6,16 @@ import {
   basics, cardImage, cardKey, diffEntries, displayPrinting, formatDecklist, lookup, parseDecklist, resolvePrintings,
   sortEntries, total, type Card, type Entry,
 } from '@/lib/decklist'
-import { archetypeName, matchArchetypes } from '@/lib/archetypes'
+import { archetypeName, deckSprites, matchArchetypes, sameSprites, spritesOf } from '@/lib/archetypes'
 import { prettyArch } from '@/lib/format'
 import type { Deck } from '@/lib/types'
-import { deckHistory, saveDeck } from './actions'
+import { deckHistory, saveDeck, type PastGames } from './actions'
 import DeckDiff from './DeckDiff'
 import Pokeball from '@/components/Pokeball'
 import Icon from '@/components/Icon'
+import Sprites from '@/components/Sprites'
+import SpritePicker from '@/components/SpritePicker'
+import DeckPicker from '@/components/DeckPicker'
 
 let cardsPromise: Promise<Card[]> | null = null
 const loadCards = () => (cardsPromise ??= fetch('/cards.json').then((r) => r.json() as Promise<Card[]>))
@@ -30,10 +33,14 @@ function CardImg({ e, cards, size = 'SM' }: { e: { name: string; set: string; no
   return <img className="card-img" src={src} alt={`${e.name} ${e.set} ${e.no}`} loading="lazy" onError={() => setBroken(src)} />
 }
 
-export default function DeckEditor({ deck, latest }: {
+export default function DeckEditor({ deck, latest, gameCount = 0, stats }: {
   deck?: Deck
   /** the newest version of this deck, when that isn't the one being edited */
   latest?: { id: string; version: string; version_order: number }
+  /** games played with any version of this deck */
+  gameCount?: number
+  /** the deck's record, shown above the list */
+  stats?: React.ReactNode
 }) {
   const router = useRouter()
   const [cards, setCards] = useState<Card[]>([])
@@ -42,6 +49,9 @@ export default function DeckEditor({ deck, latest }: {
   const [entries, setEntries] = useState<Entry[]>(() => parseDecklist(deck?.decklist ?? ''))
   const [name, setName] = useState(deck?.name ?? '')
   const [archetype, setArchetype] = useState(deck?.archetype ?? '')
+  // sprites picked by hand; until then they follow the archetype
+  const [chosenSprites, setChosenSprites] = useState<string[] | null>(deck?.sprites?.length ? deck.sprites : null)
+  const [askPast, setAskPast] = useState(false)
   const [query, setQuery] = useState('')
   const [importing, setImporting] = useState(!deck)
   const [importText, setImportText] = useState('')
@@ -71,6 +81,9 @@ export default function DeckEditor({ deck, latest }: {
   const best = guesses[0]
   const [dismissed, setDismissed] = useState(false)
   const askArchetype = best && best.key !== archetype.trim() && !dismissed
+  const archSprites = deckSprites(archetype.trim() || best?.key)
+  const sprites = chosenSprites ?? archSprites
+  const spritesChanged = !!saved && !sameSprites(sprites, spritesOf(saved))
 
   const results = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -127,7 +140,10 @@ export default function DeckEditor({ deck, latest }: {
     useList(t)
   }
 
-  async function save() {
+  async function save(pastGames?: PastGames) {
+    // new sprites on a deck with games: ask whether its past matches change too
+    if (spritesChanged && gameCount > 0 && !pastGames) return setAskPast(true)
+    setAskPast(false)
     setBusy(true)
     const res = await saveDeck({
       id: saved?.id,
@@ -136,12 +152,14 @@ export default function DeckEditor({ deck, latest }: {
       decklist: text,
       basics: cards.length ? basics(entries, index) : saved?.basics ?? null,
       active: saved?.active ?? true,
-    })
+      sprites,
+    }, pastGames)
     setBusy(false)
     if (res.error) return setStatus({ error: res.error })
     if (!name.trim() && best) setName(best.name)
     if (!archetype.trim() && best) setArchetype(best.key)
-    setStatus({ ok: res.newVersion ? `Saved as ${res.version}` : 'Saved' })
+    setStatus({ ok: res.newVersion ? `Saved as ${res.version}` : pastGames === 'update' ? `Saved, and updated ${gameCount} past match${gameCount === 1 ? '' : 'es'}` : 'Saved' })
+    if (saved && res.id === saved.id) setSaved({ ...saved, decklist: text, sprites, name: name.trim() || best?.name || saved.name, archetype: archetype.trim() || best?.key || null })
     setHistory(null)
     if (res.id !== saved?.id) router.replace(`/decks/${res.id}`)
     else router.refresh()
@@ -160,6 +178,23 @@ export default function DeckEditor({ deck, latest }: {
   return (
     <>
     <Link href="/decks" className="button secondary back-link"><Icon name="back" /> All decks</Link>
+    {stats}
+    {askPast && (
+      <div className="modal-back" onMouseDown={(e) => e.target === e.currentTarget && setAskPast(false)} onKeyDown={(e) => e.key === 'Escape' && setAskPast(false)}>
+        <div className="modal panel confirm-modal" role="alertdialog" aria-label="Change the sprites on past matches?">
+          <h2 className="modal-title">Show the new sprites on past matches?</h2>
+          <p className="sprite-swap">
+            <Sprites slugs={spritesOf(saved)} /> <span aria-hidden>→</span> <Sprites slugs={sprites} />
+          </p>
+          <p>You&apos;ve played {gameCount} match{gameCount === 1 ? '' : 'es'} with this deck. Should {gameCount === 1 ? 'it' : 'they'} show the new sprites too, or keep the old ones? Matches you add from now on use the new sprites either way.</p>
+          <div className="row" style={{ justifyContent: 'flex-end', marginTop: 16 }}>
+            <button className="secondary" onClick={() => setAskPast(false)}>Cancel</button>
+            <button className="secondary" onClick={() => save('keep')}>Keep the old sprites</button>
+            <button onClick={() => save('update')} autoFocus>Update {gameCount === 1 ? 'it' : `all ${gameCount}`}</button>
+          </div>
+        </div>
+      </div>
+    )}
     <div className="builder">
       <section className="panel builder-deck">
         <div className="row">
@@ -167,7 +202,7 @@ export default function DeckEditor({ deck, latest }: {
           <span className="version" title={changed ? `Saving stores this as ${nextVersion}` : 'Current version'}>
             {changed ? nextVersion : saved?.version ?? 'v1'}
           </span>
-          <button onClick={save} disabled={busy || !count}>
+          <button onClick={() => save()} disabled={busy || !count}>
             {busy ? <Pokeball size={18} label="Saving…" /> : <><Icon name="save" /> {changed && saved ? `Save as ${nextVersion}` : 'Save'}</>}
           </button>
           <button className={importing && importText.trim() ? '' : 'secondary'} onClick={importList}
@@ -184,9 +219,14 @@ export default function DeckEditor({ deck, latest }: {
         <div className="row small muted" style={{ marginTop: 10, alignItems: 'center' }}>
           <span className={count === 60 ? '' : 'error'}>Cards: {count}/60</span>
           {cards.length > 0 && <span>Basics: {basics(entries, index)}</span>}
-          <span>Archetype: <strong>{archetypeName(archetype) ?? prettyArch(archetype) ?? 'none'}</strong></span>
           {status.ok && <span>{status.ok}</span>}
           {status.error && <span className="error">{status.error}</span>}
+        </div>
+
+        <div className="deck-meta">
+          <DeckPicker label="Archetype" value={archetype.trim() || best?.key || ''}
+            onChange={(k) => { setStatus({}); setArchetype(k); setDismissed(true); if (!name.trim()) setName(archetypeName(k) ?? prettyArch(k)) }} />
+          <SpritePicker value={sprites} suggested={archSprites} onChange={(x) => { setStatus({}); setChosenSprites(x) }} />
         </div>
 
         {older && (

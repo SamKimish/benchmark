@@ -4,6 +4,7 @@ import { requireUser } from '@/lib/supabase/server'
 import { gameRow, PARSER_VERSION } from '@/lib/games'
 import { baseArchetype, isHammer } from '@/lib/parser'
 import { prettyArch } from '@/lib/format'
+import { spritesOf } from '@/lib/archetypes'
 
 export interface GameEdit { deckId: string | null; oppArchetype: string | null; result: 'W' | 'L'; tags: string[]; winTags: string[] }
 
@@ -17,9 +18,10 @@ export async function updateGame(id: string, edit: GameEdit): Promise<{ error?: 
   const { data: game } = await supabase.from('games').select('log, deck_id').eq('id', id).single()
   if (game && game.deck_id !== edit.deckId) {
     // a different deck can mean a different game plan, so the stats are worked out again
-    const { data: deck } = edit.deckId ? await supabase.from('decks').select('archetype').eq('id', edit.deckId).single() : { data: null }
+    const { data: deck } = edit.deckId ? await supabase.from('decks').select('archetype, sprites').eq('id', edit.deckId).single() : { data: null }
     const r = gameRow(game.log, deck?.archetype)
-    Object.assign(patch, { stats: r.stats, my_archetype: r.my_archetype })
+    // and the game takes the new deck's sprites
+    Object.assign(patch, { stats: r.stats, my_archetype: r.my_archetype, my_sprites: deck ? spritesOf(deck) : [] })
   }
   const { error } = await supabase.from('games').update(patch).eq('id', id)
   if (error) return { error: error.message }

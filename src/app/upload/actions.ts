@@ -4,6 +4,7 @@ import { requireUser } from '@/lib/supabase/server'
 import { gameRow } from '@/lib/games'
 import { LogError } from '@/lib/parser'
 import { TC_DECKS } from '@/lib/training-court'
+import { deckSprites, spritesOf } from '@/lib/archetypes'
 import type { Deck } from '@/lib/types'
 
 export interface UploadItem {
@@ -31,7 +32,7 @@ export async function ensureTrainingCourtDecks(used?: string[]): Promise<Deck[]>
     const lines = new Map<string, string>((have ?? []).filter((h) => h.line_id).map((h) => [h.name, h.line_id]))
     const rows = missing.map(({ match: _, ...d }) => {
       if (!lines.has(d.name)) lines.set(d.name, crypto.randomUUID())
-      return { ...d, decklist: d.decklist ?? '', basics: d.basics ?? null, active: d.active ?? true, line_id: lines.get(d.name) }
+      return { ...d, sprites: deckSprites(d.archetype), decklist: d.decklist ?? '', basics: d.basics ?? null, active: d.active ?? true, line_id: lines.get(d.name) }
     })
     const { error } = await supabase.from('decks').insert(rows)
     if (error) throw new Error(error.message)
@@ -44,8 +45,10 @@ export async function ensureTrainingCourtDecks(used?: string[]): Promise<Deck[]>
 
 export async function saveGames(items: UploadItem[]): Promise<{ saved: number; duplicates: number; errors: string[] }> {
   const { supabase } = await requireUser()
-  const { data: decks } = await supabase.from('decks').select('id, archetype')
+  const { data: decks } = await supabase.from('decks').select('id, archetype, sprites')
   const arch = new Map((decks ?? []).map((d) => [d.id, d.archetype as string | null]))
+  // each game keeps the sprites its deck had when it was saved
+  const sprites = new Map((decks ?? []).map((d) => [d.id, spritesOf(d as Pick<Deck, 'archetype' | 'sprites'>)]))
   const rows = []
   const errors: string[] = []
   for (const [i, it] of items.entries()) {
@@ -55,6 +58,7 @@ export async function saveGames(items: UploadItem[]): Promise<{ saved: number; d
       rows.push({
         ...r,
         deck_id: it.deckId && arch.has(it.deckId) ? it.deckId : null,
+        my_sprites: (it.deckId && sprites.get(it.deckId)) || [],
         played_at: new Date(it.playedAt).toISOString(),
         result: it.result ?? r.result,
         opp_archetype: it.oppArchetype?.trim() || r.opp_archetype,

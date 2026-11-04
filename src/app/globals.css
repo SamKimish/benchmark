@@ -535,3 +535,37 @@ table.t-rounds-table { border-collapse: separate; border-spacing: 0 3px; font-si
   .round-edit .round-tools { position: absolute; right: 8px; bottom: 8px; grid-row: auto; grid-column: auto; }
   .round-more { margin-bottom: 34px; }
 }
+
+/* Deck sprites and records */
+.deck-tile-info { display: flex; gap: 8px; align-items: center; text-decoration: none; min-width: 0; flex: 1; }
+.deck-tile-info > .sprites { min-width: 0; flex: none; }
+.deck-record { display: flex; gap: 10px; margin-top: 2px; }
+.deck-record .good { color: var(--win); }
+.deck-record .bad { color: var(--loss); }
+.sprite-picker { display: inline-flex; align-items: center; gap: 8px; grid-template-columns: none; }
+.sprite-slots { display: inline-flex; align-items: center; gap: 6px; }
+.sprite-slot-wrap { position: relative; display: inline-flex; }
+.sprite-slot { padding: 0; width: 46px; height: 46px; display: grid; place-items: center; background: var(--panel); color: var(--ink);
+  border: 1px dashed var(--line); border-radius: 10px; }
+.sprite-slot:hover, .sprite-slot.on { border: 1px solid var(--accent); }
+.sprite-slot .sprites { min-width: 0; }
+.sprite-plus { font-size: 1.3rem; color: var(--muted); }
+.sprite-remove { position: absolute; top: -6px; right: -6px; width: 18px; height: 18px; padding: 0; border-radius: 99px; font-size: .75rem; line-height: 1;
+  background: var(--ink); color: var(--panel); }
+.sprite-picker .picker-pop { width: min(380px, 90vw); right: auto; }
+.sprite-swap { display: flex; align-items: center; justify-content: center; gap: 12px; font-size: 1.2rem; margin: 4px 0 12px; }
+.deck-stats { margin-bottom: 20px; }
+.deck-stats .tiles { margin-bottom: 14px; }
+.deck-stats-tables { display: grid; align-items: start; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px; margin-bottom: 8px; }
+.deck-stats tr.current td { font-weight: 600; }
+.deck-stats-empty { margin-bottom: 16px; }
+.mosaic { position: relative; }
+.tile-sprites { position: absolute; right: 8px; bottom: 8px; background: var(--panel); border-radius: 12px; padding: 2px 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .15); }
+.tile-sprites .sprites { min-width: 0; }
+.deck-record { white-space: nowrap; }
+.deck-meta { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: end; margin-top: 12px; }
+.deck-meta > .picker:first-child { flex: 0 1 420px; min-width: 260px; }
+.deck-meta .picker-current > span:nth-child(2) .muted { display: none; }
+.deck-meta .picker-label { font-size: .85rem; color: var(--muted); }
+.deck-meta .sprite-picker { display: grid; gap: 4px; }

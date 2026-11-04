@@ -11,6 +11,8 @@ export interface Deck {
   decklist: string
   basics: number | null
   active: boolean
+  /** up to two Pokémon slugs drawn for this deck; empty = its archetype's */
+  sprites: string[]
   created_at: string
 }
 
@@ -24,6 +26,8 @@ export interface Game {
   result: 'W' | 'L' | null
   went_first: boolean | null
   my_archetype: string | null
+  /** the sprites shown for your side of this game; empty = the deck's */
+  my_sprites: string[]
   opp_archetype: string | null
   end_reason: string | null
   tags: string[]

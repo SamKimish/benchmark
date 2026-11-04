@@ -9,6 +9,7 @@ import {
 import type { Deck } from '@/lib/types'
 import DeckPicker from '@/components/DeckPicker'
 import Sprites from '@/components/Sprites'
+import { spritesOf } from '@/lib/archetypes'
 import Icon from '@/components/Icon'
 import Pokeball from '@/components/Pokeball'
 import { saveTournament } from './actions'
@@ -153,7 +154,7 @@ export default function TournamentEditor({ t, decks }: { t?: Tournament; decks: 
         <section className="panel t-section">
           <h2>Your deck</h2>
           <div className="t-deck">
-            <Sprites arch={myArch} />
+            <Sprites arch={myArch} slugs={deck ? spritesOf(deck) : undefined} />
             <label className="grow">Decklist
               <select value={deckId} onChange={(e) => setDeckId(e.target.value)}>
                 <option value="">No saved list</option>

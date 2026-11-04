@@ -5,6 +5,7 @@ import {
 } from '@/lib/tournaments'
 import type { Deck } from '@/lib/types'
 import Sprites from '@/components/Sprites'
+import { spritesOf } from '@/lib/archetypes'
 import Icon from '@/components/Icon'
 import { KindIcon } from './KindIcon'
 import DeleteTournament from './DeleteTournament'
@@ -35,7 +36,7 @@ export default function TournamentView({ t, deck: d }: { t: Tournament; deck: De
           </div>
           <div className="t-score">
             <div className="t-record" title="Wins-losses-ties">{recordText(rec)}</div>
-            <Sprites arch={myArch} />
+            <Sprites arch={myArch} slugs={d ? spritesOf(d) : undefined} />
             <div className="muted small">
               {d ? <Link href={`/decks/${d.id}`}>{d.name}{d.version && <span className="ver"> {d.version}</span>}</Link> : prettyArch(myArch)}
             </div>
