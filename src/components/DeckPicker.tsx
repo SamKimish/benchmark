@@ -12,7 +12,11 @@ export const loadPokemon = () => (pokemonPromise ??= fetch('/cards.json')
   .then((r) => r.json() as Promise<Card[]>)
   .then((cs) => [...new Set(cs.filter((c) => c.t === 'P').map((c) => cardSlug(c.n)))].sort().concat(HAMMER)))
 
-type Option = { kind: 'deck'; key: string; name: string } | { kind: 'mon'; key: string; name: string }
+type Option = { kind: 'deck' | 'mon' | 'new'; key: string; name: string }
+
+/** A deck key from whatever was typed, for Pokémon too new for our card data: 'mega rayquaza' -> 'rayquaza-mega'. */
+export const typedSlug = (q: string) =>
+  cardSlug(q.trim().replace(/\s+/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()).replace(/ Ex$/, ' ex'))
 
 const words = (q: string) => q.toLowerCase().split(/\s+/).filter(Boolean)
 const hit = (text: string, ws: string[]) => ws.every((w) => text.includes(w))
@@ -52,7 +56,12 @@ export default function DeckPicker({ value, onChange, label }: { value: string; 
       .sort((a, b) => Number(!a.startsWith(ws[0])) - Number(!b.startsWith(ws[0])) || a.length - b.length)
       .slice(0, 8)
       .map((p) => ({ kind: 'mon', key: p, name: prettyArch(p) }))
-    return [...decks, ...mons]
+    const all = [...decks, ...mons]
+    // nothing we know of is called that: offer the typed name as a deck of its own
+    const slug = typedSlug(q)
+    const fresh: Option[] = slug && pokemon.length && !all.length
+      ? [{ kind: 'new', key: slug, name: prettyArch(slug) }] : []
+    return [...all, ...fresh]
   }, [q, pokemon, adding, parts.length])
 
   useEffect(() => setActive(0), [q, adding])
@@ -60,7 +69,7 @@ export default function DeckPicker({ value, onChange, label }: { value: string; 
   function close() { setOpen(false); setAdding(false); setQ('') }
   function choose(o: Option) {
     if (o.kind === 'mon' && adding && o.key === HAMMER) onChange(withHammer(value))
-    else if (o.kind === 'mon' && adding && parts.length === 1 && parts[0] !== o.key) onChange(`${parts[0]},${o.key}`)
+    else if (o.kind !== 'deck' && adding && parts.length === 1 && parts[0] !== o.key) onChange(`${parts[0]},${o.key}`)
     else onChange(o.key)
     close()
   }
@@ -94,11 +103,11 @@ export default function DeckPicker({ value, onChange, label }: { value: string; 
               const first = i === 0 || options[i - 1].kind !== o.kind
               return (
                 <li key={`${o.kind}-${o.key}`}>
-                  {first && <div className="picker-head">{o.kind === 'deck' ? (q ? 'Decks' : 'Most played decks') : 'Pokémon'}</div>}
+                  {first && <div className="picker-head">{o.kind === 'deck' ? (q ? 'Decks' : 'Most played decks') : o.kind === 'mon' ? 'Pokémon' : 'Not listed yet'}</div>}
                   <button type="button" role="option" aria-selected={i === active} className={i === active ? 'on' : ''}
                     onMouseEnter={() => setActive(i)} onClick={() => choose(o)}>
                     {o.kind === 'deck' ? <Sprites arch={o.key} /> : <span className="sprites"><span className="sprite"><img src={spriteUrl(o.key)} alt="" onError={(e) => { e.currentTarget.style.visibility = 'hidden' }} /></span></span>}
-                    <span>{o.name}</span>
+                    <span>{o.kind === 'new' ? <>Use <strong>{o.name}</strong>{adding ? ` with ${prettyArch(value)}` : ' as a new deck'}</> : o.name}</span>
                   </button>
                 </li>
               )
