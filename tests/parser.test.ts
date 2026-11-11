@@ -1,6 +1,8 @@
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import { cardSlug, detectArchetype, gameStats, LogError } from '@/lib/parser'
+import { parse } from '@/lib/parser/parse'
+import { retreatLocks } from '@/lib/parser/stats'
 
 const fixture = (name: string) => readFileSync(new URL(`./fixtures/${name}`, import.meta.url), 'utf8')
 
@@ -50,6 +52,19 @@ describe('gameStats', () => {
     const numbered = old.split(/\r?\n/).map((l) => (/^\S+'s Turn$/.test(l) ? `Turn # ${++n} - ${l}` : l)).join('\r\n')
     expect(n).toBeGreaterThan(0)
     expect(gameStats(numbered)).toEqual(gameStats(old))
+  })
+
+  it('tags a retreat lock that left my Active stuck', () => {
+    const log = fixture('retreat-lock.txt')
+    const s = gameStats(log)
+    expect(s.result).toBe('L')
+    expect(s.tags).toContain('Retreat locked')
+    // seven Impounds; the first, on a Gardevoir ex that attacked and survived, didn't hurt
+    expect(retreatLocks(parse(log), 'opp')).toBe(6)
+    // switching the locked Pokémon out on my next turn gets out of the lock
+    const escaped = log.replace(/(Kimish17's Turn\r?\n)/g, "$1Kimish17's Gardevoir ex is now in the Active Spot.\n")
+    expect(gameStats(escaped).tags).not.toContain('Retreat locked')
+    expect(retreatLocks(parse(log), 'me')).toBe(0)
   })
 
   it('rejects text that is not a game log', () => {

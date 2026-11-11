@@ -14,6 +14,10 @@ const sets = (await get('sets/en.json')).filter((s) => /^(sv|me|zsv|rsv)/.test(s
 // TCG Live / Limitless codes where the data's ptcgoCode differs
 const CODE = { svp: 'SVP', mep: 'MEP' }
 const cards = []
+// "Pokémon|Attack" for every attack or Ability that stops the opponent's Active retreating (Yveltal's Clutch,
+// Mega Golisopod ex's Quadruple Hold, ...), for the "Retreat locked" loss reason. Locks on the user's own
+// Pokémon ("this Pokémon can't retreat") don't count.
+const locks = new Set()
 for (const s of sets) {
   const code = CODE[s.id] ?? s.ptcgoCode
   if (!code) continue
@@ -22,6 +26,8 @@ for (const s of sets) {
   for (const c of list) {
     const basicEnergy = c.supertype === 'Energy' && c.subtypes?.includes('Basic')
     if (!basicEnergy && !MARKS.has(c.regulationMark)) continue
+    for (const a of [...(c.attacks ?? []), ...(c.abilities ?? [])])
+      if (/(?:Defending|that|their \w+) Pokémon can't retreat/.test(a.text ?? '')) locks.add(`${c.name}|${a.name}`)
     cards.push({
       n: c.name,
       s: code,
@@ -34,3 +40,4 @@ for (const s of sets) {
   console.log(s.id, code, cards.length)
 }
 writeFileSync(new URL('../public/cards.json', import.meta.url), JSON.stringify(cards))
+writeFileSync(new URL('../src/lib/parser/retreat-locks.json', import.meta.url), JSON.stringify([...locks].sort(), null, 1) + '\n')
