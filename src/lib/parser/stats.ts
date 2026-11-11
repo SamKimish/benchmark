@@ -2,6 +2,7 @@
 import { parse, ParsedGame, TWO_PRIZERS_SUPPORT } from './parse'
 import { cardSlug, esc, normalize } from './text'
 import { baseArchetype, detectArchetype, withHammer } from './archetype'
+import RETREAT_LOCK_LIST from './retreat-locks.json'
 
 // Per archetype: main attackers, the Basics that start those lines, and the line pieces that are liabilities early
 interface Plan { attackers: Set<string>; lineBasics: Set<string>; lineEarly: Set<string> }
@@ -20,6 +21,39 @@ SUPPORT_EX.delete('Squawkabilly ex')
 const NON_DAMAGE = new Set(['Recon Directive', 'Flip the Script', 'Fighting Gong', 'Tuck Tail', 'Run Errand', 'Bubble Gathering'])
 const BASIC_ENERGY = /^Basic \w+ Energy$/
 const HAND_DISRUPTION = new Set(['Unfair Stamp', 'Judge', 'Iono', 'Roxanne', "Xerosic's Machinations", 'Eri', 'Marnie', 'Red Card', 'Special Red Card'])
+// "Pokémon|Attack" pairs that stop the Defending Pokémon retreating, built from the card data by scripts/build-cards.mjs
+const RETREAT_LOCKS = new Set<string>(RETREAT_LOCK_LIST)
+
+/**
+ * Times `by` retreat-locked the other player's Active and it hurt: on the locked player's next turn the
+ * Pokémon was still stuck in the Active Spot (not switched out or evolved, which clears the lock) and it
+ * either couldn't attack or was Knocked Out on the turn after.
+ */
+export function retreatLocks(g: ParsedGame, by: 'me' | 'opp') {
+  const lockBy = by === 'me' ? g.me : g.opp
+  const victim = by === 'me' ? g.opp : g.me
+  if (!lockBy || !victim) return 0
+  const reLock = new RegExp(`^${esc(lockBy)}'s (.+?) used (.+?) on ${esc(victim)}['’]s (.+?)(?: for \\d+ damage)?\\.`)
+  const reNewActive = new RegExp(`^${esc(victim)}['’]s .+? is now in the Active Spot`)
+  const side = by === 'me' ? 'opp' : 'me'
+  let n = 0
+  g.turns.forEach((t, ti) => {
+    if (t.who !== by) return
+    for (const ln of t.lines) {
+      const m = ln.match(reLock)
+      if (!m || !RETREAT_LOCKS.has(`${m[1]}|${m[2]}`)) continue
+      const mon = m[3]
+      if (g.kos.some((k) => k.turnIdx === ti && k.side === side && k.mon === mon)) continue
+      const next = g.turns[ti + 1]
+      if (!next || next.who !== side) continue
+      const escaped = next.lines.some((l) => reNewActive.test(l) || (l.startsWith(`${victim} evolved ${mon} to `) && l.includes('Active Spot')))
+      if (escaped) continue
+      const kodAfter = g.kos.some((k) => k.turnIdx === ti + 2 && k.side === side && k.mon === mon)
+      if (!next.attacked || kodAfter) n++
+    }
+  })
+  return n
+}
 
 /** A plan for decks without one: the attackers are the Pokémon the archetype is named after. */
 function planFor(key: string | null, inPlay: string[]): Plan {
@@ -112,6 +146,7 @@ function tags(g: ParsedGame, text: string, x: ReturnType<typeof extras>, slow: b
   if (supportKod.length) out.push("Support ex KO'd")
   if (x.firstGiven && x.firstGiven >= 2 && g.firstPrize === 'opp') out.push('Gave up first KO on ex')
   if ((text.match(new RegExp(`^${opp}'s Budew used Itchy Pollen`, 'gm')) ?? []).length >= 2) out.push('Item locked')
+  if (retreatLocks(g, 'opp')) out.push('Retreat locked')
   const denied = g.opp ? energyDenied(text, g.opp, g.me) : 0
   if (denied) out.push('Energy denied')
   if ([...text.matchAll(new RegExp(`^${opp} played (.+?)\\.$`, 'gm'))].some((m) => HAND_DISRUPTION.has(m[1]))) out.push('Hand disrupted')
