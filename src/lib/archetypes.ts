@@ -35,8 +35,32 @@ export function deckSprites(key: string | null | undefined): string[] {
   return (limitlessArchetype(key)?.key ?? key).split(',').slice(0, 2)
 }
 
+/** Megas Limitless has no sprite for yet; they are drawn as the regular Pokémon. */
+const NO_MEGA_SPRITE = new Set(['golurk-mega', 'golisopod-mega', 'zeraora-mega'])
+
+/**
+ * The Limitless sprite name for one of our slugs, where the two differ: our slugs come from card names
+ * ('Fan Rotom' -> 'fan-rotom'), Limitless names forms after the species ('rotom-fan').
+ */
+export function spriteSlug(slug: string): string {
+  if (NO_MEGA_SPRITE.has(slug)) return slug.replace(/-mega$/, '')
+  return slug
+    .replace(/^(.+)-([xy])-mega$/, '$1-mega-$2')                      // charizard-x-mega -> charizard-mega-x
+    .replace(/^(fan|frost|heat|mow|wash)-rotom$/, 'rotom-$1')
+    .replace(/^(black|white)-kyurem$/, 'kyurem-$1')
+    .replace(/^bloodmoon-ursaluna$/, 'ursaluna-bloodmoon')
+    .replace(/^castform-(\w+)-form$/, 'castform-$1')
+    .replace(/^(clodsire|obstagoon|perrserker|sirfetchd|runerigus|cursola|mr-rime|sneasler|overqwil|kleavor)-(paldea|galar|hisui)$/, '$1')   // only one form exists
+}
+
 export const spriteUrl = (slug: string) =>
-  slug === HAMMER ? '/sprites/crushing-hammer.png' : `https://r2.limitlesstcg.net/pokemon/gen9/${slug}.png`
+  slug === HAMMER ? '/sprites/crushing-hammer.png' : `https://r2.limitlesstcg.net/pokemon/gen9/${spriteSlug(slug)}.png`
+
+/** A sprite to try when Limitless has none for a slug: the regular form of a Mega or regional Pokémon. */
+export const fallbackSpriteUrl = (slug: string): string | null => {
+  const base = spriteSlug(slug).replace(/-mega(-[xy])?$/, '').replace(/-(alola|galar|hisui|paldea)$/, '')
+  return base !== spriteSlug(slug) ? `https://r2.limitlesstcg.net/pokemon/gen9/${base}.png` : null
+}
 
 /**
  * The Limitless archetypes a decklist's Pokémon could be, best first. An archetype matches when every

@@ -1,4 +1,5 @@
-import { deckSprites, spriteUrl } from '@/lib/archetypes'
+import { deckSprites } from '@/lib/archetypes'
+import SpriteImg from './SpriteImg'
 import { prettyArch } from '@/lib/format'
 
 /**
@@ -11,7 +12,7 @@ export default function Sprites({ arch, slugs, title }: { arch?: string | null; 
   const shown = slugs?.length ? slugs.slice(0, 2) : deckSprites(arch)
   return (
     <span className="sprites" title={title ?? (arch ? prettyArch(arch) : undefined)}>
-      {shown.map((s) => <span key={s} className="sprite"><img src={spriteUrl(s)} alt="" loading="lazy" /></span>)}
+      {shown.map((s) => <span key={s} className="sprite"><SpriteImg slug={s} /></span>)}
     </span>
   )
 }
