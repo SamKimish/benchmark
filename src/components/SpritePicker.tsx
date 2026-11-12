@@ -1,10 +1,11 @@
 'use client'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { HAMMER } from '@/lib/parser'
-import { deckSprites, LIMITLESS, spriteUrl } from '@/lib/archetypes'
+import { deckSprites, LIMITLESS } from '@/lib/archetypes'
 import { prettyArch } from '@/lib/format'
 import { loadPokemon } from './DeckPicker'
 import Sprites from './Sprites'
+import SpriteImg from './SpriteImg'
 
 type Option = { kind: 'deck'; key: string; name: string; slugs: string[] } | { kind: 'mon'; key: string; name: string; slugs: string[] }
 
@@ -105,7 +106,7 @@ export default function SpritePicker({ value, suggested, onChange }: {
                   <button type="button" role="option" aria-selected={i === active} className={i === active ? 'on' : ''}
                     onMouseEnter={() => setActive(i)} onClick={() => choose(o)}>
                     {o.kind === 'deck' ? <Sprites slugs={o.slugs} />
-                      : <span className="sprites"><span className="sprite"><img src={spriteUrl(o.key)} alt="" onError={(e) => { e.currentTarget.style.visibility = 'hidden' }} /></span></span>}
+                      : <span className="sprites"><span className="sprite"><SpriteImg slug={o.key} /></span></span>}
                     <span>{o.key === HAMMER ? 'Crushing Hammer' : o.name}</span>
                   </button>
                 </li>

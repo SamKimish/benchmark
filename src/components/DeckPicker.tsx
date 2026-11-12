@@ -1,10 +1,11 @@
 'use client'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { cardSlug, HAMMER, isHammer, withHammer } from '@/lib/parser'
-import { LIMITLESS, spriteUrl } from '@/lib/archetypes'
+import { LIMITLESS } from '@/lib/archetypes'
 import { prettyArch } from '@/lib/format'
 import type { Card } from '@/lib/decklist'
 import Sprites from './Sprites'
+import SpriteImg from './SpriteImg'
 
 let pokemonPromise: Promise<string[]> | null = null
 /** Every Pokémon slug in the card data ('dragapult', 'starmie-mega'), for building a deck by hand. */
@@ -106,7 +107,7 @@ export default function DeckPicker({ value, onChange, label }: { value: string; 
                   {first && <div className="picker-head">{o.kind === 'deck' ? (q ? 'Decks' : 'Most played decks') : o.kind === 'mon' ? 'Pokémon' : 'Not listed yet'}</div>}
                   <button type="button" role="option" aria-selected={i === active} className={i === active ? 'on' : ''}
                     onMouseEnter={() => setActive(i)} onClick={() => choose(o)}>
-                    {o.kind === 'deck' ? <Sprites arch={o.key} /> : <span className="sprites"><span className="sprite"><img src={spriteUrl(o.key)} alt="" onError={(e) => { e.currentTarget.style.visibility = 'hidden' }} /></span></span>}
+                    {o.kind === 'deck' ? <Sprites arch={o.key} /> : <span className="sprites"><span className="sprite"><SpriteImg slug={o.key} /></span></span>}
                     <span>{o.kind === 'new' ? <>Use <strong>{o.name}</strong>{adding ? ` with ${prettyArch(value)}` : ' as a new deck'}</> : o.name}</span>
                   </button>
                 </li>

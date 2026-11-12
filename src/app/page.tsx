@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import Icon from '@/components/Icon'
 import { requireUser } from '@/lib/supabase/server'
-import { dayKey, dayLabel, pct, prettyArch, timeOnly } from '@/lib/format'
+import { dayKey, dayParts, pct, prettyArch, timeOnly } from '@/lib/format'
 import Sprites from '@/components/Sprites'
 import QuickPaste from '@/components/QuickPaste'
 import { MatchEditor, RowActions } from '@/components/MatchEditor'
@@ -30,6 +30,19 @@ interface Row {
 }
 
 const PAGE = 1000
+
+/** ' good' / ' bad' for a win rate worth colouring, the same thresholds as the stat tiles. */
+const tone = (w: number, n: number) => (!n ? '' : w / n >= 0.55 ? ' good' : w / n < 0.45 ? ' bad' : '')
+
+/** A share of games as a number with a slim bar behind it. */
+function Share({ n, of, kind }: { n: number; of: number; kind: 'good' | 'bad' }) {
+  return (
+    <span className={`share ${kind}`}>
+      <span className="share-bar" aria-hidden><span style={{ width: `${of ? Math.round((100 * n) / of) : 0}%` }} /></span>
+      <span className="share-n">{pct(n, of)}</span>
+    </span>
+  )
+}
 
 export default async function MatchLog({ searchParams }: { searchParams: Promise<{ deck?: string; v?: string }> }) {
   const q = await searchParams
@@ -126,18 +139,19 @@ export default async function MatchLog({ searchParams }: { searchParams: Promise
             <Stat label="Going 2nd" w={wins(second)} n={second.length} />
           </div>
 
-          <h2>Matches</h2>
+          <h2 className="section-head">Matches <span className="section-meta">{days.length} {days.length === 1 ? 'day' : 'days'}</span></h2>
           <Reanalyse outdated={outdated ?? 0} />
           <MatchEditor decks={decks} knownTags={knownTags}>
           {days.map(([day, xs], i) => {
             const w = wins(xs), l = xs.filter((r) => r.result === 'L').length
             const decksPlayed = [...new Map(xs.map((r) => mySprites(r)).filter((x) => x.length).map((x) => [x.join(','), x])).values()].slice(0, 2)
+            const { weekday, date } = dayParts(day)
             return (
               <details key={day} className="day" open={i === 0}>
                 <summary>
-                  <span className="day-date">{dayLabel(day)}</span>
-                  <span className="day-decks">{decksPlayed.map((k) => <Sprites key={k.join(',')} slugs={k} />)}</span>
-                  <span className="day-record"><strong>{w}-{l}</strong><span className="muted small">{xs.length} total</span></span>
+                  <span className="day-date"><span className="day-wd">{weekday}</span><span className="day-dm">{date}</span></span>
+                  <span className="day-decks">{decksPlayed.map((k) => <span key={k.join(',')} className="deck-chip"><Sprites slugs={k} /></span>)}</span>
+                  <span className={`day-record${tone(w, w + l)}`}><strong>{w}–{l}</strong><span className="day-n">{xs.length} {xs.length === 1 ? 'game' : 'games'}</span></span>
                   <span className="chevron" aria-hidden><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6" /></svg></span>
                 </summary>
                 <ul className="matches">
@@ -171,17 +185,19 @@ export default async function MatchLog({ searchParams }: { searchParams: Promise
 
           <div className="grid2">
             <div>
-              <h2>Matchups</h2>
+              <h2 className="section-head">Matchups <span className="section-meta">{matchups.length} decks faced</span></h2>
               <div className="table-wrap">
-                <table>
-                  <thead><tr><th>Opponent deck</th><th>Games</th><th>Win rate</th><th>1st</th><th>2nd</th></tr></thead>
+                <table className="data">
+                  <thead><tr><th>Opponent deck</th><th className="num">Games</th><th className="num">Win rate</th><th className="num">1st</th><th className="num">2nd</th></tr></thead>
                   <tbody>
                     {matchups.map(([opp, xs]) => {
                       const f = xs.filter((r) => r.went_first === true), s = xs.filter((r) => r.went_first === false)
                       return (
                         <tr key={opp}>
-                          <td><span className="row" style={{ gap: 8, flexWrap: 'nowrap' }}><Sprites arch={opp} />{prettyArch(opp)}</span></td><td>{xs.length}</td><td>{pct(wins(xs), xs.length)}</td>
-                          <td>{pct(wins(f), f.length)}</td><td>{pct(wins(s), s.length)}</td>
+                          <td><span className="opp-cell"><Sprites arch={opp} /><span>{prettyArch(opp)}</span></span></td>
+                          <td className="num">{xs.length}</td>
+                          <td className={`num rate${tone(wins(xs), xs.length)}`}><strong>{pct(wins(xs), xs.length)}</strong></td>
+                          <td className="num muted">{pct(wins(f), f.length)}</td><td className="num muted">{pct(wins(s), s.length)}</td>
                         </tr>
                       )
                     })}
@@ -190,24 +206,24 @@ export default async function MatchLog({ searchParams }: { searchParams: Promise
               </div>
             </div>
             <div>
-              <h2>What went wrong in losses</h2>
+              <h2 className="section-head">What went wrong in losses</h2>
               <div className="table-wrap">
-                <table>
-                  <thead><tr><th>Tag</th><th>Losses</th><th>Share</th></tr></thead>
+                <table className="data">
+                  <thead><tr><th>Reason</th><th className="num">Losses</th><th className="share-col">Share</th></tr></thead>
                   <tbody>
                     {[...tagCounts.entries()].sort((a, b) => b[1] - a[1]).map(([t, n]) => (
-                      <tr key={t}><td><span className="pill bad">{t}</span></td><td>{n}</td><td>{pct(n, losses)}</td></tr>
+                      <tr key={t}><td><span className="pill bad">{t}</span></td><td className="num">{n}</td><td><Share n={n} of={losses} kind="bad" /></td></tr>
                     ))}
                   </tbody>
                 </table>
               </div>
-              <h2>What went right in wins</h2>
+              <h2 className="section-head">What went right in wins</h2>
               <div className="table-wrap">
-                <table>
-                  <thead><tr><th>Tag</th><th>Wins</th><th>Share</th></tr></thead>
+                <table className="data">
+                  <thead><tr><th>Reason</th><th className="num">Wins</th><th className="share-col">Share</th></tr></thead>
                   <tbody>
                     {[...winCounts.entries()].sort((a, b) => b[1] - a[1]).map(([t, n]) => (
-                      <tr key={t}><td><span className="pill good">{t}</span></td><td>{n}</td><td>{pct(n, wins(done))}</td></tr>
+                      <tr key={t}><td><span className="pill good">{t}</span></td><td className="num">{n}</td><td><Share n={n} of={wins(done)} kind="good" /></td></tr>
                     ))}
                   </tbody>
                 </table>

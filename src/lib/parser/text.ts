@@ -50,6 +50,7 @@ export function cardSlug(name: string | null | undefined): string {
   if (region && REGIONS[region[1]]) { n = n.slice(region[0].length); suffix += '-' + REGIONS[region[1]] }
   const mask = n.match(/^(\w+) Mask (Ogerpon)$/)
   if (mask) { n = mask[2]; if (mask[1] !== 'Teal') suffix += '-' + mask[1].toLowerCase() }
+  n = n.replace(/ ?♀$/, '-f').replace(/ ?♂$/, '-m')   // Nidoran♀ -> nidoran-f, as Limitless names it
   n = n.toLowerCase().replace(/é/g, 'e').replace(/[^a-z0-9 -]/g, '').trim().replace(/ /g, '-')
   return n + suffix
 }
