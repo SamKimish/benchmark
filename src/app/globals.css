@@ -179,7 +179,8 @@ button:has(> .icon) { display: inline-flex; align-items: center; gap: 6px; }
 
 .save-bar { position: sticky; top: 0; z-index: 5; background: var(--bg); padding: 10px 0; }
 /* match log: one collapsible group per day, rows coloured by result */
-.sprites { display: inline-flex; gap: 2px; min-width: 76px; align-items: center; }
+/* two 38px slots + gap, so a one-sprite deck takes the same room as a two-sprite one */
+.sprites { display: inline-flex; gap: 2px; min-width: 78px; align-items: center; }
 /* a fixed slot per Pokémon; the bitmap keeps its own size inside it, so small sprites stay sharp */
 .sprite { width: 38px; height: 40px; display: grid; place-items: center; flex: none; }
 .sprite img { max-width: 100%; max-height: 100%; width: auto; height: auto; display: block; }
@@ -191,6 +192,8 @@ details.day > summary:hover .chevron { background: var(--line); }
 details.day:not([open]) .chevron { transform: rotate(-90deg); }
 .day-date { font-weight: 600; flex: 1; }
 .day-decks { display: flex; gap: 8px; }
+/* right-align each deck in its slot so every day's sprites end flush against the record */
+.day-decks .sprites { justify-content: flex-end; }
 .day-record { display: flex; flex-direction: column; align-items: flex-end; line-height: 1.2; min-width: 64px; }
 .matches { list-style: none; margin: 0 0 12px; padding: 0; display: grid; gap: 6px; }
 .match { display: grid; grid-template-columns: 80px minmax(180px, 1.1fr) minmax(0, 1fr) 40px 80px 72px; align-items: center; gap: 14px;
