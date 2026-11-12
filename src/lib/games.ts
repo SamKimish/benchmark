@@ -2,8 +2,8 @@ import { createHash } from 'node:crypto'
 import { gameStats } from './parser'
 import { normalize } from './parser/text'
 
-/** Bump when the parser's output changes, so saved games can be analysed again (2: win reasons, Hammer decks; 3: Retreat locked). */
-export const PARSER_VERSION = 3
+/** Bump when the parser's output changes, so saved games can be analysed again (2: win reasons, Hammer decks; 3: Retreat locked; 4: Ability locked). */
+export const PARSER_VERSION = 4
 
 export const logHash = (log: string) => createHash('sha256').update(normalize(log).trim()).digest('hex')
 

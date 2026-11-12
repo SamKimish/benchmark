@@ -1,0 +1,317 @@
+Setup
+Rival8 chose tails for the opening coin flip.
+Kimish17 won the coin toss.
+Kimish17 decided to go second.
+Rival8 drew 7 cards for the opening hand.
+- 7 drawn cards.
+Kimish17 drew 7 cards for the opening hand.
+- 7 drawn cards.
+   • Poké Pad, Dudunsparce, Ultra Ball, Munkidori, Poké Pad, Basic Fire Energy, Jamming Tower
+Rival8 played Mega Rayquaza ex to the Active Spot.
+Kimish17 played Munkidori to the Active Spot.
+
+Rival8's Turn
+Rival8 drew a card.
+Rival8 attached Basic Fire Energy to Mega Rayquaza ex in the Active Spot.
+Rival8 ended their turn.
+
+Kimish17's Turn
+Kimish17 drew Lillie's Determination.
+Kimish17 played Poké Pad.
+- Kimish17 drew Dreepy.
+- Kimish17 shuffled their deck.
+Kimish17 played Dreepy to the Bench.
+Kimish17 played Poké Pad.
+- Kimish17 drew Budew.
+- Kimish17 shuffled their deck.
+Kimish17 played Budew to the Bench.
+Kimish17 attached Basic Fire Energy to Munkidori in the Active Spot.
+Kimish17 played Lillie's Determination.
+- Kimish17 shuffled 3 cards into their deck.
+   • Dudunsparce, Ultra Ball, Jamming Tower
+- Kimish17 drew 8 cards.
+   • Lillie's Determination, Poké Pad, Dunsparce, Munkidori, Risky Ruins, Buddy-Buddy Poffin, Night Stretcher, Crispin
+Kimish17 played Buddy-Buddy Poffin.
+- Kimish17 drew 2 cards and played them to the Bench.
+   • Dreepy, Dreepy
+- Kimish17 shuffled their deck.
+Kimish17 played Risky Ruins to the Stadium spot.
+Kimish17 played Dunsparce to the Bench.
+Risky Ruins was activated.
+- Kimish17 put 2 damage counters on Kimish17's Dunsparce.
+Kimish17 retreated Munkidori to the Bench.
+- Basic Fire Energy was discarded from Kimish17's Munkidori.
+Kimish17's Budew is now in the Active Spot.
+Kimish17's Budew used Itchy Pollen on Rival8’s Mega Rayquaza ex for 10 damage.
+
+Rival8's Turn
+Rival8 drew a card.
+Rival8 played Meowth ex to the Bench.
+Rival8's Meowth ex used Last-Ditch Catch.
+- Rival8 drew Cyrano.
+- Rival8 shuffled their deck.
+Risky Ruins was activated.
+- Rival8 put 2 damage counters on Kimish17's Meowth ex.
+Rival8 played Cyrano.
+- Rival8 drew 3 cards.
+   • Talonflame ex, Mega Kangaskhan ex, Latias ex
+- Rival8 shuffled their deck.
+Rival8 played Talonflame ex to the Bench.
+Rival8 attached Basic Fire Energy to Talonflame ex on the Bench.
+Rival8 played Mega Kangaskhan ex to the Bench.
+Risky Ruins was activated.
+- Rival8 put 2 damage counters on Kimish17's Mega Kangaskhan ex.
+Rival8 played Latias ex to the Bench.
+Risky Ruins was activated.
+- Rival8 put 2 damage counters on Kimish17's Latias ex.
+Rival8 retreated Mega Rayquaza ex to the Bench.
+Rival8's Mega Kangaskhan ex is now in the Active Spot.
+Rival8's Mega Kangaskhan ex used Run Errand.
+- Rival8 drew 2 cards.
+Rival8 attached Legendary Pyroduct to Legendary Pyroduct.
+Rival8 played Legendary Pyroduct to the Stadium spot.
+- Kimish17 discarded Risky Ruins.
+Rival8 ended their turn.
+
+Kimish17's Turn
+Kimish17 drew Night Stretcher.
+Kimish17 played Poké Pad.
+- Kimish17 drew Drakloak.
+- Kimish17 shuffled their deck.
+Kimish17 evolved Dreepy to Drakloak on the Bench.
+Kimish17 played Lillie's Determination.
+- Kimish17 shuffled 4 cards into their deck.
+   • Munkidori, Night Stretcher, Crispin, Night Stretcher
+- Kimish17 drew 8 cards.
+   • Dudunsparce ex, Poké Pad, Night Stretcher, Ultra Ball, Basic Darkness Energy, Basic Darkness Energy, Crushing Hammer, Dudunsparce
+Kimish17 played Poké Pad.
+- Kimish17 drew Drakloak.
+- Kimish17 shuffled their deck.
+Kimish17 evolved Dreepy to Drakloak on the Bench.
+Kimish17 attached Basic Darkness Energy to Munkidori on the Bench.
+Kimish17's Munkidori used Adrena-Brain.
+- Kimish17 moved 2 damage counters from Kimish17's Dunsparce to Kimish17's Mega Rayquaza ex.
+Kimish17 played Crushing Hammer.
+- Kimish17 flipped a coin and it landed on tails.
+Kimish17 played Ultra Ball.
+- Kimish17 discarded 2 cards.
+   • Night Stretcher, Basic Darkness Energy
+- Kimish17 drew Meowth ex.
+- Kimish17 shuffled their deck.
+Kimish17's Budew used Itchy Pollen on Rival8’s Mega Kangaskhan ex for 10 damage.
+
+Rival8's Turn
+Rival8 drew a card.
+Rival8's Mega Kangaskhan ex used Run Errand.
+- Rival8 drew 2 cards.
+Rival8 played Crispin.
+- Rival8 drew Basic Fire Energy.
+- Rival8 attached Basic Lightning Energy to Talonflame ex on the Bench.
+- Rival8 shuffled their deck.
+Rival8 attached Basic Lightning Energy to Mega Rayquaza ex on the Bench.
+Rival8 ended their turn.
+
+Kimish17's Turn
+Kimish17 drew Crushing Hammer.
+Kimish17 played Crushing Hammer.
+- Kimish17 flipped a coin and it landed on tails.
+Kimish17's Budew used Itchy Pollen on Rival8’s Mega Kangaskhan ex for 10 damage.
+
+Rival8's Turn
+Rival8 drew a card.
+Rival8's Mega Kangaskhan ex used Run Errand.
+- Rival8 drew 2 cards.
+Rival8 attached Basic Fire Energy to Mega Rayquaza ex on the Bench.
+Rival8 retreated Mega Kangaskhan ex to the Bench.
+Rival8's Talonflame ex is now in the Active Spot.
+Rival8's Talonflame ex used Talon Hunt on Kimish17’s Budew for 150 damage.
+- Rival8 drew 2 cards.
+- Rival8 shuffled their deck.
+Kimish17's Budew was Knocked Out!
+Rival8 took a Prize card.
+A card was added to Rival8's hand.
+Kimish17's Dunsparce is now in the Active Spot.
+
+Kimish17's Turn
+Kimish17 drew Basic Psychic Energy.
+Kimish17 played Meowth ex to the Bench.
+Kimish17's Meowth ex used Last-Ditch Catch.
+- Kimish17 drew Lillie's Determination.
+- Kimish17 shuffled their deck.
+Kimish17 evolved Dunsparce to Dudunsparce in the Active Spot.
+Kimish17 attached Basic Psychic Energy to Munkidori on the Bench.
+Kimish17 played Lillie's Determination.
+- Kimish17 shuffled Dudunsparce ex into their deck.
+- Kimish17 drew 8 cards.
+   • Boss's Orders, Buddy-Buddy Poffin, Jamming Tower, Basic Psychic Energy, Crushing Hammer, Lillie's Clefairy ex, Judge, Night Stretcher
+Kimish17 played Crushing Hammer.
+- Kimish17 flipped a coin and it landed on heads.
+- Basic Lightning Energy was discarded from Rival8's Mega Rayquaza ex.
+Kimish17 played Jamming Tower to the Stadium spot.
+- Rival8 discarded Legendary Pyroduct.
+- Legendary Pyroduct was discarded from Rival8's Legendary Pyroduct.
+Kimish17 played Dudunsparce.
+- Kimish17 drew 3 cards.
+   • Buddy-Buddy Poffin, Drakloak, Ultra Ball
+- Kimish17 shuffled 2 cards into their deck.
+   • Dudunsparce, Dunsparce
+Kimish17's Munkidori is now in the Active Spot.
+Kimish17 evolved Dreepy to Drakloak on the Bench.
+Kimish17's Drakloak used Recon Directive.
+- Kimish17 drew Crispin.
+Kimish17's Drakloak used Recon Directive.
+- Kimish17 drew Dragapult ex.
+Kimish17's Drakloak used Recon Directive.
+- Kimish17 drew Rosa's Encouragement.
+Kimish17 played Buddy-Buddy Poffin.
+- Kimish17 drew Dunsparce and played it to the Bench.
+- Kimish17 shuffled their deck.
+Kimish17's Munkidori used Mind Bend on Rival8’s Talonflame ex for 60 damage.
+- Rival8's Talonflame ex is now Confused.
+
+Rival8's Turn
+Rival8 drew a card.
+Rival8 attached Basic Lightning Energy to Mega Rayquaza ex on the Bench.
+Rival8 played Ethan's Ho-Oh ex to the Bench.
+Rival8's Ethan's Ho-Oh ex used Golden Flame.
+- Rival8 attached Basic Fire Energy to Ethan's Ho-Oh ex on the Bench.
+- Rival8 attached Basic Fire Energy to Ethan's Ho-Oh ex on the Bench.
+Rival8 played Switch.
+- Rival8's Mega Kangaskhan ex was switched with Rival8's Talonflame ex to become the Active Pokémon.
+Rival8's Mega Kangaskhan ex is now in the Active Spot.
+Rival8's Mega Kangaskhan ex used Run Errand.
+- Rival8 drew 2 cards.
+Rival8 played Boss's Orders.
+- Kimish17's Dunsparce was switched with Kimish17's Munkidori to become the Active Pokémon.
+Kimish17's Dunsparce is now in the Active Spot.
+Rival8 retreated Mega Kangaskhan ex to the Bench.
+Rival8's Talonflame ex is now in the Active Spot.
+Rival8's Talonflame ex used Talon Hunt on Kimish17’s Dunsparce for 150 damage.
+- Rival8 drew 2 cards.
+- Rival8 shuffled their deck.
+Kimish17's Dunsparce was Knocked Out!
+Rival8 took a Prize card.
+A card was added to Rival8's hand.
+Kimish17's Munkidori is now in the Active Spot.
+
+Kimish17's Turn
+Kimish17 drew Night Stretcher.
+Kimish17's Drakloak used Recon Directive.
+- Kimish17 drew Dragapult ex.
+Kimish17's Drakloak used Recon Directive.
+- Kimish17 drew Boss's Orders.
+Kimish17 played Night Stretcher.
+- Kimish17 moved Kimish17's Dunsparce to their hand.
+Kimish17 played Dunsparce to the Bench.
+Kimish17's Drakloak used Recon Directive.
+- Kimish17 drew Dudunsparce ex.
+Kimish17 evolved Drakloak to Dragapult ex on the Bench.
+Kimish17 retreated Munkidori to the Bench.
+- Basic Psychic Energy was discarded from Kimish17's Munkidori.
+Kimish17's Dragapult ex is now in the Active Spot.
+Kimish17 played Rosa's Encouragement.
+- Kimish17 attached Basic Fire Energy to Dragapult ex in the Active Spot.
+- Kimish17 attached Basic Psychic Energy to Dragapult ex in the Active Spot.
+Kimish17 attached Basic Psychic Energy to Drakloak on the Bench.
+Kimish17's Dragapult ex used Phantom Dive on Rival8’s Talonflame ex for 200 damage.
+- Kimish17 put a damage counter on Kimish17's Meowth ex.
+- Kimish17 put 5 damage counters on Kimish17's Mega Rayquaza ex.
+
+Rival8's Turn
+Rival8 drew a card.
+Rival8 played Ultra Ball.
+- Rival8 discarded 2 cards.
+   • Iron Thorns ex, Mega Kangaskhan ex
+- Rival8 drew Fezandipiti ex.
+- Rival8 shuffled their deck.
+Rival8's Ethan's Ho-Oh ex used Golden Flame.
+- Rival8 attached Basic Fire Energy to Ethan's Ho-Oh ex on the Bench.
+- Rival8 attached Basic Fire Energy to Ethan's Ho-Oh ex on the Bench.
+Rival8 played Energy Switch.
+- Rival8 attached Basic Lightning Energy to Mega Kangaskhan ex on the Bench.
+Rival8 attached Legendary Pyroduct to Legendary Pyroduct.
+Rival8 played Legendary Pyroduct to the Stadium spot.
+- Kimish17 discarded Jamming Tower.
+Rival8 played Judge.
+- Rival8 shuffled 5 cards into their deck.
+- Kimish17 shuffled 10 cards into their deck.
+   • Boss's Orders, Buddy-Buddy Poffin, Lillie's Clefairy ex, Judge, Night Stretcher, Ultra Ball, Crispin, Dragapult ex, Boss's Orders, Dudunsparce ex
+- Rival8 drew 4 cards.
+- Kimish17 drew 4 cards.
+   • Night Stretcher, Boss's Orders, Dudunsparce, Boss's Orders
+Rival8 retreated Talonflame ex to the Bench.
+Rival8's Mega Rayquaza ex is now in the Active Spot.
+Rival8's Mega Rayquaza ex used Storm Emerald on Kimish17’s Dragapult ex for 450 damage.
+- Damage breakdown:
+   • 9 attached Energy: 450 damage
+
+Kimish17's Dragapult ex was Knocked Out!
+- 4 cards were discarded from Kimish17's Dragapult ex.
+   • Basic Fire Energy, Basic Psychic Energy, Drakloak, Dreepy
+Rival8 took 2 Prize cards.
+A card was added to Rival8's hand.
+A card was added to Rival8's hand.
+Kimish17's Dunsparce is now in the Active Spot.
+
+Kimish17's Turn
+Kimish17 drew Dragapult ex.
+Kimish17 retreated Dunsparce to the Bench.
+Kimish17's Drakloak is now in the Active Spot.
+Kimish17 evolved Drakloak to Dragapult ex in the Active Spot.
+Kimish17 played Night Stretcher.
+- Kimish17 moved Kimish17's Basic Fire Energy to their hand.
+Kimish17 attached Basic Fire Energy to Dragapult ex in the Active Spot.
+Kimish17's Dragapult ex used Phantom Dive on Rival8’s Mega Rayquaza ex for 200 damage.
+- Kimish17 put a damage counter on Kimish17's Meowth ex.
+- Kimish17 put 3 damage counters on Kimish17's Ethan's Ho-Oh ex.
+- Kimish17 put 2 damage counters on Kimish17's Talonflame ex.
+Rival8's Mega Rayquaza ex was Knocked Out!
+- 3 cards were discarded from Rival8's Mega Rayquaza ex.
+   • Basic Fire Energy, Basic Fire Energy, Basic Lightning Energy
+Rival8's Talonflame ex was Knocked Out!
+Basic Fire Energy was discarded from Rival8's Talonflame ex.
+Kimish17 took 5 Prize cards.
+Dreepy was added to Kimish17's hand.
+Drakloak was added to Kimish17's hand.
+Crispin was added to Kimish17's hand.
+Lillie's Determination was added to Kimish17's hand.
+Basic Fire Energy was added to Kimish17's hand.
+Rival8's Mega Kangaskhan ex is now in the Active Spot.
+
+Rival8's Turn
+Rival8 drew a card.
+Rival8 played Fezandipiti ex to the Bench.
+Rival8 played Ultra Ball.
+- Rival8 discarded 2 cards.
+   • Ethan's Ho-Oh ex, Latias ex
+- Rival8 drew Talonflame ex.
+- Rival8 shuffled their deck.
+Rival8 played Mega Rayquaza ex to the Bench.
+Rival8's Mega Rayquaza ex used Ruler's Roar.
+- Kimish17 shuffled their cards.
+Rival8 played Special Red Card.
+- Kimish17 shuffled their hand.
+- Kimish17 put 8 cards on the bottom of their deck.
+   • Crispin, Lillie's Determination, Drakloak, Dudunsparce, Boss's Orders, Dreepy, Basic Fire Energy, Boss's Orders
+- Kimish17 drew 3 cards.
+   • Buddy-Buddy Poffin, Dragapult ex, Buddy-Buddy Poffin
+Rival8's Fezandipiti ex used Flip the Script.
+- Rival8 drew 3 cards.
+Rival8 attached Basic Fire Energy to Mega Kangaskhan ex in the Active Spot.
+Rival8 played Energy Switch.
+- Rival8 attached Basic Fire Energy to Mega Kangaskhan ex in the Active Spot.
+Rival8 played Boss's Orders.
+- Kimish17's Meowth ex was switched with Kimish17's Dragapult ex to become the Active Pokémon.
+Kimish17's Meowth ex is now in the Active Spot.
+Rival8's Mega Kangaskhan ex used Rapid-Fire Combo on Kimish17’s Meowth ex for 300 damage.
+- Damage breakdown:
+   • Base damage: 200 damage
+   • 2 heads: 100 damage
+   • Total damage: 300 damage
+
+- Rival8 flipped 3 coins, and 2 landed on heads.
+Kimish17's Meowth ex was Knocked Out!
+Rival8 took 2 Prize cards.
+A card was added to Rival8's hand.
+A card was added to Rival8's hand.
+Opponent took all of their Prize cards. Rival8 wins.

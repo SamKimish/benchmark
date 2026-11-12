@@ -3,6 +3,7 @@ import { parse, ParsedGame, TWO_PRIZERS_SUPPORT } from './parse'
 import { cardSlug, esc, normalize } from './text'
 import { baseArchetype, detectArchetype, withHammer } from './archetype'
 import RETREAT_LOCK_LIST from './retreat-locks.json'
+import { abilityLocks, type AbilityLock } from './ability-lock'
 
 // Per archetype: main attackers, the Basics that start those lines, and the line pieces that are liabilities early
 interface Plan { attackers: Set<string>; lineBasics: Set<string>; lineEarly: Set<string> }
@@ -137,7 +138,7 @@ function extras(text: string, me: string, opp: string | null) {
 }
 
 /** Short labels for what went wrong (or was rough) in a game. A game can carry several. */
-function tags(g: ParsedGame, text: string, x: ReturnType<typeof extras>, slow: boolean, supportKod: string[], earlyLineKo: number, idle: number, lost: boolean) {
+function tags(g: ParsedGame, text: string, x: ReturnType<typeof extras>, slow: boolean, supportKod: string[], earlyLineKo: number, idle: number, lost: boolean, abilityLocked: AbilityLock) {
   const opp = esc(g.opp ?? '__OPP__')
   const out: string[] = []
   if (g.myMulligans) out.push('Mulligan')
@@ -147,6 +148,7 @@ function tags(g: ParsedGame, text: string, x: ReturnType<typeof extras>, slow: b
   if (x.firstGiven && x.firstGiven >= 2 && g.firstPrize === 'opp') out.push('Gave up first KO on ex')
   if ((text.match(new RegExp(`^${opp}'s Budew used Itchy Pollen`, 'gm')) ?? []).length >= 2) out.push('Item locked')
   if (retreatLocks(g, 'opp')) out.push('Retreat locked')
+  if (abilityLocked.turns >= 2) out.push('Ability locked')
   const denied = g.opp ? energyDenied(text, g.opp, g.me) : 0
   if (denied) out.push('Energy denied')
   if ([...text.matchAll(new RegExp(`^${opp} played (.+?)\\.$`, 'gm'))].some((m) => HAND_DISRUPTION.has(m[1]))) out.push('Hand disrupted')
@@ -172,7 +174,7 @@ function energyDenied(text: string, by: string, from: string) {
 }
 
 /** The other side of the loss tags: short labels for what went right in a game. */
-function winTags(g: ParsedGame, text: string, x: ReturnType<typeof extras>, online: number | null, heads: number, won: boolean) {
+function winTags(g: ParsedGame, text: string, x: ReturnType<typeof extras>, online: number | null, heads: number, won: boolean, lockedThem: AbilityLock) {
   const me = esc(g.me)
   const out: string[] = []
   if (online !== null && online <= 2) out.push('Fast setup')
@@ -181,6 +183,7 @@ function winTags(g: ParsedGame, text: string, x: ReturnType<typeof extras>, onli
   if (x.firstTaken && x.firstTaken >= 2 && g.firstPrize === 'me') out.push('Took first KO on ex')
   if (g.kos.some((k) => k.side === 'opp' && SUPPORT_EX.has(k.mon))) out.push("KO'd their support ex")
   if ((text.match(new RegExp(`^${me}'s Budew used Itchy Pollen`, 'gm')) ?? []).length >= 2) out.push('Item locked them')
+  if (lockedThem.turns >= 2) out.push('Ability locked them')
   if (heads >= 2) out.push('Hammers hit')
   else if (g.opp && energyDenied(text, g.me, g.opp)) out.push('Energy denied them')
   if ([...text.matchAll(new RegExp(`^${me} played (.+?)\\.$`, 'gm'))].some((m) => HAND_DISRUPTION.has(m[1]))) out.push('Disrupted their hand')
@@ -235,6 +238,9 @@ export interface GameStats {
   opp_pokemon: string[]
   hammers_played: number
   hammer_heads: number
+  /** my turns where the opponent's lock switched off Abilities my Pokémon in play have, and the cards that did it */
+  ability_locked_turns: number
+  ability_locked_by: string[]
 }
 
 /**
@@ -270,6 +276,8 @@ export function gameStats(raw: string, opts: { me?: string; archetype?: string |
   const slow = online === null || online > 3
   const earlyLineKo = g.kos.filter((k) => k.side === 'me' && plan.lineEarly.has(k.mon) && k.turn <= 3).length
   const x = extras(text, g.me, g.opp)
+  const locked = abilityLocks(text, g.me, g.opp, 'opp')
+  const lockedThem = abilityLocks(text, g.me, g.opp, 'me')
   let hammers = 0, heads = 0
   const tl = text.split('\n')
   tl.forEach((ln, i) => {
@@ -304,8 +312,8 @@ export function gameStats(raw: string, opts: { me?: string; archetype?: string |
     dive_converted: conv,
     idle_turns_after_online: idle,
     end_reason: END_REASONS[g.endReason],
-    tags: tags(g, text, x, slow, supportKod, earlyLineKo, idle, g.winnerIsMe === false),
-    win_tags: winTags(g, text, x, online, heads, win),
+    tags: tags(g, text, x, slow, supportKod, earlyLineKo, idle, g.winnerIsMe === false, locked),
+    win_tags: winTags(g, text, x, online, heads, win, lockedThem),
     max_deficit: x.maxDeficit,
     first_given_prizes: x.firstGiven,
     first_taken_prizes: x.firstTaken,
@@ -316,5 +324,7 @@ export function gameStats(raw: string, opts: { me?: string; archetype?: string |
     opp_pokemon: [...new Set(oppMons)].sort(),
     hammers_played: hammers,
     hammer_heads: heads,
+    ability_locked_turns: locked.turns,
+    ability_locked_by: locked.by,
   }
 }
