@@ -3,6 +3,8 @@ import { describe, expect, it } from 'vitest'
 import { cardSlug, detectArchetype, gameStats, LogError } from '@/lib/parser'
 import { parse } from '@/lib/parser/parse'
 import { retreatLocks } from '@/lib/parser/stats'
+import { abilityLocks } from '@/lib/parser/ability-lock'
+import { normalize } from '@/lib/parser/text'
 
 const fixture = (name: string) => readFileSync(new URL(`./fixtures/${name}`, import.meta.url), 'utf8')
 
@@ -65,6 +67,22 @@ describe('gameStats', () => {
     const escaped = log.replace(/(Kimish17's Turn\r?\n)/g, "$1Kimish17's Gardevoir ex is now in the Active Spot.\n")
     expect(gameStats(escaped).tags).not.toContain('Retreat locked')
     expect(retreatLocks(parse(log), 'me')).toBe(0)
+  })
+
+  it('tags an ability lock that switched off Abilities I had in play', () => {
+    const log = fixture('ability-lock.txt')
+    const s = gameStats(log)
+    expect(s.tags).toContain('Ability locked')
+    // Legendary Pyroduct was up with Drakloak in play on my turns 2, 3 and 4 (until Jamming Tower replaced it) and 6
+    expect(s.ability_locked_turns).toBe(4)
+    expect(s.ability_locked_by).toEqual(['Legendary Pyroduct'])
+    expect(s.win_tags).not.toContain('Ability locked them')
+    // a Pyroduct with nothing of mine that has an Ability in play doesn't count
+    const noAbilities = log.replace(/Drakloak/g, 'Dragapult ex').replace(/Dudunsparce/g, 'Dunsparce')
+    expect(abilityLocks(normalize(noAbilities), 'Kimish17', 'Rival8', 'opp').turns).toBe(0)
+    // nor does my own Pyroduct
+    const mine = log.replace(/Rival8 played Legendary Pyroduct/g, 'Kimish17 played Legendary Pyroduct')
+    expect(gameStats(mine).tags).not.toContain('Ability locked')
   })
 
   it('rejects text that is not a game log', () => {

@@ -20,7 +20,7 @@ jobs:
       - run: node scripts/build-archetypes.mjs
       - name: Commit if changed
         run: |
-          git add public/cards.json src/lib/limitless-archetypes.json src/lib/parser/retreat-locks.json
+          git add public/cards.json src/lib/limitless-archetypes.json src/lib/parser/retreat-locks.json src/lib/parser/ability-mons.json
           if git diff --cached --quiet; then echo "No changes"; exit 0; fi
           git config user.name "github-actions[bot]"
           git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
