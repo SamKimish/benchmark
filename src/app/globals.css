@@ -11,12 +11,13 @@
 body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 system-ui, -apple-system, 'Segoe UI', sans-serif; }
 a { color: inherit; }
 /* page width grows with the screen, so big and ultra-wide monitors aren't mostly margin */
+:root { --ease: cubic-bezier(0.16, 1, 0.3, 1); }
 :root { --page: 1200px; --gutter: clamp(16px, 2.5vw, 48px); }
 @media (min-width: 1700px) { :root { --page: 1560px; } }
 @media (min-width: 2200px) { :root { --page: 2000px; } }
 @media (min-width: 2900px) { :root { --page: 2600px; } }
 main { max-width: calc(var(--page) + 2 * var(--gutter)); margin: 0 auto; padding: 24px var(--gutter) 48px; }
-h1 { font-size: 1.6rem; margin: 0 0 16px; font-family: var(--font-display), system-ui, sans-serif; font-weight: 600; }
+h1 { font-size: clamp(1.8rem, 2.4vw, 2.3rem); letter-spacing: -.02em; line-height: 1.1; margin: 0 0 16px; font-family: var(--font-display), system-ui, sans-serif; font-weight: 600; }
 h2 { font-size: 1.15rem; margin: 28px 0 10px; }
 /* header: artwork sits on the red line, labels hang underneath it */
 .site-header { background: var(--panel); margin-bottom: 64px; }
@@ -184,17 +185,34 @@ button:has(> .icon) { display: inline-flex; align-items: center; gap: 6px; }
 /* a fixed slot per Pokémon; the bitmap keeps its own size inside it, so small sprites stay sharp */
 .sprite { width: 38px; height: 40px; display: grid; place-items: center; flex: none; }
 .sprite img { max-width: 100%; max-height: 100%; width: auto; height: auto; display: block; }
+/* section headings: display face, with a quiet count beside them */
+.section-head { font-family: var(--font-display), system-ui, sans-serif; font-weight: 600; font-size: 1.4rem; letter-spacing: -.01em;
+  display: flex; align-items: baseline; gap: 10px; margin: 36px 0 12px; }
+.section-meta { font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: .8rem; font-weight: 500; color: var(--muted);
+  text-transform: uppercase; letter-spacing: .08em; }
+/* one collapsible group per day */
 details.day { border-bottom: 1px solid var(--line); }
-details.day > summary { display: flex; align-items: center; gap: 16px; padding: 14px 4px; cursor: pointer; list-style: none; }
+details.day > summary { display: flex; align-items: center; gap: 18px; padding: 12px 10px; margin: 2px -10px; border-radius: 12px;
+  cursor: pointer; list-style: none; transition: background .25s var(--ease); }
 details.day > summary::-webkit-details-marker { display: none; }
+details.day > summary:hover { background: var(--panel); }
 details.day > summary:hover .chevron { background: var(--line); }
-.chevron { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 99px; background: var(--tag); color: var(--ink); transition: transform .15s, background .15s; }
+.chevron { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 99px; background: var(--tag); color: var(--ink);
+  transition: transform .4s var(--ease), background .25s var(--ease); }
 details.day:not([open]) .chevron { transform: rotate(-90deg); }
-.day-date { font-weight: 600; flex: 1; }
-.day-decks { display: flex; gap: 8px; }
-/* right-align each deck in its slot so every day's sprites end flush against the record */
-.day-decks .sprites { justify-content: flex-end; }
-.day-record { display: flex; flex-direction: column; align-items: flex-end; line-height: 1.2; min-width: 64px; }
+/* date: weekday as a small label, the date in the display face */
+.day-date { flex: 1; display: flex; align-items: baseline; gap: 10px; min-width: 0; }
+.day-wd { width: 2.6em; font-size: .74rem; font-weight: 600; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); }
+.day-dm { font-family: var(--font-display), system-ui, sans-serif; font-size: 1.15rem; font-weight: 600; letter-spacing: -.01em; }
+/* the decks played that day, each a snug chip, ending flush against the record */
+.day-decks { display: flex; gap: 6px; justify-content: flex-end; }
+.deck-chip { display: inline-flex; padding: 0 4px; border-radius: 12px; background: var(--tag); }
+.deck-chip .sprites { min-width: 0; gap: 0; }
+.day-record { display: flex; flex-direction: column; align-items: flex-end; line-height: 1.15; min-width: 64px; font-variant-numeric: tabular-nums; }
+.day-record strong { font-family: var(--font-display), system-ui, sans-serif; font-size: 1.15rem; font-weight: 600; }
+.day-record.good strong { color: var(--win); }
+.day-record.bad strong { color: var(--loss); }
+.day-n { font-size: .78rem; color: var(--muted); }
 .matches { list-style: none; margin: 0 0 12px; padding: 0; display: grid; gap: 6px; }
 .match { display: grid; grid-template-columns: 80px minmax(180px, 1.1fr) minmax(0, 1fr) 40px 80px 72px; align-items: center; gap: 14px;
   height: 64px; padding: 0 16px; border-radius: 10px; text-decoration: none; color: var(--ink); background: var(--tag); }
@@ -225,7 +243,9 @@ details.day:not([open]) .chevron { transform: rotate(-90deg); }
 .page-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
 .page-head h1 { margin: 0; }
 .page-actions { display: flex; gap: 10px; flex-wrap: wrap; }
-.filters { margin-bottom: 22px; }
+.filters { margin-bottom: 22px; align-items: center; gap: 8px; }
+.filters label { display: flex; align-items: center; gap: 8px; font-size: .78rem; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; }
+.filters select { min-width: 200px; font-size: .95rem; text-transform: none; letter-spacing: 0; color: var(--ink); }
 .paste-game { font-size: 1rem; padding: 10px 18px; box-shadow: 0 2px 0 rgba(0, 0, 0, .12); }
 /* headline stats */
 .tiles { gap: 14px; margin-bottom: 28px; }
@@ -572,3 +592,25 @@ table.t-rounds-table { border-collapse: separate; border-spacing: 0 3px; font-si
 .deck-meta .picker-current > span:nth-child(2) .muted { display: none; }
 .deck-meta .picker-label { font-size: .85rem; color: var(--muted); }
 .deck-meta .sprite-picker { display: grid; gap: 4px; }
+
+/* Matches page tables: numbers right-aligned in tabular figures, win rates coloured like the stat tiles */
+table.data th.num, table.data td.num { text-align: right; font-variant-numeric: tabular-nums; }
+table.data th { text-transform: uppercase; letter-spacing: .06em; font-size: .72rem; padding-top: 10px; padding-bottom: 10px; }
+table.data td { padding: 6px 12px; vertical-align: middle; }
+table.data th { padding-left: 12px; padding-right: 12px; }
+table.data tbody tr { transition: background .25s var(--ease); }
+table.data tbody tr:hover { background: var(--bg); }
+table.data td.good { color: var(--win); }
+table.data td.bad { color: var(--loss); }
+table.data td.rate strong { font-weight: 700; }
+.opp-cell { display: flex; align-items: center; gap: 10px; font-weight: 500; }
+table.data th.share-col { width: 40%; }
+.share { display: flex; align-items: center; gap: 10px; }
+.share-bar { flex: 1; height: 6px; border-radius: 99px; background: var(--tag); overflow: hidden; min-width: 40px; }
+.share-bar span { display: block; height: 100%; border-radius: 99px; }
+.share.good .share-bar span { background: var(--win); }
+.share.bad .share-bar span { background: var(--loss); }
+.share-n { width: 3.2em; text-align: right; font-variant-numeric: tabular-nums; color: var(--muted); font-size: .85rem; }
+@media (prefers-reduced-motion: reduce) {
+  .chevron, details.day > summary, table.data tbody tr { transition: none; }
+}

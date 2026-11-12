@@ -34,4 +34,13 @@ const LONDON = 'Europe/London'
 export const dayKey = (iso: string) => new Date(iso).toLocaleDateString('en-CA', { timeZone: LONDON })
 export const dayLabel = (key: string) =>
   new Date(`${key}T12:00:00Z`).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' })
+/** A day's label in two parts, 'Wed' and '11 Nov' (with the year when it isn't this year). */
+export function dayParts(key: string): { weekday: string; date: string } {
+  const d = new Date(`${key}T12:00:00Z`)
+  const thisYear = key.slice(0, 4) === dayKey(new Date().toISOString()).slice(0, 4)
+  return {
+    weekday: d.toLocaleDateString('en-GB', { weekday: 'short', timeZone: 'UTC' }),
+    date: d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', ...(thisYear ? {} : { year: 'numeric' }), timeZone: 'UTC' }),
+  }
+}
 export const timeOnly = (iso: string) => new Date(iso).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: LONDON })
