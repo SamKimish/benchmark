@@ -3,468 +3,648 @@
   "id": "mega-rayquaza-ex",
   "name": "Mega Rayquaza",
   "key": "rayquaza-mega",
-  "count": 208
+  "count": 652
  },
  {
   "id": "dragapult-ex",
   "name": "Dragapult",
   "key": "dragapult",
-  "count": 142
+  "count": 606
  },
  {
   "id": "basic-box-m",
   "name": "Basic Box",
   "key": "ogerpon,clefairy",
-  "count": 111
+  "count": 373
  },
  {
   "id": "slowking-scr",
   "name": "Slowking",
   "key": "slowking",
-  "count": 94
- },
- {
-  "id": "alakazam-dudunsparce",
-  "name": "Alakazam Dudunsparce",
-  "key": "alakazam,dudunsparce",
-  "count": 75
+  "count": 332
  },
  {
   "id": "ogerpon-meganium-hydrapple",
   "name": "Ogerpon Meganium Hydrapple",
   "key": "ogerpon,hydrapple",
-  "count": 68
+  "count": 252
  },
  {
-  "id": "dhelmise-pbl",
-  "name": "Dhelmise",
-  "key": "dhelmise,banette",
-  "count": 61
- },
- {
-  "id": "crustle-dri",
-  "name": "Crustle",
-  "key": "crustle",
-  "count": 49
+  "id": "alakazam-dudunsparce",
+  "name": "Alakazam Dudunsparce",
+  "key": "alakazam,dudunsparce",
+  "count": 237
  },
  {
   "id": "n-zoroark",
   "name": "N's Zoroark",
   "key": "zoroark",
-  "count": 48
+  "count": 211
  },
  {
-  "id": "dragapult-dudunsparce",
-  "name": "Dragapult Dudunsparce",
-  "key": "dragapult,dudunsparce",
-  "count": 44
+  "id": "dhelmise-pbl",
+  "name": "Dhelmise",
+  "key": "dhelmise,banette",
+  "count": 197
  },
  {
   "id": "mega-excadrill-ex",
   "name": "Mega Excadrill",
   "key": "excadrill-mega",
-  "count": 44
- },
- {
-  "id": "dragapult-blaziken",
-  "name": "Dragapult Blaziken",
-  "key": "dragapult,blaziken",
-  "count": 39
- },
- {
-  "id": "rockets-honchkrow",
-  "name": "Rocket's Honchkrow",
-  "key": "honchkrow,porygon2",
-  "count": 38
- },
- {
-  "id": "festival-lead",
-  "name": "Festival Lead",
-  "key": "dipplin,thwackey",
-  "count": 38
- },
- {
-  "id": "greninja-ex",
-  "name": "Greninja",
-  "key": "greninja",
-  "count": 36
+  "count": 193
  },
  {
   "id": "talonflame-dusknoir",
   "name": "Talonflame Dusknoir",
   "key": "talonflame,dusknoir",
-  "count": 35
+  "count": 189
  },
  {
-  "id": "lopunny-dudunsparce",
-  "name": "Lopunny Dudunsparce",
-  "key": "lopunny-mega,dudunsparce",
-  "count": 34
+  "id": "dragapult-dudunsparce",
+  "name": "Dragapult Dudunsparce",
+  "key": "dragapult,dudunsparce",
+  "count": 182
  },
  {
-  "id": "sharpedo-toxtricity",
-  "name": "Sharpedo Toxtricity",
-  "key": "sharpedo-mega,toxtricity",
-  "count": 33
- },
- {
-  "id": "lucario-hariyama",
-  "name": "Lucario Hariyama",
-  "key": "lucario-mega,hariyama",
-  "count": 30
- },
- {
-  "id": "cynthia-garchomp-ex",
-  "name": "Cynthia's Garchomp",
-  "key": "garchomp",
-  "count": 27
+  "id": "crustle-dri",
+  "name": "Crustle",
+  "key": "crustle",
+  "count": 164
  },
  {
   "id": "mega-lucario-ex",
   "name": "Mega Lucario",
   "key": "lucario-mega",
-  "count": 26
+  "count": 157
+ },
+ {
+  "id": "lopunny-dudunsparce",
+  "name": "Lopunny Dudunsparce",
+  "key": "lopunny-mega,dudunsparce",
+  "count": 152
+ },
+ {
+  "id": "festival-lead",
+  "name": "Festival Lead",
+  "key": "dipplin,thwackey",
+  "count": 137
+ },
+ {
+  "id": "rockets-honchkrow",
+  "name": "Rocket's Honchkrow",
+  "key": "honchkrow,porygon2",
+  "count": 128
+ },
+ {
+  "id": "greninja-ex",
+  "name": "Greninja",
+  "key": "greninja",
+  "count": 121
+ },
+ {
+  "id": "dragapult-blaziken",
+  "name": "Dragapult Blaziken",
+  "key": "dragapult,blaziken",
+  "count": 107
+ },
+ {
+  "id": "sharpedo-toxtricity",
+  "name": "Sharpedo Toxtricity",
+  "key": "sharpedo-mega,toxtricity",
+  "count": 105
  },
  {
   "id": "dragapult-dusknoir",
   "name": "Dragapult Dusknoir",
   "key": "dragapult,dusknoir",
-  "count": 25
+  "count": 98
  },
  {
-  "id": "mega-greninja-ex",
-  "name": "Mega Greninja",
-  "key": "greninja-mega",
-  "count": 24
- },
- {
-  "id": "mega-starmie-ex",
-  "name": "Mega Starmie",
-  "key": "starmie-mega",
-  "count": 21
+  "id": "lucario-hariyama",
+  "name": "Lucario Hariyama",
+  "key": "lucario-mega,hariyama",
+  "count": 89
  },
  {
   "id": "alakazam-dusknoir",
   "name": "Alakazam Dusknoir",
   "key": "alakazam,dusknoir",
-  "count": 20
+  "count": 87
  },
  {
-  "id": "grimmsnarl-froslass",
-  "name": "Grimmsnarl Froslass",
-  "key": "grimmsnarl,froslass",
-  "count": 19
- },
- {
-  "id": "mega-golisopod-ex",
-  "name": "Mega Golisopod",
-  "key": "golisopod-mega",
-  "count": 18
- },
- {
-  "id": "mega-charizard-y-ex",
-  "name": "Mega Charizard Y",
-  "key": "charizard-mega-y",
-  "count": 17
- },
- {
-  "id": "mew-ex-30c",
-  "name": "Mew Box",
-  "key": "mew,clefairy",
-  "count": 17
- },
- {
-  "id": "ogerpon-meganium-arboliva",
-  "name": "Ogerpon Meganium Arboliva",
-  "key": "ogerpon,arboliva",
-  "count": 15
- },
- {
-  "id": "ethan-typhlosion",
-  "name": "Ethan's Typhlosion",
-  "key": "typhlosion",
-  "count": 15
- },
- {
-  "id": "toucannon-pbl",
-  "name": "Toucannon",
-  "key": "toucannon",
-  "count": 14
- },
- {
-  "id": "rocket-mewtwo-ex",
-  "name": "Rocket's Mewtwo",
-  "key": "mewtwo,spidops",
-  "count": 14
- },
- {
-  "id": "raging-bolt-ogerpon",
-  "name": "Raging Bolt Ogerpon",
-  "key": "raging-bolt,ogerpon",
-  "count": 13
- },
- {
-  "id": "mega-absol-mega-audino",
-  "name": "Absol Audino",
-  "key": "absol-mega,audino-mega",
-  "count": 12
+  "id": "cynthia-garchomp-ex",
+  "name": "Cynthia's Garchomp",
+  "key": "garchomp",
+  "count": 83
  },
  {
   "id": "iron-thorns-ex",
   "name": "Iron Thorns",
   "key": "iron-thorns",
-  "count": 12
+  "count": 83
  },
  {
-  "id": "manectric-eelektrik",
-  "name": "Manectric Eelektrik",
-  "key": "manectric-mega,eelektrik",
-  "count": 10
+  "id": "mega-golisopod-ex",
+  "name": "Mega Golisopod",
+  "key": "golisopod-mega",
+  "count": 81
  },
  {
-  "id": "seaking-pre",
-  "name": "Seaking Festival Lead",
-  "key": "seaking,thwackey",
-  "count": 10
+  "id": "grimmsnarl-froslass",
+  "name": "Grimmsnarl Froslass",
+  "key": "grimmsnarl,froslass",
+  "count": 75
  },
  {
-  "id": "starmie-froslass",
-  "name": "Starmie Froslass",
-  "key": "starmie-mega,froslass",
-  "count": 9
+  "id": "mega-greninja-ex",
+  "name": "Mega Greninja",
+  "key": "greninja-mega",
+  "count": 57
  },
  {
-  "id": "hops-trevenant",
-  "name": "Hop's Trevenant",
-  "key": "trevenant",
-  "count": 9
+  "id": "ogerpon-meganium-arboliva",
+  "name": "Ogerpon Meganium Arboliva",
+  "key": "ogerpon,arboliva",
+  "count": 53
  },
  {
-  "id": "beedrill-ex-cri",
-  "name": "Beedrill",
-  "key": "beedrill",
-  "count": 9
+  "id": "mega-starmie-ex",
+  "name": "Mega Starmie",
+  "key": "starmie-mega",
+  "count": 53
  },
  {
-  "id": "mega-manectric-ex-meg",
-  "name": "Mega Manectric",
-  "key": "manectric-mega",
-  "count": 9
+  "id": "toucannon-pbl",
+  "name": "Toucannon",
+  "key": "toucannon",
+  "count": 51
  },
  {
-  "id": "okidogi-barbaracle",
-  "name": "Okidogi Barbaracle",
-  "key": "okidogi,barbaracle",
-  "count": 8
+  "id": "ethan-typhlosion",
+  "name": "Ethan's Typhlosion",
+  "key": "typhlosion",
+  "count": 48
  },
  {
-  "id": "cinccino-ex",
-  "name": "Cinccino",
-  "key": "cinccino",
-  "count": 8
- },
- {
-  "id": "mega-malamar-ex",
-  "name": "Mega Malamar",
-  "key": "malamar-mega",
-  "count": 8
- },
- {
-  "id": "mega-chandelure-ex",
-  "name": "Mega Chandelure",
-  "key": "chandelure-mega",
-  "count": 8
- },
- {
-  "id": "mega-absol-box",
-  "name": "Mega Absol Box",
-  "key": "absol-mega,kangaskhan-mega",
-  "count": 8
- },
- {
-  "id": "froslass-munkidori",
-  "name": "Froslass Munkidori",
-  "key": "froslass,munkidori",
-  "count": 7
- },
- {
-  "id": "kangaskhan-bouffalant",
-  "name": "Kangaskhan Bouffalant",
-  "key": "kangaskhan-mega,bouffalant",
-  "count": 7
- },
- {
-  "id": "iono-bellibolt",
-  "name": "Iono's Bellibolt",
-  "key": "bellibolt,voltorb",
-  "count": 7
+  "id": "mew-ex-30c",
+  "name": "Mew Box",
+  "key": "mew,clefairy",
+  "count": 40
  },
  {
   "id": "lopunny-dusknoir",
   "name": "Lopunny Dusknoir",
   "key": "lopunny-mega,dusknoir",
-  "count": 7
+  "count": 40
+ },
+ {
+  "id": "seaking-pre",
+  "name": "Seaking Festival Lead",
+  "key": "seaking,thwackey",
+  "count": 39
+ },
+ {
+  "id": "rocket-mewtwo-ex",
+  "name": "Rocket's Mewtwo",
+  "key": "mewtwo,spidops",
+  "count": 39
+ },
+ {
+  "id": "beedrill-ex-cri",
+  "name": "Beedrill",
+  "key": "beedrill",
+  "count": 38
+ },
+ {
+  "id": "mega-charizard-y-ex",
+  "name": "Mega Charizard Y",
+  "key": "charizard-mega-y",
+  "count": 36
+ },
+ {
+  "id": "mega-absol-mega-audino",
+  "name": "Absol Audino",
+  "key": "absol-mega,audino-mega",
+  "count": 36
  },
  {
   "id": "igglybuff-30c",
   "name": "Igglybuff",
   "key": "igglybuff",
-  "count": 7
+  "count": 35
  },
  {
-  "id": "stevens-metagross",
-  "name": "Steven's Metagross",
-  "key": "metagross",
-  "count": 7
+  "id": "starmie-froslass",
+  "name": "Starmie Froslass",
+  "key": "starmie-mega,froslass",
+  "count": 34
  },
  {
-  "id": "ceruledge-ex",
-  "name": "Ceruledge",
-  "key": "ceruledge",
-  "count": 6
+  "id": "mega-malamar-ex",
+  "name": "Mega Malamar",
+  "key": "malamar-mega",
+  "count": 34
+ },
+ {
+  "id": "raging-bolt-ogerpon",
+  "name": "Raging Bolt Ogerpon",
+  "key": "raging-bolt,ogerpon",
+  "count": 33
+ },
+ {
+  "id": "manectric-eelektrik",
+  "name": "Manectric Eelektrik",
+  "key": "manectric-mega,eelektrik",
+  "count": 33
+ },
+ {
+  "id": "okidogi-barbaracle",
+  "name": "Okidogi Barbaracle",
+  "key": "okidogi,barbaracle",
+  "count": 29
  },
  {
   "id": "mega-venusaur-ex",
   "name": "Mega Venusaur",
   "key": "venusaur-mega",
-  "count": 6
+  "count": 28
  },
  {
-  "id": "palafin-ex",
-  "name": "Palafin",
-  "key": "palafin-hero",
-  "count": 5
- },
- {
-  "id": "hydreigon-ex",
-  "name": "Hydreigon",
-  "key": "hydreigon",
-  "count": 5
- },
- {
-  "id": "mega-abomasnow-ex",
-  "name": "Mega Abomasnow",
-  "key": "abomasnow-mega",
-  "count": 5
+  "id": "hops-trevenant",
+  "name": "Hop's Trevenant",
+  "key": "trevenant",
+  "count": 27
  },
  {
   "id": "mega-charizard-x-ex",
   "name": "Mega Charizard X",
   "key": "charizard-mega-x",
-  "count": 4
+  "count": 25
  },
  {
-  "id": "doublade-por",
-  "name": "Doublade",
-  "key": "doublade",
-  "count": 4
+  "id": "kangaskhan-bouffalant",
+  "name": "Kangaskhan Bouffalant",
+  "key": "kangaskhan-mega,bouffalant",
+  "count": 24
  },
  {
-  "id": "eelektrik-blk",
-  "name": "Eelektrik",
-  "key": "eelektrik",
-  "count": 4
+  "id": "stevens-metagross",
+  "name": "Steven's Metagross",
+  "key": "metagross",
+  "count": 24
  },
  {
-  "id": "toxtricity-box",
-  "name": "Toxtricity Box",
-  "key": "toxtricity,absol-mega",
-  "count": 4
+  "id": "mega-chandelure-ex",
+  "name": "Mega Chandelure",
+  "key": "chandelure-mega",
+  "count": 22
  },
  {
-  "id": "dragapult-alakazam",
-  "name": "Dragapult Alakazam",
-  "key": "dragapult,alakazam",
-  "count": 3
+  "id": "ceruledge-ex",
+  "name": "Ceruledge",
+  "key": "ceruledge",
+  "count": 22
  },
  {
-  "id": "ursaluna-lunatone",
-  "name": "Ursaluna Lunatone",
-  "key": "ursaluna-bloodmoon,lunatone",
-  "count": 3
+  "id": "mega-absol-box",
+  "name": "Mega Absol Box",
+  "key": "absol-mega,kangaskhan-mega",
+  "count": 21
+ },
+ {
+  "id": "iono-bellibolt",
+  "name": "Iono's Bellibolt",
+  "key": "bellibolt,voltorb",
+  "count": 20
+ },
+ {
+  "id": "froslass-munkidori",
+  "name": "Froslass Munkidori",
+  "key": "froslass,munkidori",
+  "count": 19
+ },
+ {
+  "id": "mega-manectric-ex-meg",
+  "name": "Mega Manectric",
+  "key": "manectric-mega",
+  "count": 19
+ },
+ {
+  "id": "starmie-dusknoir",
+  "name": "Starmie Dusknoir",
+  "key": "starmie-mega,dusknoir",
+  "count": 17
+ },
+ {
+  "id": "mega-abomasnow-ex",
+  "name": "Mega Abomasnow",
+  "key": "abomasnow-mega",
+  "count": 16
  },
  {
   "id": "mega-froslass-ex",
   "name": "Mega Froslass",
   "key": "froslass-mega",
-  "count": 3
- },
- {
-  "id": "mamoswine-ex",
-  "name": "Mamoswine",
-  "key": "mamoswine",
-  "count": 3
- },
- {
-  "id": "gengar-ex",
-  "name": "Gengar",
-  "key": "gengar",
-  "count": 3
- },
- {
-  "id": "yanmega-ex",
-  "name": "Yanmega",
-  "key": "yanmega",
-  "count": 2
- },
- {
-  "id": "mega-zygarde-ex",
-  "name": "Mega Zygarde",
-  "key": "zygarde-mega",
-  "count": 2
- },
- {
-  "id": "decidueye-ex",
-  "name": "Decidueye",
-  "key": "decidueye",
-  "count": 2
- },
- {
-  "id": "dragapult-iron-thorns",
-  "name": "Dragapult Iron Thorns",
-  "key": "dragapult,iron-thorns",
-  "count": 2
- },
- {
-  "id": "marnie-grimmsnarl-ex",
-  "name": "Marnie's Grimmsnarl",
-  "key": "grimmsnarl",
-  "count": 2
- },
- {
-  "id": "archaludon-zoroark",
-  "name": "Archaludon Zoroark",
-  "key": "archaludon,zoroark",
-  "count": 2
+  "count": 15
  },
  {
   "id": "mega-dragonite-ex",
   "name": "Mega Dragonite",
   "key": "dragonite-mega",
-  "count": 2
+  "count": 14
  },
  {
-  "id": "metagross-cri",
-  "name": "Metagross",
-  "key": "metagross",
-  "count": 2
+  "id": "toxtricity-box",
+  "name": "Toxtricity Box",
+  "key": "toxtricity,absol-mega",
+  "count": 13
+ },
+ {
+  "id": "cinccino-ex",
+  "name": "Cinccino",
+  "key": "cinccino",
+  "count": 13
+ },
+ {
+  "id": "toxtricity-pfl",
+  "name": "Toxtricity",
+  "key": "toxtricity",
+  "count": 13
+ },
+ {
+  "id": "yanmega-ex",
+  "name": "Yanmega",
+  "key": "yanmega",
+  "count": 12
+ },
+ {
+  "id": "mega-froslass-dudunsparce",
+  "name": "Froslass Dudunsparce",
+  "key": "froslass-mega,dudunsparce",
+  "count": 11
+ },
+ {
+  "id": "mega-darkrai-ex",
+  "name": "Mega Darkrai",
+  "key": "darkrai-mega",
+  "count": 11
+ },
+ {
+  "id": "mega-zygarde-ex",
+  "name": "Mega Zygarde",
+  "key": "zygarde-mega",
+  "count": 11
+ },
+ {
+  "id": "raging-bolt-ex",
+  "name": "Raging Bolt",
+  "key": "raging-bolt",
+  "count": 11
+ },
+ {
+  "id": "mega-lopunny-ex",
+  "name": "Mega Lopunny",
+  "key": "lopunny-mega",
+  "count": 10
+ },
+ {
+  "id": "doublade-por",
+  "name": "Doublade",
+  "key": "doublade",
+  "count": 10
+ },
+ {
+  "id": "gengar-ex",
+  "name": "Gengar",
+  "key": "gengar",
+  "count": 10
+ },
+ {
+  "id": "palafin-ex",
+  "name": "Palafin",
+  "key": "palafin-hero",
+  "count": 9
+ },
+ {
+  "id": "eelektrik-blk",
+  "name": "Eelektrik",
+  "key": "eelektrik",
+  "count": 9
+ },
+ {
+  "id": "flareon-noctowl",
+  "name": "Flareon Noctowl",
+  "key": "flareon,noctowl",
+  "count": 8
  },
  {
   "id": "blaziken-ex-jtg",
   "name": "Blaziken",
   "key": "blaziken",
-  "count": 2
+  "count": 8
+ },
+ {
+  "id": "sinistcha-ogerpon",
+  "name": "Sinistcha Ogerpon",
+  "key": "sinistcha,ogerpon",
+  "count": 8
+ },
+ {
+  "id": "tapu-koko-spread",
+  "name": "Tapu Koko Spread",
+  "key": "tapu-koko",
+  "count": 8
+ },
+ {
+  "id": "rocket-spidops",
+  "name": "Rocket's Spidops",
+  "key": "spidops",
+  "count": 7
+ },
+ {
+  "id": "metagross-cri",
+  "name": "Metagross",
+  "key": "metagross",
+  "count": 7
+ },
+ {
+  "id": "lillie-clefairy",
+  "name": "Lillie's Clefairy",
+  "key": "clefairy",
+  "count": 7
+ },
+ {
+  "id": "decidueye-ex",
+  "name": "Decidueye",
+  "key": "decidueye",
+  "count": 7
+ },
+ {
+  "id": "marnie-grimmsnarl-ex",
+  "name": "Marnie's Grimmsnarl",
+  "key": "grimmsnarl",
+  "count": 7
+ },
+ {
+  "id": "mega-gengar-ex",
+  "name": "Mega Gengar",
+  "key": "gengar-mega",
+  "count": 7
+ },
+ {
+  "id": "hydreigon-ex",
+  "name": "Hydreigon",
+  "key": "hydreigon",
+  "count": 7
+ },
+ {
+  "id": "dragapult-alakazam",
+  "name": "Dragapult Alakazam",
+  "key": "dragapult,alakazam",
+  "count": 6
+ },
+ {
+  "id": "archaludon-ex",
+  "name": "Archaludon",
+  "key": "archaludon",
+  "count": 6
+ },
+ {
+  "id": "ursaluna-lunatone",
+  "name": "Ursaluna Lunatone",
+  "key": "ursaluna-bloodmoon,lunatone",
+  "count": 6
+ },
+ {
+  "id": "dragapult-iron-thorns",
+  "name": "Dragapult Iron Thorns",
+  "key": "dragapult,iron-thorns",
+  "count": 6
+ },
+ {
+  "id": "mamoswine-ex",
+  "name": "Mamoswine",
+  "key": "mamoswine",
+  "count": 5
  },
  {
   "id": "ogerpon-meganium",
   "name": "Ogerpon Meganium",
   "key": "ogerpon,meganium",
-  "count": 2
+  "count": 5
+ },
+ {
+  "id": "alakazam-meg",
+  "name": "Alakazam",
+  "key": "alakazam",
+  "count": 5
+ },
+ {
+  "id": "miraidon-ex",
+  "name": "Miraidon",
+  "key": "miraidon",
+  "count": 4
+ },
+ {
+  "id": "flygon-ex-ssp",
+  "name": "Flygon",
+  "key": "flygon",
+  "count": 4
+ },
+ {
+  "id": "scovillain-ex",
+  "name": "Scovillain",
+  "key": "scovillain",
+  "count": 4
+ },
+ {
+  "id": "slaking-ex",
+  "name": "Slaking",
+  "key": "slaking",
+  "count": 3
+ },
+ {
+  "id": "erikas-victreebel",
+  "name": "Erika's Victreebel",
+  "key": "victreebel,tangela",
+  "count": 3
+ },
+ {
+  "id": "hop-zacian",
+  "name": "Hop's Zacian",
+  "key": "zacian-crowned,snorlax",
+  "count": 3
+ },
+ {
+  "id": "mega-camerupt-ex",
+  "name": "Mega Camerupt",
+  "key": "camerupt-mega",
+  "count": 3
+ },
+ {
+  "id": "misty-gyarados",
+  "name": "Misty's Gyarados",
+  "key": "gyarados,psyduck",
+  "count": 3
+ },
+ {
+  "id": "archaludon-zoroark",
+  "name": "Archaludon Zoroark",
+  "key": "archaludon,zoroark",
+  "count": 3
  },
  {
   "id": "dudunsparce-control",
   "name": "Dudunsparce Control",
   "key": "dudunsparce,elgyem",
+  "count": 3
+ },
+ {
+  "id": "flareon-ex",
+  "name": "Flareon",
+  "key": "flareon",
+  "count": 3
+ },
+ {
+  "id": "cornerstone-mask-ogerpon-ex",
+  "name": "Cornerstone Mask Ogerpon",
+  "key": "ogerpon-cornerstone",
+  "count": 3
+ },
+ {
+  "id": "tera-box",
+  "name": "Tera Box",
+  "key": "noctowl,ogerpon-wellspring",
+  "count": 3
+ },
+ {
+  "id": "toxtricity-brute-bonnet",
+  "name": "Toxtricity Brute Bonnet",
+  "key": "toxtricity,brute-bonnet",
+  "count": 2
+ },
+ {
+  "id": "azumarill-ssp",
+  "name": "Azumarill",
+  "key": "azumarill",
+  "count": 2
+ },
+ {
+  "id": "terapagos-noctowl",
+  "name": "Terapagos Noctowl",
+  "key": "terapagos,noctowl",
+  "count": 2
+ },
+ {
+  "id": "greninja-froslass",
+  "name": "Greninja Froslass",
+  "key": "greninja,froslass",
+  "count": 2
+ },
+ {
+  "id": "joltik-box",
+  "name": "Joltik Box",
+  "key": "joltik,pikachu",
   "count": 2
  },
  {
@@ -474,63 +654,45 @@
   "count": 2
  },
  {
-  "id": "lillie-clefairy",
-  "name": "Lillie's Clefairy",
-  "key": "clefairy",
+  "id": "blaziken-zoroark",
+  "name": "Blaziken Zoroark",
+  "key": "blaziken,zoroark",
   "count": 2
  },
  {
-  "id": "alakazam-meg",
-  "name": "Alakazam",
-  "key": "alakazam",
+  "id": "wailord-ex-pbl",
+  "name": "Wailord",
+  "key": "wailord",
   "count": 2
  },
  {
-  "id": "toxtricity-pfl",
-  "name": "Toxtricity",
-  "key": "toxtricity",
+  "id": "zygarde-barbaracle",
+  "name": "Zygarde Barbaracle",
+  "key": "zygarde-mega,barbaracle",
   "count": 2
  },
  {
-  "id": "flareon-ex",
-  "name": "Flareon",
-  "key": "flareon",
-  "count": 2
- },
- {
-  "id": "mega-gengar-ex",
-  "name": "Mega Gengar",
-  "key": "gengar-mega",
-  "count": 2
- },
- {
-  "id": "starmie-dusknoir",
-  "name": "Starmie Dusknoir",
-  "key": "starmie-mega,dusknoir",
+  "id": "archaludon-dudunsparce",
+  "name": "Archaludon Dudunsparce",
+  "key": "archaludon,dudunsparce",
   "count": 1
  },
  {
-  "id": "archaludon-ex",
-  "name": "Archaludon",
-  "key": "archaludon",
+  "id": "jellicent-dusknoir",
+  "name": "Jellicent Dusknoir",
+  "key": "jellicent,dusknoir",
   "count": 1
  },
  {
-  "id": "toxtricity-brute-bonnet",
-  "name": "Toxtricity Brute Bonnet",
-  "key": "toxtricity,brute-bonnet",
+  "id": "dragapult-toucannon",
+  "name": "Dragapult Toucannon",
+  "key": "dragapult,toucannon",
   "count": 1
  },
  {
-  "id": "terapagos-noctowl",
-  "name": "Terapagos Noctowl",
-  "key": "terapagos,noctowl",
-  "count": 1
- },
- {
-  "id": "mega-lopunny-ex",
-  "name": "Mega Lopunny",
-  "key": "lopunny-mega",
+  "id": "future-box",
+  "name": "Future Box",
+  "key": "miraidon,iron-crown",
   "count": 1
  },
  {
@@ -540,21 +702,57 @@
   "count": 1
  },
  {
-  "id": "misty-gyarados",
-  "name": "Misty's Gyarados",
-  "key": "gyarados,psyduck",
+  "id": "mega-latias-ex",
+  "name": "Mega Latias",
+  "key": "latias-mega",
   "count": 1
  },
  {
-  "id": "slaking-ex",
-  "name": "Slaking",
-  "key": "slaking",
+  "id": "bloodmoon-ursaluna-sfa",
+  "name": "Bloodmoon Ursaluna",
+  "key": "ursaluna-bloodmoon",
   "count": 1
  },
  {
-  "id": "azumarill-ssp",
-  "name": "Azumarill",
-  "key": "azumarill",
+  "id": "sylveon-pre",
+  "name": "Sylveon",
+  "key": "sylveon",
+  "count": 1
+ },
+ {
+  "id": "zoroark-crustle",
+  "name": "Zoroark Crustle",
+  "key": "zoroark,crustle",
+  "count": 1
+ },
+ {
+  "id": "cinderace-ex",
+  "name": "Cinderace",
+  "key": "cinderace",
+  "count": 1
+ },
+ {
+  "id": "bronzong-tef",
+  "name": "Bronzong",
+  "key": "bronzong",
+  "count": 1
+ },
+ {
+  "id": "tyranitar-jtg",
+  "name": "Tyranitar",
+  "key": "tyranitar",
+  "count": 1
+ },
+ {
+  "id": "koraidon-ex",
+  "name": "Koraidon",
+  "key": "koraidon",
+  "count": 1
+ },
+ {
+  "id": "milotic-ex",
+  "name": "Milotic",
+  "key": "milotic",
   "count": 1
  },
  {
@@ -564,21 +762,15 @@
   "count": 1
  },
  {
-  "id": "scovillain-ex",
-  "name": "Scovillain",
-  "key": "scovillain",
+  "id": "reging-bolt-bellibolt",
+  "name": "Raging Bolt Bellibolt",
+  "key": "raging-bolt,bellibolt",
   "count": 1
  },
  {
-  "id": "tera-box",
-  "name": "Tera Box",
-  "key": "noctowl,ogerpon-wellspring",
-  "count": 1
- },
- {
-  "id": "hop-zacian",
-  "name": "Hop's Zacian",
-  "key": "zacian-crowned,snorlax",
+  "id": "mega-sharpedo-ex",
+  "name": "Mega Sharpedo",
+  "key": "sharpedo-mega",
   "count": 1
  },
  {
@@ -586,72 +778,6 @@
   "name": "Diancie Dusknoir",
   "key": "diancie-mega,dusknoir",
   "count": 1
- },
- {
-  "id": "raging-bolt-ex",
-  "name": "Raging Bolt",
-  "key": "raging-bolt",
-  "count": 1
- },
- {
-  "id": "mega-froslass-dudunsparce",
-  "name": "Froslass Dudunsparce",
-  "key": "froslass-mega,dudunsparce",
-  "count": 1
- },
- {
-  "id": "mega-darkrai-ex",
-  "name": "Mega Darkrai",
-  "key": "darkrai-mega",
-  "count": 1
- },
- {
-  "id": "mega-camerupt-ex",
-  "name": "Mega Camerupt",
-  "key": "camerupt-mega",
-  "count": 0
- },
- {
-  "id": "rocket-spidops",
-  "name": "Rocket's Spidops",
-  "key": "spidops",
-  "count": 0
- },
- {
-  "id": "flareon-noctowl",
-  "name": "Flareon Noctowl",
-  "key": "flareon,noctowl",
-  "count": 0
- },
- {
-  "id": "zygarde-barbaracle",
-  "name": "Zygarde Barbaracle",
-  "key": "zygarde-mega,barbaracle",
-  "count": 0
- },
- {
-  "id": "archaludon-dudunsparce",
-  "name": "Archaludon Dudunsparce",
-  "key": "archaludon,dudunsparce",
-  "count": 0
- },
- {
-  "id": "erikas-victreebel",
-  "name": "Erika's Victreebel",
-  "key": "victreebel,tangela",
-  "count": 0
- },
- {
-  "id": "sinistcha-ogerpon",
-  "name": "Sinistcha Ogerpon",
-  "key": "sinistcha,ogerpon",
-  "count": 0
- },
- {
-  "id": "blaziken-zoroark",
-  "name": "Blaziken Zoroark",
-  "key": "blaziken,zoroark",
-  "count": 0
  },
  {
   "id": "dragapult-froslass",
@@ -663,18 +789,6 @@
   "id": "ethan-magcargo",
   "name": "Ethan's Magcargo",
   "key": "magcargo,ho-oh",
-  "count": 0
- },
- {
-  "id": "reging-bolt-bellibolt",
-  "name": "Raging Bolt Bellibolt",
-  "key": "raging-bolt,bellibolt",
-  "count": 0
- },
- {
-  "id": "joltik-box",
-  "name": "Joltik Box",
-  "key": "joltik,pikachu",
   "count": 0
  },
  {
@@ -690,39 +804,9 @@
   "count": 0
  },
  {
-  "id": "wailord-ex",
-  "name": "Wailord",
-  "key": "wailord",
-  "count": 0
- },
- {
-  "id": "mega-sharpedo-ex",
-  "name": "Mega Sharpedo",
-  "key": "sharpedo-mega",
-  "count": 0
- },
- {
-  "id": "jellicent-dusknoir",
-  "name": "Jellicent Dusknoir",
-  "key": "jellicent,dusknoir",
-  "count": 0
- },
- {
   "id": "incineroar-ex",
   "name": "Incineroar",
   "key": "incineroar",
-  "count": 0
- },
- {
-  "id": "greninja-froslass",
-  "name": "Greninja Froslass",
-  "key": "greninja,froslass",
-  "count": 0
- },
- {
-  "id": "flygon-ex-ssp",
-  "name": "Flygon",
-  "key": "flygon",
   "count": 0
  },
  {
@@ -738,39 +822,9 @@
   "count": 0
  },
  {
-  "id": "wailord-ex-pbl",
-  "name": "Wailord",
-  "key": "wailord",
-  "count": 0
- },
- {
-  "id": "mega-latias-ex",
-  "name": "Mega Latias",
-  "key": "latias-mega",
-  "count": 0
- },
- {
-  "id": "sylveon-pre",
-  "name": "Sylveon",
-  "key": "sylveon",
-  "count": 0
- },
- {
   "id": "dragonite-eelektrik",
   "name": "Dragonite Eelektrik",
   "key": "dragonite-mega,eelektrik",
-  "count": 0
- },
- {
-  "id": "cinderace-ex",
-  "name": "Cinderace",
-  "key": "cinderace",
-  "count": 0
- },
- {
-  "id": "bronzong-tef",
-  "name": "Bronzong",
-  "key": "bronzong",
   "count": 0
  },
  {
@@ -792,21 +846,9 @@
   "count": 0
  },
  {
-  "id": "milotic-ex",
-  "name": "Milotic",
-  "key": "milotic",
-  "count": 0
- },
- {
   "id": "heatran-metang",
   "name": "Heatran Metang",
   "key": "heatran,metang",
-  "count": 0
- },
- {
-  "id": "tyranitar-jtg",
-  "name": "Tyranitar",
-  "key": "tyranitar",
   "count": 0
  },
  {
@@ -834,21 +876,9 @@
   "count": 0
  },
  {
-  "id": "bloodmoon-ursaluna-sfa",
-  "name": "Bloodmoon Ursaluna",
-  "key": "ursaluna-bloodmoon",
-  "count": 0
- },
- {
   "id": "galvantula-ex",
   "name": "Galvantula",
   "key": "galvantula",
-  "count": 0
- },
- {
-  "id": "future-box",
-  "name": "Future Box",
-  "key": "miraidon,iron-crown",
   "count": 0
  }
 ]
