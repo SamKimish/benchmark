@@ -790,6 +790,9 @@ button.icon.archive-btn:hover { color: var(--ink); }
 button.icon.archive-btn.pending { opacity: .4; cursor: progress; }
 .deck-when { font-size: .74rem; letter-spacing: .02em; color: var(--muted); margin-top: 2px; }
 .deck-when.idle { color: #a8641a; }
+.deck-when.rotated { display: flex; align-items: center; gap: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rotated-tag { flex: none; font-size: .64rem; font-weight: 600; text-transform: uppercase; letter-spacing: .1em; padding: 1px 6px;
+  border-radius: 99px; background: var(--loss-bg); color: var(--loss); }
 @media (prefers-color-scheme: dark) { .deck-when.idle { color: #e0a35c; } }
 details.deck-archive { margin-top: clamp(40px, 4vw, 64px); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 details.deck-archive > summary { display: flex; align-items: center; gap: 18px; padding: 16px 12px; margin: 4px -12px; border-radius: 14px;

@@ -7,13 +7,14 @@ import { pct, prettyArch } from '@/lib/format'
 import type { Tally } from '@/lib/deckstats'
 import Sprites from '@/components/Sprites'
 import type { Deck } from '@/lib/types'
+import { rotatedCards } from '@/lib/legality'
 import DeleteDeck from './DeleteDeck'
 import ArchiveDeck from './ArchiveDeck'
 
 const CARDS = cardData as Card[]
 
 type Record_ = Tally & { last?: string }
-type Line = { deck: Deck; versions: number }
+type Line = { deck: Deck; versions: number; rotated?: string[] }
 
 /** A deck not played for this long gets a quiet "idle since" note, as a hint it may have rotated. */
 export const IDLE_DAYS = 45
@@ -42,7 +43,7 @@ const rateClass = (r: Tally) => {
   return rate >= 0.55 ? 'good' : rate < 0.45 ? 'bad' : ''
 }
 
-function Tile({ line: { deck: d, versions }, rec, archived, now, i }: { line: Line; rec?: Record_; archived: boolean; now: number; i: number }) {
+function Tile({ line: { deck: d, versions, rotated = [] }, rec, archived, now, i }: { line: Line; rec?: Record_; archived: boolean; now: number; i: number }) {
   const es = resolvePrintings(parseDecklist(d.decklist), CARDS)
   const idle = !archived && rec?.last && now - Date.parse(rec.last) > IDLE_DAYS * 864e5
   return (
@@ -70,13 +71,19 @@ function Tile({ line: { deck: d, versions }, rec, archived, now, i }: { line: Li
                 <strong className={rateClass(rec)}>{pct(rec.wins, rec.wins + rec.losses)}</strong>
               </> : <span className="muted">No matches yet</span>}
             </div>
-            {archived && d.archived_at
+            {rotated.length > 0
+              ? <div className="deck-when rotated" title={rotated.join(', ')}>
+                  <span className="rotated-tag">Rotated</span>
+                  {rotated.slice(0, 2).join(', ')}{rotated.length > 2 ? ` +${rotated.length - 2}` : ''}
+                </div>
+              : archived && d.archived_at
               ? <div className="deck-when">Archived {shortDate(d.archived_at)}{rec?.last ? ` · last played ${shortDate(rec.last)}` : ''}</div>
               : idle && <div className="deck-when idle">Not played since {shortDate(rec!.last!)}</div>}
           </span>
         </Link>
         <span className="tile-tools">
-          <ArchiveDeck lineId={d.line_id} name={d.name} archived={archived} />
+          {/* a rotated deck stays archived until its list is legal again, so there's nothing to toggle */}
+          {rotated.length === 0 && <ArchiveDeck lineId={d.line_id} name={d.name} archived={archived} />}
           <DeleteDeck lineId={d.line_id} name={d.name} versions={versions} />
         </span>
       </div>
@@ -85,12 +92,16 @@ function Tile({ line: { deck: d, versions }, rec, archived, now, i }: { line: Li
 }
 
 export default function DeckGallery({ decks, records = {}, now = Date.now() }: { decks: Deck[]; records?: Record<string, Record_>; now?: number }) {
-  const lines = latestVersions(decks)
+  // a deck whose newest list has cards that have left Standard is archived as rotated, without anyone pressing anything
+  const lines = latestVersions(decks).map((l) => ({
+    ...l, rotated: [...new Set(rotatedCards(resolvePrintings(parseDecklist(l.deck.decklist), CARDS), CARDS).map((e) => e.name))],
+  }))
   const gone = archivedLines(decks)
-  const live = lines.filter((l) => !gone.has(l.deck.line_id))
-  const shelf = lines.filter((l) => gone.has(l.deck.line_id))
-    // most recently archived first
-    .sort((a, b) => Date.parse(maxArchived(decks, b.deck.line_id)) - Date.parse(maxArchived(decks, a.deck.line_id)))
+  const isArchived = (l: Line) => gone.has(l.deck.line_id) || l.rotated!.length > 0
+  const live = lines.filter((l) => !isArchived(l))
+  // most recently archived (or, for a rotated deck, played) first
+  const when = (l: Line) => Date.parse(maxArchived(decks, l.deck.line_id) || records[l.deck.line_id]?.last || l.deck.created_at) || 0
+  const shelf = lines.filter(isArchived).sort((a, b) => when(b) - when(a))
   const sum = shelf.reduce<Tally>((t, l) => {
     const r = records[l.deck.line_id]
     return r ? { games: t.games + r.games, wins: t.wins + r.wins, losses: t.losses + r.losses } : t

@@ -3,6 +3,8 @@
 import { writeFileSync } from 'node:fs'
 
 const RAW = 'https://raw.githubusercontent.com/PokemonTCG/pokemon-tcg-data/master'
+// Regulation marks legal in Standard (G rotated on 10 April 2026). At the next rotation, drop the old mark here and
+// re-run: cards with it leave the deckbuilder's search and go into rotated.json, which archives decks still using them.
 const MARKS = new Set(['H', 'I', 'J', 'K', 'L'])
 const get = async (p) => {
   const r = await fetch(`${RAW}/${p}`)
@@ -14,6 +16,13 @@ const sets = (await get('sets/en.json')).filter((s) => /^(sv|me|zsv|rsv)/.test(s
 // TCG Live / Limitless codes where the data's ptcgoCode differs
 const CODE = { svp: 'SVP', mep: 'MEP' }
 const cards = []
+// Printings with a rotated mark: rotated unless a legal printing is the same card (same name and, for a Pokémon,
+// the same attacks and Abilities)
+const old = []
+const sameCard = (c) => c.supertype === 'Pokémon'
+  ? `${c.name}|${[...(c.abilities ?? []), ...(c.attacks ?? [])].map((a) => a.name).join('/')}`
+  : c.name.replace(/ \([^)]*\)$/, '')   // 'Boss's Orders (Ghetsis)' is Boss's Orders
+const legalCards = new Set()
 // "Pokémon|Attack" for every attack or Ability that stops the opponent's Active retreating (Yveltal's Clutch,
 // Mega Golisopod ex's Quadruple Hold, ...), for the "Retreat locked" loss reason. Locks on the user's own
 // Pokémon ("this Pokémon can't retreat") don't count.
@@ -31,7 +40,8 @@ for (const s of sets) {
   try { list = await get(`cards/en/${s.id}.json`) } catch { continue }
   for (const c of list) {
     const basicEnergy = c.supertype === 'Energy' && c.subtypes?.includes('Basic')
-    if (!basicEnergy && !MARKS.has(c.regulationMark)) continue
+    if (!basicEnergy && !MARKS.has(c.regulationMark)) { old.push({ key: `${code}-${c.number}`, same: sameCard(c), n: c.name }); continue }
+    legalCards.add(sameCard(c))
     for (const a of [...(c.attacks ?? []), ...(c.abilities ?? [])])
       if (/(?:Defending|that|their \w+) Pokémon can't retreat/.test(a.text ?? '')) locks.add(`${c.name}|${a.name}`)
     for (const t of [...(c.attacks ?? []), ...(c.abilities ?? [])].map((a) => a.text ?? '').concat(c.rules ?? []))
@@ -58,6 +68,10 @@ for (const s of sets) {
   console.log(s.id, code, cards.length)
 }
 writeFileSync(new URL('../public/cards.json', import.meta.url), JSON.stringify(cards))
+// 'SET-NO' -> name for every printing no longer legal in Standard
+const rotated = Object.fromEntries(old.filter((c) => !legalCards.has(c.same)).map((c) => [c.key, c.n]).sort(([a], [b]) => a.localeCompare(b)))
+writeFileSync(new URL('../src/lib/rotated.json', import.meta.url), JSON.stringify(rotated, null, 1) + '\n')
+console.log('Rotated printings:', Object.keys(rotated).length, 'of', old.length, 'with an old mark')
 writeFileSync(new URL('../src/lib/parser/retreat-locks.json', import.meta.url), JSON.stringify([...locks].sort(), null, 1) + '\n')
 const sorted = Object.fromEntries(Object.entries(abilityMons).sort(([a], [b]) => a.localeCompare(b)))
 writeFileSync(new URL('../src/lib/parser/ability-mons.json', import.meta.url), JSON.stringify(sorted, null, 1) + '\n')
