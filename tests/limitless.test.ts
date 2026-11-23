@@ -57,9 +57,9 @@ describe('importing a run', () => {
     const t = gdansk()
     expect(t.rounds.map((r) => matchResult(r)).join('')).toBe('TWWWWLLWLLLLL')
     expect(recordText(record(t.rounds))).toBe('5-7-1')
-    expect(t.rounds[0]).toMatchObject({ opponent: 'Justin Soyka', opp: 'dragapult', phase: 1 })
+    expect(t.rounds[0]).toMatchObject({ opponent: 'Justin Soyka', opp: 'dragapult', day: 1 })
     expect(t.rounds[1]).toMatchObject({ opponent: 'Marek Změlík', opp: 'ogerpon,hydrapple' })
-    expect(t.rounds[12]).toMatchObject({ opponent: 'Milos Ristin', opp: 'lucario-mega,hariyama', phase: 2 })
+    expect(t.rounds[12]).toMatchObject({ opponent: 'Milos Ristin', opp: 'lucario-mega,hariyama', day: 2 })
   })
 
   it('makes byes and no-shows out of rounds with no opponent', () => {

@@ -27,6 +27,8 @@ export interface Round {
   special: 'bye' | 'id' | null
   opponent: string
   notes: string
+  /** 2 for a round on day two of a big event; left out otherwise */
+  day?: number
 }
 
 export interface Tournament {
@@ -41,6 +43,8 @@ export interface Tournament {
   my_archetype: string | null
   placement: number | null
   players: number | null
+  /** Championship Points earned; null when none were recorded */
+  cp: number | null
   rounds: Round[]
   notes: string
   created_at: string
@@ -90,9 +94,13 @@ export function normaliseRounds(raw: unknown): Round[] {
       special: r.special === 'bye' || r.special === 'id' ? r.special : null,
       opponent: typeof r.opponent === 'string' ? r.opponent.slice(0, 80) : '',
       notes: typeof r.notes === 'string' ? r.notes.slice(0, 500) : '',
+      ...(r.day === 2 ? { day: 2 } : {}),
     }
   })
 }
+
+/** Whether round i is the first of day two. */
+export const startsDay2 = (rounds: Pick<Round, 'day'>[], i: number) => (rounds[i]?.day ?? 1) > 1 && (rounds[i - 1]?.day ?? 1) === 1
 
 export const ordinal = (n: number) => {
   const s = ['th', 'st', 'nd', 'rd'], v = n % 100
@@ -109,6 +117,35 @@ export function dateRange(start: string, end?: string | null): string {
   if (sameMonth) return `${fmt(start, { day: 'numeric' })}–${fmt(end, { day: 'numeric', month: 'long', year: 'numeric' })}`
   if (sameYear) return `${fmt(start, { day: 'numeric', month: 'long' })} – ${fmt(end, { day: 'numeric', month: 'long', year: 'numeric' })}`
   return `${fmt(start, { day: 'numeric', month: 'long', year: 'numeric' })} – ${fmt(end, { day: 'numeric', month: 'long', year: 'numeric' })}`
+}
+
+/** Championship Points for an Ace Trainer card in a season. */
+export const ACE_CP = 200
+
+/**
+ * The Play! Pokémon season an event counts towards, named by the year it ends: seasons run from
+ * September to the end of August, so 31 October 2026 is in the 2027 season.
+ */
+export const seasonOf = (date: string) => {
+  const [y, m] = date.split('-').map(Number)
+  return m >= 9 ? y + 1 : y
+}
+/** '2026–27 season' */
+export const seasonLabel = (season: number) => `${season - 1}–${String(season).slice(2)} season`
+
+export interface SeasonCP {
+  season: number
+  total: number
+  /** the events that earned CP, oldest first */
+  events: { id: string; name: string; cp: number; start_date: string }[]
+}
+
+/** CP earned in a season, with each event that earned it. */
+export function seasonCP(ts: Pick<Tournament, 'id' | 'name' | 'cp' | 'start_date'>[], season: number): SeasonCP {
+  const events = ts.filter((t) => t.cp && t.cp > 0 && seasonOf(t.start_date) === season)
+    .map((t) => ({ id: t.id, name: t.name, cp: t.cp!, start_date: t.start_date }))
+    .sort((a, b) => a.start_date.localeCompare(b.start_date))
+  return { season, total: events.reduce((n, e) => n + e.cp, 0), events }
 }
 
 /** '12th of 340', '3rd', or '' when no finish is set. */

@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { deckLabel } from '@/lib/format'
 import {
-  cleanGames, emptyRound, KINDS, matchResult, record, recordText, type Round, type Tournament,
+  cleanGames, emptyRound, startsDay2, KINDS, matchResult, record, recordText, type Round, type Tournament,
 } from '@/lib/tournaments'
 import type { Deck } from '@/lib/types'
 import DeckPicker from '@/components/DeckPicker'
@@ -13,7 +13,7 @@ import { spritesOf } from '@/lib/archetypes'
 import Icon from '@/components/Icon'
 import Pokeball from '@/components/Pokeball'
 import { saveTournament, type LimitlessImport } from './actions'
-import { closestDeck, type ImportedRound } from '@/lib/limitless'
+import { closestDeck } from '@/lib/limitless'
 import LimitlessDock, { type DeckNote } from './LimitlessDock'
 
 const today = () => new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/London' })
@@ -88,6 +88,7 @@ export default function TournamentEditor({ t, decks, limitless }: { t?: Tourname
   const [listText, setListText] = useState('')
   const [placement, setPlacement] = useState(t?.placement ? String(t.placement) : '')
   const [players, setPlayers] = useState(t?.players ? String(t.players) : '')
+  const [cp, setCp] = useState(t?.cp != null ? String(t.cp) : '')
   const [rounds, setRounds] = useState<Round[]>(t?.rounds.length ? t.rounds : [emptyRound()])
   const [notes, setNotes] = useState(t?.notes ?? '')
   const [saving, setSaving] = useState(false)
@@ -109,7 +110,7 @@ export default function TournamentEditor({ t, decks, limitless }: { t?: Tourname
       const r = await saveTournament({
         id: t?.id, name, kind, format, location, startDate: start, endDate: end || null,
         deckId: deckId && deckId !== NEW_LIST ? deckId : null, myArchetype: deck ? null : arch || null,
-        placement: num(placement), players: num(players), rounds, notes,
+        placement: num(placement), players: num(players), cp: cp.trim() ? Math.max(0, Math.floor(Number(cp))) || 0 : null, rounds, notes,
         newDeck: deckId === NEW_LIST ? { name: listName, decklist: listText } : null,
       })
       if (r.error || !r.id) { setError(r.error ?? 'Something went wrong.'); return }
@@ -229,6 +230,8 @@ export default function TournamentEditor({ t, decks, limitless }: { t?: Tourname
             <label>Placed<input type="number" min={1} inputMode="numeric" value={placement} onChange={(e) => setPlacement(e.target.value)} placeholder="12" /></label>
             <span className="muted">of</span>
             <label>Players<input type="number" min={1} inputMode="numeric" value={players} onChange={(e) => setPlayers(e.target.value)} placeholder="340" /></label>
+            <label className="t-cp"><span>CP earned <span className="muted small" title="Championship Points">(towards Ace)</span></span>
+              <input type="number" min={0} inputMode="numeric" value={cp} onChange={(e) => setCp(e.target.value)} placeholder="0" /></label>
           </div>
         </section>
       </div>
@@ -240,8 +243,7 @@ export default function TournamentEditor({ t, decks, limitless }: { t?: Tourname
         </div>
         <ol className="rounds-edit">
           {rounds.map((r, i) => {
-            const phase = (r as Partial<ImportedRound>).phase ?? 1
-            const day2 = phase > 1 && ((rounds[i - 1] as Partial<ImportedRound> | undefined)?.phase ?? 1) === 1
+            const day2 = startsDay2(rounds, i)
             return [
               day2 && <li key={`d${i}`} className="round-day" aria-hidden><span>Day 2</span></li>,
               <RoundRow key={i} i={i} r={r} onChange={(x) => setRound(i, x)} onRemove={() => setRounds(rounds.filter((_, j) => j !== i))} />,

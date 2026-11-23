@@ -21,6 +21,7 @@ export interface TournamentInput {
   myArchetype: string | null
   placement: number | null
   players: number | null
+  cp: number | null
   rounds: Round[]
   notes: string
   /** a list pasted in while logging the event, saved as a new deck first */
@@ -28,6 +29,7 @@ export interface TournamentInput {
 }
 
 const DATE = /^\d{4}-\d{2}-\d{2}$/
+const points = (n: number | null) => (n !== null && Number.isInteger(n) && n >= 0 && n < 10000 ? n : null)
 const count = (n: number | null) => (n && Number.isInteger(n) && n > 0 && n < 100000 ? n : null)
 
 export async function saveTournament(t: TournamentInput): Promise<{ id?: string; error?: string }> {
@@ -62,7 +64,7 @@ export async function saveTournament(t: TournamentInput): Promise<{ id?: string;
 
   const row = {
     name: t.name.trim().slice(0, 120), kind: t.kind, format: t.format.trim().slice(0, 40), location: t.location.trim().slice(0, 120),
-    start_date: t.startDate, end_date: end, deck_id: deckId, my_archetype: arch, placement, players,
+    start_date: t.startDate, end_date: end, deck_id: deckId, my_archetype: arch, placement, players, cp: points(t.cp),
     rounds: normaliseRounds(t.rounds).slice(0, 30), notes: t.notes.slice(0, 5000),
   }
   const { data, error } = t.id

@@ -33,6 +33,7 @@ export default function TournamentView({ t, deck: d }: { t: Tournament; deck: De
               <span className={`t-pill kind-${t.kind}`}><KindIcon kind={t.kind} /> {kindLabel(t.kind)}</span>
               {t.format && <span className="t-pill">{t.format}</span>}
               {finish && <span className="t-pill finish">{finish}</span>}
+              {t.cp ? <span className="t-pill cp" title="Championship Points">+{t.cp} CP</span> : null}
               {labs && <a className="t-pill t-pill-link" href={labs} target="_blank" rel="noreferrer">Limitless <Icon name="external" size={14} /></a>}
             </div>
           </div>

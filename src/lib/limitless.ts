@@ -132,10 +132,8 @@ export function decklistText(d: LabsDecklist | null | undefined): string {
   return [section('Pokémon', d.pokemon), section('Trainer', d.trainer), section('Energy', d.energy)].filter(Boolean).join('\n\n')
 }
 
-export interface ImportedRound extends Round {
-  /** which day of the event the round was on: 1, or 2 for day two */
-  phase: number
-}
+/** Labs rounds always know their day. */
+export type ImportedRound = Round & { day: number }
 
 export interface ImportedTournament {
   source: string
@@ -177,7 +175,7 @@ export function buildImport(ref: LabsRef, t: LabsTournament, p: LabsPlayer, matc
       const oppId = first ? m.p2_id : m.p1_id
       const oppName = (first ? m.p2_name : m.p1_name) ?? ''
       const opp = deckKey(first ? m.p2_deck : m.p1_deck, first ? m.p2_icons : m.p1_icons)
-      const base = { opp, opponent: oppName.slice(0, 80), notes: '', phase: m.phase || 1 }
+      const base = { opp, opponent: oppName.slice(0, 80), notes: '', day: m.phase > 1 ? 2 : 1 }
       if (!oppId) {
         return m.winner === me
           ? { ...base, opp: null, games: '', special: 'bye' }
@@ -203,7 +201,7 @@ export function buildImport(ref: LabsRef, t: LabsTournament, p: LabsPlayer, matc
     rounds,
     record: { w: p.wins ?? 0, l: p.losses ?? 0, t: p.ties ?? 0 },
     dropped: p.drop_round ?? null,
-    day2: rounds.some((r) => r.phase > 1),
+    day2: rounds.some((r) => r.day > 1),
   }
 }
 
