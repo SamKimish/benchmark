@@ -35,6 +35,8 @@ export default function TournamentList({ ts, decks: deckList, error }: { ts: Tou
       <div className="page-head">
         <h1>Tournaments</h1>
         <div className="page-actions">
+          <Link href="/tournaments/new?import" className="button secondary paste-game lx-entry" title="Fill a tournament in from your Limitless player page">
+            <Icon name="link" /> Import from Limitless</Link>
           <Link href="/tournaments/new" className="button paste-game"><Icon name="plus" /> Log tournament</Link>
         </div>
       </div>
@@ -42,7 +44,8 @@ export default function TournamentList({ ts, decks: deckList, error }: { ts: Tou
 
       {!ts.length ? (
         <p className="panel">No tournaments yet. After your next Locals, Cup or Regionals, press <strong>Log tournament</strong> to
-          record your list, each round&apos;s opponent and games, and where you finished.</p>
+          record your list, each round&apos;s opponent and games, and where you finished. Played a Regionals or bigger?
+          {' '}<Link href="/tournaments/new?import">Import it from Limitless</Link> instead.</p>
       ) : (
         <>
           <div className="tiles">
