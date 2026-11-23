@@ -1,7 +1,8 @@
 'use client'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { baseArchetype, gameStats, LogError, type GameStats } from '@/lib/parser'
+import { gameStats, LogError, type GameStats } from '@/lib/parser'
+import { guessDeck } from '@/lib/guess-deck'
 import { prettyArch } from '@/lib/format'
 import type { Deck } from '@/lib/types'
 import { saveGames } from '@/app/upload/actions'
@@ -10,24 +11,11 @@ import GameDialog, { type GameFields, type KnownTags } from './GameDialog'
 
 interface Draft { log: string; stats: GameStats; key: number }
 
-/** The deck a pasted game was most likely played with: the newest active version of a matching
- * archetype, else whatever the last game was played with. */
-function guessDeck(decks: Deck[], arch: string | null, lastDeckId: string | null) {
-  const same = (d: Deck) => d.archetype && arch && (d.archetype === arch || prettyArch(d.archetype) === prettyArch(arch))
-  // Hammer Pult with no hammers drawn this game is still Hammer Pult, so fall back to the deck's Pokémon alone
-  const base = (k: string | null) => prettyArch(baseArchetype(k))
-  const near = (d: Deck) => d.archetype && arch && base(d.archetype) === base(arch)
-  const order = (a: Deck, b: Deck) => Number(b.active) - Number(a.active) || b.version_order - a.version_order
-  const hits = decks.filter(same).sort(order)
-  const nearHits = decks.filter(near).sort(order)
-  return hits[0]?.id ?? nearHits[0]?.id ?? lastDeckId ?? ''
-}
-
 /**
  * Adding the game you just played: copy the log in TCG Live, press "Paste game" (or Ctrl+V anywhere
  * on the page), check the guesses, save.
  */
-export default function QuickPaste({ decks, lastDeckId, knownTags }: { decks: Deck[]; lastDeckId: string | null; knownTags: KnownTags }) {
+export default function QuickPaste({ decks, lastPlayed, knownTags }: { decks: Deck[]; lastPlayed: Record<string, string>; knownTags: KnownTags }) {
   const router = useRouter()
   const [draft, setDraft] = useState<Draft | null>(null)
   const [manual, setManual] = useState(false)
@@ -99,7 +87,7 @@ export default function QuickPaste({ decks, lastDeckId, knownTags }: { decks: De
           myArch={draft.stats.my_archetype} onSave={save} onClose={close}
           info={`vs ${draft.stats.opponent}${draft.stats.went_first === null ? '' : draft.stats.went_first ? ' · went 1st' : ' · went 2nd'} · prizes ${draft.stats.prizes_taken}–${draft.stats.prizes_given}`}
           initial={{
-            deckId: guessDeck(decks, draft.stats.my_archetype, lastDeckId), oppArchetype: draft.stats.opp_archetype ?? '',
+            deckId: guessDeck(decks, draft.stats.my_archetype, lastPlayed), oppArchetype: draft.stats.opp_archetype ?? '',
             result: draft.stats.result, tags: draft.stats.tags, winTags: draft.stats.win_tags,
           }} />
       )}

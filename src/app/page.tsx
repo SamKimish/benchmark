@@ -52,9 +52,11 @@ export default async function MatchLog({ searchParams }: { searchParams: Promise
   const deckById = new Map(decks.map((d) => [d.id, d]))
   // decks listed by when they were last played, newest first; never-played decks last
   const lastPlayed = new Map<string, string>()
+  const deckLastPlayed: Record<string, string> = {}
   await Promise.all(decks.map(async (d) => {
     const { data } = await supabase.from('games').select('played_at').eq('deck_id', d.id).order('played_at', { ascending: false }).limit(1)
     const at = data?.[0]?.played_at as string | undefined
+    if (at) deckLastPlayed[d.id] = at
     if (at && at > (lastPlayed.get(d.name) ?? '')) lastPlayed.set(d.name, at)
   }))
   const names = [...new Set(decks.map((d) => d.name))]
@@ -106,7 +108,7 @@ export default async function MatchLog({ searchParams }: { searchParams: Promise
       <div className="page-head">
         <h1>Match log</h1>
         <div className="page-actions">
-          <QuickPaste decks={decks} lastDeckId={rows[0]?.deck_id ?? null} knownTags={knownTags} />
+          <QuickPaste decks={decks} lastPlayed={deckLastPlayed} knownTags={knownTags} />
           <Link href="/upload" className="button secondary"><Icon name="import" /> Upload files</Link>
         </div>
       </div>

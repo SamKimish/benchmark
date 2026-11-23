@@ -1,6 +1,6 @@
 /** One flat row of stats and loss tags per game. Port of the ptcg-pipeline build.py. */
 import { parse, ParsedGame, TWO_PRIZERS_SUPPORT } from './parse'
-import { cardSlug, esc, normalize } from './text'
+import { cardSlug, esc, normalize, splitCards } from './text'
 import { baseArchetype, detectArchetype, withHammer } from './archetype'
 import RETREAT_LOCK_LIST from './retreat-locks.json'
 import { abilityLocks, type AbilityLock } from './ability-lock'
@@ -244,6 +244,25 @@ export interface GameStats {
 }
 
 /**
+ * Did `who` show `card` anywhere in the log: played it, drew it, put it in hand, or had it in a
+ * revealed list of cards (opening hand, a draw, a discard...)? A "• a, b, c" list belongs to the
+ * player named on the line above it ("- Sam drew 8 cards.", "- Opp moved Sam's 2 cards to the
+ * discard pile."), or, for "- 7 drawn cards." and mulligan reveals, the line above that.
+ */
+export function showedCard(text: string, who: string, names: string[], card: string): boolean {
+  const lines = text.split('\n').map((l) => l.trim().replace(/^- /, ''))
+  const owner = (ln: string) =>
+    names.find((n) => ln.includes(`${n}'s `) || ln.includes(`${n}\u2019s `)) ?? names.find((n) => ln.startsWith(`${n} `)) ?? null
+  return lines.some((ln, i) => {
+    if (ln === `${who} played ${card}.` || ln === `${who} drew ${card}.` || ln === `${card} was added to ${who}'s hand.`) return true
+    if (!ln.startsWith('•') || !splitCards(ln.slice(1).trim()).includes(card)) return false
+    let j = i - 1
+    while (j > 0 && (/^\d+ drawn cards/.test(lines[j]) || lines[j].startsWith('Cards revealed from Mulligan'))) j--
+    return j >= 0 && owner(lines[j]) === who
+  })
+}
+
+/**
  * Parse a raw log into stats. `archetype` is my deck's archetype slug when known (e.g. from the
  * deck it was uploaded against); otherwise it is detected from the Pokémon I played.
  */
@@ -253,9 +272,9 @@ export function gameStats(raw: string, opts: { me?: string; archetype?: string |
   const ins = enteredPlay(text, g.me)
   const myMons = [...ins.map(([, p]) => p), ...evolutions(text, g.me).map(([, p]) => p)]
   const oppMons = g.opp ? [...enteredPlay(text, g.opp), ...evolutions(text, g.opp)].map(([, p]) => p) : []
-  // a side that played Crushing Hammer is the hammer version of its deck (Hammer Pult)
+  // a side that showed a Crushing Hammer (played, drawn, in the opening hand...) is the hammer version of its deck (Hammer Pult)
   const hammered = (who: string | null, key: string | null) =>
-    key && who && text.split('\n').includes(`${who} played Crushing Hammer.`) ? withHammer(key) : key
+    key && who && showedCard(text, who, [g.me, g.opp].filter((n): n is string => !!n), 'Crushing Hammer') ? withHammer(key) : key
   const myArch = opts.archetype ?? hammered(g.me, detectArchetype(myMons))
   const oppArch = hammered(g.opp, detectArchetype(oppMons))
   const plan = planFor(myArch, myMons)
