@@ -13,6 +13,14 @@ for (const [, row] of html.matchAll(/<tr[^>]*>(.*?)<\/tr>/gs)) {
   const name = deck[2].replace(/&#0?39;|&apos;/g, "'").replace(/&amp;/g, '&').trim()
   if (icons.length) out.push({ id: deck[1], name, key: icons.join(','), count })
 }
+// Limitless draws some decks with the same icons ('Steven's Metagross' and 'Metagross'); keep them apart by
+// putting the trainer in the key of the one named after them ('stevens-metagross'), as the parser does
+const keyCount = new Map()
+for (const a of out) keyCount.set(a.key, (keyCount.get(a.key) ?? 0) + 1)
+for (const a of out) {
+  const owner = a.name.match(/^(Team Rocket's|\S+'s) /)?.[1]
+  if (owner && keyCount.get(a.key) > 1) a.key = `${owner.toLowerCase().replace(/[^a-z ]/g, '').replace(/ /g, '-')}-${a.key}`
+}
 if (out.length < 20) throw new Error(`only found ${out.length} archetypes; has the page changed?`)
 // Limitless only lists decks from the current format, so keep archetypes that have dropped off (with no
 // play count) so older games still get their names

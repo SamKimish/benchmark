@@ -3,7 +3,7 @@ import { gameStats } from './parser'
 import { normalize } from './parser/text'
 
 /** Bump when the parser's output changes, so saved games can be analysed again (2: win reasons, Hammer decks; 3: Retreat locked; 4: Ability locked). */
-export const PARSER_VERSION = 4
+export const PARSER_VERSION = 5   // 5: Steven's Metagross told apart from Metagross
 
 export const logHash = (log: string) => createHash('sha256').update(normalize(log).trim()).digest('hex')
 

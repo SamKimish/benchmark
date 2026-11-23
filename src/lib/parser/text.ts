@@ -54,3 +54,25 @@ export function cardSlug(name: string | null | undefined): string {
   n = n.toLowerCase().replace(/é/g, 'e').replace(/[^a-z0-9 -]/g, '').trim().replace(/ /g, '-')
   return n + suffix
 }
+
+/** The trainer a Pokémon belongs to, as a slug: "Steven's Metagross ex" -> 'stevens', "Team Rocket's Spidops" -> 'team-rockets'. */
+export function ownerSlug(name: string | null | undefined): string | null {
+  const m = (name ?? '').match(/^(Team Rocket's|\S+'s) /)
+  return m ? m[1].toLowerCase().replace(/[^a-z ]/g, '').replace(/ /g, '-') : null
+}
+
+/**
+ * A slug that keeps the trainer, for the decks Limitless tells apart only by it: "Steven's Metagross ex"
+ * -> 'stevens-metagross', a different deck from plain Metagross.
+ */
+export const ownedSlug = (name: string | null | undefined) => {
+  const owner = ownerSlug(name)
+  return owner ? `${owner}-${cardSlug(name)}` : cardSlug(name)
+}
+
+/** Trainers whose Pokémon have their own cards; an owned slug starts with one of these. */
+const OWNERS = ['acerolas', 'arvens', 'biancas', 'brocks', 'cynthias', 'erikas', 'ethans', 'hops', 'ionos', 'iriss',
+  'janines', 'larrys', 'lillies', 'marnies', 'mistys', 'ns', 'rosas', 'stevens', 'team-rockets', 'wallys']
+const OWNED = new RegExp(`^(?:${OWNERS.join('|')})-(?=[a-z])`)
+/** The Pokémon in an owned slug: 'stevens-metagross' -> 'metagross'. */
+export const unowned = (slug: string) => slug.replace(OWNED, '')

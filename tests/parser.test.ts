@@ -104,6 +104,32 @@ describe('archetypes', () => {
     expect(detectArchetype(['Dreepy', 'Drakloak', 'Fezandipiti ex'])).toBe('dragapult')
     expect(detectArchetype(['Dreepy', 'Dragapult ex', 'Duskull', 'Dusclops', 'Dusknoir'])).toBe('dragapult,dusknoir')
   })
+
+  it("tells Steven's Metagross apart from Metagross", () => {
+    expect(detectArchetype(["Steven's Beldum", "Steven's Metang", "Steven's Metagross ex"])).toBe('stevens-metagross')
+    expect(detectArchetype(["Steven's Beldum", "Steven's Metang"])).toBe('stevens-metagross')
+    expect(detectArchetype(['Beldum', 'Metang', 'Metagross'])).toBe('metagross')
+    expect(detectArchetype(["Team Rocket's Tarountula", "Team Rocket's Spidops"])).not.toContain('team-rockets')
+  })
+})
+
+describe('deck names', () => {
+  it('keeps every Limitless archetype under its own key', async () => {
+    const { LIMITLESS } = await import('@/lib/archetypes')
+    const keys = LIMITLESS.map((a) => a.key)
+    expect(keys.filter((k, i) => keys.indexOf(k) !== i)).toEqual([])
+  })
+
+  it("names an opponent's deck the way it was picked", async () => {
+    const { prettyArch } = await import('@/lib/format')
+    const { deckSprites, spriteSlug } = await import('@/lib/archetypes')
+    expect(prettyArch('stevens-metagross')).toBe("Steven's Metagross")
+    expect(prettyArch('metagross')).toBe('Metagross')
+    expect(prettyArch('spidops')).toBe("Rocket's Spidops")
+    const { matchArchetypes } = await import('@/lib/archetypes')
+    expect(matchArchetypes(["Steven's Beldum", "Steven's Metagross ex"])[0].name).toBe("Steven's Metagross")
+    expect(deckSprites('stevens-metagross').map(spriteSlug)).toEqual(['metagross'])
+  })
 })
 
 describe('timeline', () => {
