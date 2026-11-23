@@ -43,3 +43,21 @@ describe('tournaments', () => {
     expect(dateRange('2026-11-07', '2026-11-08')).toBe('7–8 November 2026')
   })
 })
+
+describe('Championship Points', () => {
+  it('puts events in the season they count towards', async () => {
+    const { seasonOf, seasonLabel } = await import('../src/lib/tournaments')
+    expect(seasonOf('2026-10-31')).toBe(2027)
+    expect(seasonOf('2026-09-01')).toBe(2027)
+    expect(seasonOf('2026-08-30')).toBe(2026)
+    expect(seasonOf('2027-04-12')).toBe(2027)
+    expect(seasonLabel(2027)).toBe('2026–27 season')
+  })
+  it('adds up a season, oldest event first, leaving out other seasons and events without CP', async () => {
+    const { seasonCP } = await import('../src/lib/tournaments')
+    const t = (id: string, start_date: string, cp: number | null) => ({ id, name: id, start_date, cp })
+    const s = seasonCP([t('gdansk', '2026-10-31', 45), t('cup', '2026-10-12', 15), t('locals', '2026-09-26', null), t('worlds', '2026-08-20', 500)], 2027)
+    expect(s.total).toBe(60)
+    expect(s.events.map((e) => e.id)).toEqual(['cup', 'gdansk'])
+  })
+})

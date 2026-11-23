@@ -3,37 +3,13 @@ import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import Link from 'next/link'
 import type { ImportedTournament } from '@/lib/limitless'
 import { parseLabsUrl } from '@/lib/limitless'
-import { dateRange, kindLabel, matchResult, ordinal, recordText } from '@/lib/tournaments'
-import { prettyArch } from '@/lib/format'
-import Sprites from '@/components/Sprites'
+import { dateRange } from '@/lib/tournaments'
+import Ticket from './Ticket'
 import Icon from '@/components/Icon'
 import Pokeball from '@/components/Pokeball'
-import { KindIcon } from './KindIcon'
 import { importFromLimitless, type LimitlessImport } from './actions'
 
 export interface DeckNote { kind: 'same' | 'close' | 'new' | 'none'; name?: string; off?: number; onUse?: () => void }
-
-const RESULT = { W: 'Win', L: 'Loss', T: 'Tie' } as const
-
-/** The run as a row of tiles, one per round, with a gap where day two starts. */
-function Ribbon({ run }: { run: ImportedTournament }) {
-  return (
-    <ol className="lx-ribbon" aria-label="Rounds">
-      {run.rounds.map((r, i) => {
-        const m = matchResult(r)
-        const day2 = r.phase > 1 && (run.rounds[i - 1]?.phase ?? 1) === 1
-        const who = r.special === 'bye' ? 'Bye' : `${m ? RESULT[m] : 'No result'} vs ${r.opponent || 'unknown'}${r.opp ? ` (${prettyArch(r.opp)})` : ''}`
-        return (
-          <li key={i} className={`lx-tile ${m ?? ''}${day2 ? ' day2' : ''}`} style={{ '--i': i } as CSSProperties} title={`Round ${i + 1}: ${who}`}>
-            {day2 && <span className="lx-day2">Day 2</span>}
-            <span className="lx-tile-r">{m ?? '–'}</span>
-            <span className="lx-tile-n">{i + 1}</span>
-          </li>
-        )
-      })}
-    </ol>
-  )
-}
 
 /**
  * Pulling a run in from Limitless: paste your Labs player link, and the event, your list and every round
@@ -82,36 +58,20 @@ export default function LimitlessDock({ autoUrl, autoFocus, deckNote, onImport }
   if (run && !busy) {
     return (
       <section className="lx-dock done" aria-live="polite">
-        <article className={`lx-ticket ${run.record.w > run.record.l ? 'W' : run.record.l > run.record.w ? 'L' : 'T'}`}>
-          <div className="lx-main">
-            <div className="lx-eyebrow"><KindIcon kind={run.kind} size={15} /> {kindLabel(run.kind)} <span aria-hidden>·</span> Imported from Limitless</div>
-            <h2 className="lx-name">{run.name}</h2>
-            <div className="lx-meta">
-              {run.start_date && <span>{dateRange(run.start_date, run.end_date)}</span>}
-              {run.location && <span>{run.location}</span>}
-              <span>{run.player}</span>
-            </div>
-            <Ribbon run={run} />
-            {deckNote && (
-              <p className="lx-deck">
-                {deckNote.kind === 'same' && <>Your list matches <strong>{deckNote.name}</strong> in Decks.</>}
-                {deckNote.kind === 'close' && <>Your list is {deckNote.off} {deckNote.off === 1 ? 'card' : 'cards'} off <strong>{deckNote.name}</strong>, so it&apos;ll be saved to Decks as a new list.{' '}
-                  <button type="button" className="link lx-use" onClick={deckNote.onUse}>Use {deckNote.name} instead</button></>}
-                {deckNote.kind === 'new' && <>Your list isn&apos;t in Decks yet. It&apos;ll be saved there as a new deck.</>}
-                {deckNote.kind === 'none' && <>Limitless hasn&apos;t published lists for this event, so pick your deck below.</>}
-              </p>
-            )}
-          </div>
-          <div className="lx-stub">
-            {run.placement ? (
-              <div className="lx-place"><span className="lx-place-n">{run.placement}</span><span className="lx-place-s">{ordinal(run.placement).replace(String(run.placement), '')}</span></div>
-            ) : <div className="lx-place"><span className="lx-place-n">–</span></div>}
-            {run.players && <div className="lx-of">of {run.players.toLocaleString('en-GB')}</div>}
-            <div className="lx-rec" title="Wins-losses-ties">{recordText(run.record)}</div>
-            <Sprites arch={run.my_archetype} />
-            {run.day2 && <span className="lx-badge">Day 2</span>}
-          </div>
-        </article>
+        <Ticket kind={run.kind} eyebrow={<><span aria-hidden>·</span> Imported from Limitless</>} name={run.name}
+          meta={[run.start_date && dateRange(run.start_date, run.end_date), run.location, run.player]}
+          rounds={run.rounds} rec={run.record} placement={run.placement} players={run.players} arch={run.my_archetype}
+          badge={run.day2 ? <span className="lx-badge">Day 2</span> : undefined}>
+          {deckNote && (
+            <p className="lx-deck">
+              {deckNote.kind === 'same' && <>Your list matches <strong>{deckNote.name}</strong> in Decks.</>}
+              {deckNote.kind === 'close' && <>Your list is {deckNote.off} {deckNote.off === 1 ? 'card' : 'cards'} off <strong>{deckNote.name}</strong>, so it&apos;ll be saved to Decks as a new list.{' '}
+                <button type="button" className="link lx-use" onClick={deckNote.onUse}>Use {deckNote.name} instead</button></>}
+              {deckNote.kind === 'new' && <>Your list isn&apos;t in Decks yet. It&apos;ll be saved there as a new deck.</>}
+              {deckNote.kind === 'none' && <>Limitless hasn&apos;t published lists for this event, so pick your deck below.</>}
+            </p>
+          )}
+        </Ticket>
         <div className="lx-after">
           {done.existing && (
             <span className="lx-warn">You&apos;ve already logged <Link href={`/tournaments/${done.existing.id}`}>{done.existing.name}</Link>. Saving adds it again.</span>
