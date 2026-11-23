@@ -1,0 +1,20 @@
+{
+    "ok": true,
+    "message": {
+        "player_id": 40104,
+        "division": "MA",
+        "name": "Sam Kimish",
+        "country": "UK",
+        "placement": 323,
+        "points": 16,
+        "wins": 5,
+        "losses": 7,
+        "ties": 1,
+        "drop_round": null,
+        "dropped": 0,
+        "dupe": 0,
+        "deck_id": "dragapult-ex",
+        "deck_name": "Dragapult",
+        "icons": "dragapult"
+    }
+}

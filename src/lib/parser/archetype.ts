@@ -4,7 +4,7 @@
  * Pokémon that evolves into it did (a game can end before Dreepy becomes Dragapult). The match
  * with the most evidence wins, then the most common one.
  */
-import { cardSlug } from './text'
+import { cardSlug, ownedSlug, ownerSlug } from './text'
 import { ARCHETYPES, EVOLUTIONS } from './archetypes'
 
 // Pokémon that turn up in many decks as support, so they never name a deck on their own
@@ -17,8 +17,10 @@ const SUPPORT = new Set([
 
 const next = new Map<string, string[]>()
 for (const [a, b] of EVOLUTIONS) {
-  const [x, y] = [cardSlug(a), cardSlug(b)]
-  if (x !== y) next.set(x, [...(next.get(x) ?? []), y])
+  for (const slug of ownerSlug(a) && ownerSlug(b) ? [cardSlug, ownedSlug] : [cardSlug]) {
+    const [x, y] = [slug(a), slug(b)]
+    if (x !== y) next.set(x, [...(next.get(x) ?? []), y])
+  }
 }
 function descendants(slug: string, out = new Set<string>()): Set<string> {
   for (const d of next.get(slug) ?? []) if (!out.has(d)) { out.add(d); descendants(d, out) }
@@ -26,7 +28,9 @@ function descendants(slug: string, out = new Set<string>()): Set<string> {
 }
 
 export function detectArchetype(pokemon: string[]): string | null {
-  const seen = new Set(pokemon.map(cardSlug))
+  // both 'metagross' and 'stevens-metagross' for Steven's Metagross ex, so Steven's Metagross can be told
+  // apart from Metagross while the owner doesn't matter to any other deck
+  const seen = new Set(pokemon.flatMap((p) => [cardSlug(p), ownedSlug(p)]))
   const implied = new Set<string>()
   for (const s of seen) for (const d of descendants(s)) if (!seen.has(d)) implied.add(d)
   let best: { slug: string; score: number } | null = null

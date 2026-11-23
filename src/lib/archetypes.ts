@@ -1,6 +1,6 @@
 /** Naming a deck after the Limitless archetype it matches (play.limitlesstcg.com/decks). */
 import data from './limitless-archetypes.json'
-import { baseArchetype, cardSlug, HAMMER, isHammer, withHammer } from './parser'
+import { baseArchetype, cardSlug, HAMMER, isHammer, ownedSlug, unowned, withHammer } from './parser'
 
 export interface Archetype { id: string; name: string; key: string; count: number }
 export const LIMITLESS: Archetype[] = data
@@ -43,6 +43,7 @@ const NO_MEGA_SPRITE = new Set(['golurk-mega', 'golisopod-mega', 'zeraora-mega']
  * ('Fan Rotom' -> 'fan-rotom'), Limitless names forms after the species ('rotom-fan').
  */
 export function spriteSlug(slug: string): string {
+  slug = unowned(slug)   // Steven's Metagross is drawn as Metagross
   if (NO_MEGA_SPRITE.has(slug)) return slug.replace(/-mega$/, '')
   return slug
     .replace(/^(.+)-([xy])-mega$/, '$1-mega-$2')                      // charizard-x-mega -> charizard-mega-x
@@ -68,7 +69,7 @@ export const fallbackSpriteUrl = (slug: string): string | null => {
  * A list with Crushing Hammer in it gets the Hammer versions first ('Hammer Pult' before 'Dragapult').
  */
 export function matchArchetypes(pokemonNames: string[], limit = 6, hammer = false): Archetype[] {
-  const seen = new Set(pokemonNames.map(cardSlug))
+  const seen = new Set(pokemonNames.flatMap((n) => [cardSlug(n), ownedSlug(n)]))
   const hits = LIMITLESS
     .filter((a) => a.key.split(',').every((p) => seen.has(p)))
     .sort((x, y) => y.key.split(',').length - x.key.split(',').length || y.count - x.count)

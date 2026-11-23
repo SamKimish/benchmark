@@ -1,13 +1,15 @@
 import Link from 'next/link'
 import { pct, prettyArch } from '@/lib/format'
 import {
-  dateRange, finishText, kindLabel, matchResult, ordinal, record, recordText, type Tournament,
+  dateRange, matchResult, ordinal, record, recordText, seasonCP, seasonOf, type Tournament,
 } from '@/lib/tournaments'
 import type { Deck } from '@/lib/types'
 import Sprites from '@/components/Sprites'
 import { spritesOf } from '@/lib/archetypes'
 import Icon from '@/components/Icon'
-import { KindIcon } from './KindIcon'
+import Ticket from './Ticket'
+import AceRace from './AceRace'
+import type { CSSProperties } from 'react'
 
 export type DeckName = Pick<Deck, 'id' | 'name' | 'version' | 'archetype' | 'sprites'>
 
@@ -28,6 +30,8 @@ export default function TournamentList({ ts, decks: deckList, error }: { ts: Tou
     x[m.toLowerCase() as 'w' | 'l' | 't']++
     byOpp.set(k, x)
   }
+  const today = new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/London' })
+  const season = seasonCP(ts, seasonOf(today))
   const matchups = [...byOpp.entries()].sort((a, b) => (b[1].w + b[1].l + b[1].t) - (a[1].w + a[1].l + a[1].t))
 
   return (
@@ -35,6 +39,8 @@ export default function TournamentList({ ts, decks: deckList, error }: { ts: Tou
       <div className="page-head">
         <h1>Tournaments</h1>
         <div className="page-actions">
+          <Link href="/tournaments/new?import" className="button secondary paste-game lx-entry" title="Fill a tournament in from your Limitless player page">
+            <Icon name="link" /> Import from Limitless</Link>
           <Link href="/tournaments/new" className="button paste-game"><Icon name="plus" /> Log tournament</Link>
         </div>
       </div>
@@ -42,9 +48,11 @@ export default function TournamentList({ ts, decks: deckList, error }: { ts: Tou
 
       {!ts.length ? (
         <p className="panel">No tournaments yet. After your next Locals, Cup or Regionals, press <strong>Log tournament</strong> to
-          record your list, each round&apos;s opponent and games, and where you finished.</p>
+          record your list, each round&apos;s opponent and games, and where you finished. Played a Regionals or bigger?
+          {' '}<Link href="/tournaments/new?import">Import it from Limitless</Link> instead.</p>
       ) : (
         <>
+          <AceRace s={season} />
           <div className="tiles">
             <div className="panel stat"><div className="stat-label">Events</div><div className="stat-n">{ts.length}</div>
               <div className="stat-sub">{played} rounds</div></div>
@@ -56,26 +64,19 @@ export default function TournamentList({ ts, decks: deckList, error }: { ts: Tou
               <div className="stat-sub">{best ? `${best.name}${best.players ? ` · ${best.players} players` : ''}` : 'No finishes yet'}</div></div>
           </div>
 
-          <ul className="t-list">
-            {ts.map((t) => {
-              const rec = record(t.rounds)
+          <ul className="t-tickets">
+            {ts.map((t, n) => {
               const d = t.deck_id ? decks.get(t.deck_id) : undefined
-              const finish = finishText(t.placement, t.players)
-              const tone = rec.w > rec.l ? 'W' : rec.l > rec.w ? 'L' : 'T'
               return (
                 <li key={t.id}>
-                  <Link href={`/tournaments/${t.id}`} className={`t-row ${t.rounds.length ? tone : 'none'}`}>
-                    <Sprites arch={d?.archetype ?? t.my_archetype} slugs={d ? spritesOf(d) : undefined} />
-                    <span className="match-main">
-                      <strong>{t.name}</strong>
-                      <span className="match-meta">
-                        <span className="muted">{dateRange(t.start_date, t.end_date)}</span>
-                        <span className="deck-name">{d ? <>{d.name}{d.version && <span className="ver">{d.version}</span>}</> : prettyArch(t.my_archetype)}</span>
-                      </span>
-                    </span>
-                    <span className={`t-pill kind-${t.kind}`}><KindIcon kind={t.kind} size={16} /> {kindLabel(t.kind)}</span>
-                    <span className="t-row-finish">{finish}</span>
-                    <span className="t-row-record">{recordText(rec)}</span>
+                  <Link href={`/tournaments/${t.id}`} className="t-ticket-link" aria-label={`${t.name}, ${dateRange(t.start_date, t.end_date)}`}>
+                    <Ticket kind={t.kind} eyebrow={t.format ? <><span aria-hidden>·</span> {t.format}</> : undefined} name={t.name}
+                      meta={[dateRange(t.start_date, t.end_date), t.location,
+                        d ? <>{d.name}{d.version && <span className="ver"> {d.version}</span>}</> : t.my_archetype ? prettyArch(t.my_archetype) : '']}
+                      rounds={t.rounds} rec={record(t.rounds)} placement={t.placement} players={t.players} cp={t.cp}
+                      arch={d?.archetype ?? t.my_archetype} slugs={d ? spritesOf(d) : undefined}
+                      badge={t.rounds.some((r) => r.day === 2) ? <span className="lx-badge">Day 2</span> : undefined}
+                      style={{ '--t': Math.min(n, 8) } as CSSProperties} />
                   </Link>
                 </li>
               )

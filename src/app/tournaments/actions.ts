@@ -4,6 +4,7 @@ import { requireUser } from '@/lib/supabase/server'
 import { basics, cardKey, parseDecklist } from '@/lib/decklist'
 import { matchArchetypes } from '@/lib/archetypes'
 import { isKind, normaliseRounds, type Round } from '@/lib/tournaments'
+import { fetchLabs, parseLabsUrl, type ImportedTournament } from '@/lib/limitless'
 import type { Card } from '@/lib/decklist'
 import cardData from '../../../public/cards.json'
 import { saveDeck } from '../decks/actions'
@@ -20,6 +21,7 @@ export interface TournamentInput {
   myArchetype: string | null
   placement: number | null
   players: number | null
+  cp: number | null
   rounds: Round[]
   notes: string
   /** a list pasted in while logging the event, saved as a new deck first */
@@ -27,6 +29,7 @@ export interface TournamentInput {
 }
 
 const DATE = /^\d{4}-\d{2}-\d{2}$/
+const points = (n: number | null) => (n !== null && Number.isInteger(n) && n >= 0 && n < 10000 ? n : null)
 const count = (n: number | null) => (n && Number.isInteger(n) && n > 0 && n < 100000 ? n : null)
 
 export async function saveTournament(t: TournamentInput): Promise<{ id?: string; error?: string }> {
@@ -61,7 +64,7 @@ export async function saveTournament(t: TournamentInput): Promise<{ id?: string;
 
   const row = {
     name: t.name.trim().slice(0, 120), kind: t.kind, format: t.format.trim().slice(0, 40), location: t.location.trim().slice(0, 120),
-    start_date: t.startDate, end_date: end, deck_id: deckId, my_archetype: arch, placement, players,
+    start_date: t.startDate, end_date: end, deck_id: deckId, my_archetype: arch, placement, players, cp: points(t.cp),
     rounds: normaliseRounds(t.rounds).slice(0, 30), notes: t.notes.slice(0, 5000),
   }
   const { data, error } = t.id
@@ -79,4 +82,29 @@ export async function deleteTournament(id: string): Promise<{ error?: string }> 
   if (error) return { error: error.message }
   revalidatePath('/tournaments')
   return {}
+}
+
+export interface LimitlessImport {
+  run?: ImportedTournament
+  /** a tournament already logged for the same event, so you don't log it twice */
+  existing?: { id: string; name: string } | null
+  error?: string
+}
+
+/** Read a run from a Limitless Labs player link, for the editor to prefill. Saves nothing. */
+export async function importFromLimitless(url: string): Promise<LimitlessImport> {
+  const { supabase } = await requireUser()
+  const ref = parseLabsUrl(url)
+  if (!ref) return { error: "That isn't a Limitless player link. Open your name on the event's Standings page on labs.limitlesstcg.com and copy the address." }
+  let run: ImportedTournament
+  try {
+    run = await fetchLabs(ref)
+  } catch (e) {
+    return { error: e instanceof Error ? e.message : "Couldn't read that page from Limitless." }
+  }
+  const { data } = run.start_date
+    ? await supabase.from('tournaments').select('id, name, notes').eq('start_date', run.start_date)
+    : { data: null }
+  const same = (data ?? []).find((t: { name: string; notes: string }) => t.notes?.includes(run.source) || t.name.trim().toLowerCase() === run.name.toLowerCase())
+  return { run, existing: same ? { id: same.id, name: same.name } : null }
 }

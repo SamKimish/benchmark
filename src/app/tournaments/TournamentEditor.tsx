@@ -1,10 +1,10 @@
 'use client'
-import { useState } from 'react'
+import { useState, type CSSProperties } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { deckLabel } from '@/lib/format'
 import {
-  cleanGames, emptyRound, KINDS, matchResult, record, recordText, type Round, type Tournament,
+  cleanGames, emptyRound, startsDay2, KINDS, matchResult, record, recordText, type Round, type Tournament,
 } from '@/lib/tournaments'
 import type { Deck } from '@/lib/types'
 import DeckPicker from '@/components/DeckPicker'
@@ -12,7 +12,9 @@ import Sprites from '@/components/Sprites'
 import { spritesOf } from '@/lib/archetypes'
 import Icon from '@/components/Icon'
 import Pokeball from '@/components/Pokeball'
-import { saveTournament } from './actions'
+import { saveTournament, type LimitlessImport } from './actions'
+import { closestDeck } from '@/lib/limitless'
+import LimitlessDock, { type DeckNote } from './LimitlessDock'
 
 const today = () => new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/London' })
 const NEW_LIST = '__new'
@@ -20,15 +22,16 @@ const num = (s: string) => (s.trim() ? Math.max(0, Math.floor(Number(s))) || nul
 
 /** One round: the opponent's deck, the games (tap W / L / T, or type 'WLW'), a bye or ID, and optional details. */
 function RoundRow({ i, r, onChange, onRemove }: { i: number; r: Round; onChange: (r: Round) => void; onRemove: () => void }) {
-  const [open, setOpen] = useState(Boolean(r.opponent || r.notes))
+  const [open, setOpen] = useState(Boolean(r.notes))
   const m = matchResult(r)
   const add = (g: 'W' | 'L' | 'T') => onChange({ ...r, special: null, games: cleanGames(r.games + g) })
   return (
-    <li className={`round-edit ${m ?? 'none'}`}>
+    <li className={`round-edit ${m ?? 'none'}`} style={{ '--i': i } as CSSProperties}>
       <span className="round-n">{i + 1}</span>
       <div className="round-opp">
         {r.special === 'bye' ? <span className="muted round-bye">Bye</span>
           : <DeckPicker label={`Round ${i + 1} opponent's deck`} value={r.opp ?? ''} onChange={(k) => onChange({ ...r, opp: k || null })} />}
+        {r.opponent && !open && <button type="button" className="round-who" onClick={() => setOpen(true)} title="Edit their name and notes">vs {r.opponent}</button>}
       </div>
       <div className="round-games">
         <div className="games-entry">
@@ -70,7 +73,7 @@ function RoundRow({ i, r, onChange, onRemove }: { i: number; r: Round; onChange:
 }
 
 /** Logging an in-person event, or changing one: what it was, the list you played, where you finished, and every round. */
-export default function TournamentEditor({ t, decks }: { t?: Tournament; decks: Deck[] }) {
+export default function TournamentEditor({ t, decks, limitless }: { t?: Tournament; decks: Deck[]; limitless?: { url?: string; focus?: boolean } }) {
   const router = useRouter()
   const [name, setName] = useState(t?.name ?? '')
   const [kind, setKind] = useState<string>(t?.kind ?? 'locals')
@@ -85,10 +88,13 @@ export default function TournamentEditor({ t, decks }: { t?: Tournament; decks: 
   const [listText, setListText] = useState('')
   const [placement, setPlacement] = useState(t?.placement ? String(t.placement) : '')
   const [players, setPlayers] = useState(t?.players ? String(t.players) : '')
+  const [cp, setCp] = useState(t?.cp != null ? String(t.cp) : '')
   const [rounds, setRounds] = useState<Round[]>(t?.rounds.length ? t.rounds : [emptyRound()])
   const [notes, setNotes] = useState(t?.notes ?? '')
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [deckNote, setDeckNote] = useState<DeckNote | null>(null)
+  const [flash, setFlash] = useState(0)
 
   const deck = decks.find((d) => d.id === deckId)
   const myArch = deck?.archetype ?? (arch || null)
@@ -104,7 +110,7 @@ export default function TournamentEditor({ t, decks }: { t?: Tournament; decks: 
       const r = await saveTournament({
         id: t?.id, name, kind, format, location, startDate: start, endDate: end || null,
         deckId: deckId && deckId !== NEW_LIST ? deckId : null, myArchetype: deck ? null : arch || null,
-        placement: num(placement), players: num(players), rounds, notes,
+        placement: num(placement), players: num(players), cp: cp.trim() ? Math.max(0, Math.floor(Number(cp))) || 0 : null, rounds, notes,
         newDeck: deckId === NEW_LIST ? { name: listName, decklist: listText } : null,
       })
       if (r.error || !r.id) { setError(r.error ?? 'Something went wrong.'); return }
@@ -115,6 +121,39 @@ export default function TournamentEditor({ t, decks }: { t?: Tournament; decks: 
     } finally {
       setSaving(false)
     }
+  }
+
+  /** Fill the form from a Limitless run. Every field stays editable; nothing is saved yet. */
+  function applyImport({ run }: Required<Pick<LimitlessImport, 'run'>>) {
+    setName(run.name)
+    setKind(run.kind)
+    setFormat(run.format)
+    setLocation(run.location)
+    if (run.start_date) setStart(run.start_date)
+    setEnd(run.end_date ?? '')
+    setPlacement(run.placement ? String(run.placement) : '')
+    setPlayers(run.players ? String(run.players) : '')
+    setRounds(run.rounds.length ? run.rounds : [emptyRound()])
+    setArch(run.my_archetype ?? '')
+    const near = closestDeck(decks, run.decklist)
+    const label = (d: Deck) => deckLabel(d)
+    if (near && near.off === 0) {
+      setDeckId(near.deck.id)
+      setDeckNote({ kind: 'same', name: label(near.deck) })
+    } else if (run.decklist) {
+      setDeckId(NEW_LIST)
+      setListName('')
+      setListText(run.decklist)
+      setDeckNote(near
+        ? { kind: 'close', name: label(near.deck), off: near.off, onUse: () => { setDeckId(near.deck.id); setDeckNote({ kind: 'same', name: label(near.deck) }) } }
+        : { kind: 'new' })
+    } else {
+      setDeckId('')
+      setDeckNote({ kind: 'none' })
+    }
+    const line = `Imported from Limitless: ${run.source}`
+    setNotes((n) => (n.includes(run.source) ? n : n.trim() ? `${n.trim()}\n\n${line}` : line))
+    setFlash((f) => f + 1)
   }
 
   const setRound = (i: number, r: Round) => setRounds(rounds.map((x, j) => (j === i ? r : x)))
@@ -131,11 +170,13 @@ export default function TournamentEditor({ t, decks }: { t?: Tournament; decks: 
       </div>
       {error && <p className="error">{error}</p>}
 
-      <div className="t-editor">
+      {!t && <LimitlessDock autoUrl={limitless?.url} autoFocus={limitless?.focus} deckNote={deckNote} onImport={applyImport} />}
+
+      <div className={`t-editor${flash ? ' filled' : ''}`} key={`e${flash}`}>
         <section className="panel t-section">
           <h2>Event</h2>
           <div className="t-grid">
-            <label className="span2">Name<input value={name} onChange={(e) => setName(e.target.value)} placeholder="Gdańsk Regionals" maxLength={120} autoFocus={!t} /></label>
+            <label className="span2">Name<input value={name} onChange={(e) => setName(e.target.value)} placeholder="Gdańsk Regionals" maxLength={120} autoFocus={!t && !limitless} /></label>
             <div className="span2">
               <span className="field-label">Type</span>
               <div className="kind-picker" role="radiogroup" aria-label="Tournament type">
@@ -189,19 +230,25 @@ export default function TournamentEditor({ t, decks }: { t?: Tournament; decks: 
             <label>Placed<input type="number" min={1} inputMode="numeric" value={placement} onChange={(e) => setPlacement(e.target.value)} placeholder="12" /></label>
             <span className="muted">of</span>
             <label>Players<input type="number" min={1} inputMode="numeric" value={players} onChange={(e) => setPlayers(e.target.value)} placeholder="340" /></label>
+            <label className="t-cp"><span>CP earned <span className="muted small" title="Championship Points">(towards Ace)</span></span>
+              <input type="number" min={0} inputMode="numeric" value={cp} onChange={(e) => setCp(e.target.value)} placeholder="0" /></label>
           </div>
         </section>
       </div>
 
-      <section className="t-rounds">
+      <section className={`t-rounds${flash ? ' filled' : ''}`} key={`r${flash}`}>
         <div className="log-head">
           <h2>Rounds</h2>
           <span className="muted small">Tap W, L or T for each game, or type them: <strong>WLW</strong>. Byes count as wins, IDs as ties.</span>
         </div>
         <ol className="rounds-edit">
-          {rounds.map((r, i) => (
-            <RoundRow key={i} i={i} r={r} onChange={(x) => setRound(i, x)} onRemove={() => setRounds(rounds.filter((_, j) => j !== i))} />
-          ))}
+          {rounds.map((r, i) => {
+            const day2 = startsDay2(rounds, i)
+            return [
+              day2 && <li key={`d${i}`} className="round-day" aria-hidden><span>Day 2</span></li>,
+              <RoundRow key={i} i={i} r={r} onChange={(x) => setRound(i, x)} onRemove={() => setRounds(rounds.filter((_, j) => j !== i))} />,
+            ]
+          })}
         </ol>
         <button type="button" className="secondary add-round" onClick={() => setRounds([...rounds, emptyRound()])} disabled={rounds.length >= 30}>
           <Icon name="plus" /> Add round

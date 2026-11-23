@@ -499,7 +499,7 @@ table.t-rounds-table { border-collapse: separate; border-spacing: 0 3px; font-si
 .t-deck .sprites { height: 40px; }
 .t-newlist { display: grid; gap: 10px; margin-top: 12px; }
 .t-arch { margin-top: 12px; }
-.t-finish { display: flex; align-items: end; gap: 10px; }
+.t-finish { display: flex; align-items: end; gap: 10px; flex-wrap: wrap; }
 .t-finish input { width: 110px; }
 .t-finish > .muted { padding-bottom: 8px; }
 .t-rounds { margin-top: 8px; }
@@ -614,3 +614,172 @@ table.data th.share-col { width: 40%; }
 @media (prefers-reduced-motion: reduce) {
   .chevron, details.day > summary, table.data tbody tr { transition: none; }
 }
+/* Import from Limitless: a paste strip that turns into the run's ticket stub, then the form fills itself in */
+:root { --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1); --lx-ink: #14161d; }
+.lx-dock { position: relative; margin: 0 0 18px; padding: clamp(16px, 2vw, 22px); border-radius: 14px; background: var(--panel);
+  border: 1px solid var(--line); display: grid; gap: 14px; overflow: hidden; }
+.lx-dock::before { content: ''; position: absolute; inset: 0 auto 0 0; width: 5px; background: var(--line-red); }
+.lx-intro { display: flex; gap: 14px; align-items: flex-start; }
+.lx-glyph { flex: none; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--tag); color: var(--accent); }
+.lx-title { margin: 0 0 2px; font-family: var(--font-display), system-ui, sans-serif; font-weight: 600; font-size: 1.3rem; letter-spacing: -.01em; }
+.lx-intro p { margin: 0; max-width: 62ch; }
+.lx-field { display: flex; align-items: center; gap: 10px; padding: 6px 6px 6px 14px; border: 1.5px solid var(--line); border-radius: 12px;
+  background: var(--bg); transition: border-color .25s var(--ease), box-shadow .25s var(--ease); }
+.lx-field:focus-within { border-color: var(--accent); box-shadow: 0 0 0 4px color-mix(in oklch, var(--accent) 14%, transparent); }
+.lx-field > .icon { color: var(--muted); flex: none; }
+.lx-field input { flex: 1; min-width: 0; border: 0; background: none; padding: 8px 0; font-size: 1.02rem; outline: none; }
+.lx-field input:focus-visible { outline: none; }
+.lx-field button { padding: 10px 20px; border-radius: 9px; font-weight: 600; min-width: 104px; display: inline-flex; justify-content: center; }
+.lx-field .pokeball-label { color: inherit; }
+.has-error .lx-field { border-color: var(--loss); animation: lx-nudge .35s var(--ease); }
+.lx-error { margin: 0; }
+@keyframes lx-nudge { 30% { transform: translateX(-4px); } 60% { transform: translateX(3px); } }
+
+/* the ticket */
+.lx-dock.done { padding: 0; border: 0; background: none; overflow: visible; }
+.lx-dock.done::before { display: none; }
+.lx-ticket { --tone: var(--muted); display: grid; grid-template-columns: minmax(0, 1fr) clamp(150px, 18vw, 210px); background: var(--panel);
+  border: 1px solid var(--line); border-radius: 14px; position: relative; overflow: hidden; animation: lx-in .6s var(--ease) both;
+  animation-delay: calc(var(--t, 0) * 70ms); }
+.lx-ticket.W { --tone: var(--win); } .lx-ticket.L { --tone: var(--loss); } .lx-ticket.T { --tone: var(--tie); }
+.lx-ticket::before { content: ''; position: absolute; inset: 0 auto 0 0; width: 5px; background: var(--line-red); }
+.lx-main { padding: 20px 22px 18px 26px; display: grid; gap: 6px; min-width: 0; }
+.lx-eyebrow { display: flex; align-items: center; gap: 6px; font-size: .74rem; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+.lx-eyebrow .icon { color: var(--accent); }
+.lx-name { margin: 0; font-family: var(--font-display), system-ui, sans-serif; font-weight: 600; font-size: clamp(1.6rem, 2.6vw, 2.3rem);
+  letter-spacing: -.025em; line-height: 1.02; }
+.lx-meta { display: flex; flex-wrap: wrap; gap: 4px 14px; color: var(--muted); font-size: .92rem; }
+.lx-meta span + span::before { content: ''; display: inline-block; width: 4px; height: 4px; border-radius: 50%; background: currentColor; opacity: .5;
+  vertical-align: middle; margin: 0 10px 2px -8px; }
+.lx-deck { margin: 6px 0 0; font-size: .92rem; }
+.lx-use { font-size: inherit; color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+/* the stub: tear-off edge with punched notches top and bottom */
+.lx-stub { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 18px 14px;
+  border-left: 2px dashed var(--line); background: color-mix(in oklch, var(--tone) 7%, var(--panel)); text-align: center; }
+.lx-stub::before, .lx-stub::after { content: ''; position: absolute; left: -11px; width: 20px; height: 20px; border-radius: 50%; background: var(--bg);
+  border: 1px solid var(--line); }
+.lx-stub::before { top: -11px; } .lx-stub::after { bottom: -11px; }
+.lx-place { display: flex; align-items: flex-start; font-family: var(--font-display), system-ui, sans-serif; font-weight: 600; line-height: .9; letter-spacing: -.03em; }
+.lx-place-n { font-size: clamp(2.6rem, 4.2vw, 3.6rem); font-variant-numeric: tabular-nums; }
+.lx-place-s { font-size: 1.1rem; margin-top: 4px; letter-spacing: 0; }
+.lx-of { font-size: .8rem; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; font-weight: 600; margin-bottom: 8px; }
+.lx-rec { font-family: var(--font-display), system-ui, sans-serif; font-weight: 600; font-size: 1.5rem; color: var(--tone); font-variant-numeric: tabular-nums; }
+.lx-stub .sprites { margin-top: 4px; }
+.lx-badge { margin-top: 6px; font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; padding: 3px 9px; border-radius: 99px;
+  background: var(--lx-ink); color: #fff; }
+/* one tile per round, day two set apart */
+.lx-ribbon { list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 5px; }
+.lx-tile { position: relative; width: 34px; height: 42px; border-radius: 8px; background: var(--tag); display: grid; grid-template-rows: 1fr auto;
+  place-items: center; padding: 3px 0 2px; animation: lx-tile .45s var(--ease-spring) both; animation-delay: calc(var(--t, 0) * 70ms + var(--i, 0) * 45ms + 150ms); }
+.lx-tile.W { background: var(--win-row); color: var(--win); }
+.lx-tile.L { background: var(--loss-row); color: var(--loss); }
+.lx-tile.T { background: var(--tie-row); color: var(--tie); }
+.lx-tile.day2 { margin-left: 16px; }
+.lx-tile-r { font-family: var(--font-display), system-ui, sans-serif; font-weight: 600; font-size: 1.15rem; line-height: 1; }
+.lx-tile-n { font-size: .62rem; font-weight: 600; opacity: .7; font-variant-numeric: tabular-nums; }
+.lx-day2 { position: absolute; left: -13px; top: -1px; bottom: -1px; width: 2px; background: var(--line); border-radius: 2px; font-size: 0; }
+.lx-ribbon.skeleton { margin: 0; }
+.lx-ribbon.skeleton .lx-tile { background: linear-gradient(90deg, var(--tag) 0%, var(--line) 50%, var(--tag) 100%); background-size: 200% 100%;
+  animation: lx-tile .45s var(--ease) both, lx-shimmer 1.2s linear infinite; animation-delay: calc(var(--i) * 55ms), 0s; }
+.lx-after { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; padding: 10px 4px 0; }
+.lx-after .muted { flex: 1 1 320px; }
+.lx-warn { flex-basis: 100%; padding: 8px 12px; border-radius: 9px; background: var(--tie-row); color: var(--ink); font-size: .9rem; }
+.lx-links { display: flex; gap: 16px; }
+.lx-link { display: inline-flex; align-items: center; gap: 4px; font-weight: 600; font-size: .9rem; color: var(--ink); text-decoration: none; }
+.lx-link:hover { color: var(--accent); }
+button.link.lx-link { color: var(--ink); }
+button.link.lx-link:hover { color: var(--accent); }
+.lx-entry .icon { color: var(--accent); }
+@keyframes lx-in { from { opacity: 0; transform: translateY(14px) scale(.99); } }
+@keyframes lx-tile { from { opacity: 0; transform: translateY(8px) scale(.85); } }
+@keyframes lx-shimmer { to { background-position: -200% 0; } }
+/* the form below fills in: sections wash in once, rounds land one after another */
+.t-editor.filled > .panel { animation: lx-wash 1.4s var(--ease) both; }
+.t-editor.filled > .panel + .panel { animation-delay: 80ms; }
+.t-rounds.filled .round-edit { animation: lx-row .5s var(--ease) both; animation-delay: calc(var(--i, 0) * 45ms + 200ms); }
+@keyframes lx-wash { from { box-shadow: 0 0 0 3px color-mix(in oklch, var(--accent) 35%, transparent); } to { box-shadow: 0 0 0 3px transparent; } }
+@keyframes lx-row { from { opacity: 0; transform: translateY(10px); } }
+.round-who { all: unset; display: block; margin: 3px 0 0 4px; font-size: .82rem; color: var(--muted); cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.round-who:hover { color: var(--ink); text-decoration: underline; }
+.round-day { display: flex; align-items: center; gap: 12px; margin: 10px 0 4px; font-size: .74rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .1em; color: var(--muted); }
+.round-day::before, .round-day::after { content: ''; height: 1px; background: var(--line); flex: 1; }
+.round-day::before { flex: 0 0 22px; }
+.t-pill-link { text-decoration: none; color: var(--ink); }
+.t-pill-link:hover { border-color: var(--accent); color: var(--accent); }
+/* the Tournaments list: every event as its ticket */
+.t-tickets { list-style: none; margin: 0 0 12px; padding: 0; display: grid; gap: 14px;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 700px), 1fr)); }
+.t-ticket-link { display: block; height: 100%; text-decoration: none; color: inherit; border-radius: 14px; }
+.t-ticket-link .lx-ticket { height: 100%; transition: transform .25s var(--ease), box-shadow .25s var(--ease), border-color .25s var(--ease); }
+.t-ticket-link:hover .lx-ticket, .t-ticket-link:focus-visible .lx-ticket { transform: translateY(-2px); border-color: color-mix(in oklch, var(--ink) 18%, var(--line));
+  box-shadow: 0 10px 24px -14px rgba(20, 22, 29, .35); }
+.t-ticket-link:hover .lx-name { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; }
+.t-ticket-link:focus-visible { outline-offset: 3px; }
+@media (hover: none) { .t-ticket-link:hover .lx-ticket { transform: none; box-shadow: none; } }
+.lx-stub-deck { font-size: .78rem; color: var(--muted); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lx-empty { margin: 6px 0 0; }
+.lx-meta .ver { color: var(--muted); }
+@media (max-width: 640px) {
+  .lx-ticket { grid-template-columns: 1fr; }
+  .lx-stub { border-left: 0; border-top: 2px dashed var(--line); flex-direction: row; flex-wrap: wrap; gap: 6px 14px; justify-content: flex-start; padding: 14px 20px 14px 26px; }
+  .lx-stub::before { top: -11px; left: -11px; } .lx-stub::after { top: -11px; bottom: auto; left: auto; right: -11px; }
+  .lx-of { margin: 0; align-self: center; }
+  .lx-tile { width: 30px; height: 38px; }
+  .lx-field button { min-width: 0; padding: 10px 14px; }
+  .lx-intro .lx-glyph { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lx-ticket, .lx-tile, .t-editor.filled > .panel, .t-rounds.filled .round-edit, .has-error .lx-field { animation: none !important; }
+  .lx-ribbon.skeleton .lx-tile { animation: none !important; }
+}
+@media (prefers-color-scheme: dark) { :root { --lx-ink: #e8eaf0; } .lx-badge { color: #14161d; } }
+@media (max-width: 640px) {
+  .lx-meta { flex-direction: column; gap: 2px; }
+  .lx-meta span + span::before { display: none; }
+  .lx-stub { align-items: center; }
+}
+/* Race to the Ace: the season's CP as a track to 200, a segment per event */
+.lx-cp { margin-top: 2px; font-size: .78rem; font-weight: 700; letter-spacing: .04em; padding: 2px 9px; border-radius: 99px;
+  background: var(--panel); border: 1px solid color-mix(in oklch, var(--ace) 45%, var(--line)); color: var(--ace-ink); font-variant-numeric: tabular-nums; }
+:root { --ace: #e0a91b; --ace-ink: #8a5a00; --ace-a: #d6342c; --ace-b: #f07a3c; }
+@media (prefers-color-scheme: dark) { :root { --ace: #f0c95a; --ace-ink: #f0c95a; --ace-a: #ef5a4f; --ace-b: #f59a5c; } }
+.t-pill.cp { border-color: color-mix(in oklch, var(--ace) 50%, var(--line)); color: var(--ace-ink); font-weight: 600; }
+.t-cp { margin-left: 12px; }
+.ace { position: relative; margin: 0 0 14px; padding: clamp(16px, 2vw, 24px) clamp(16px, 2vw, 26px) 18px; border-radius: 14px; background: var(--panel);
+  border: 1px solid var(--line); display: grid; gap: 14px; overflow: hidden; }
+.ace::before { content: ''; position: absolute; inset: 0 auto 0 0; width: 5px; background: linear-gradient(var(--ace-a), var(--ace)); }
+.ace-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px 24px; flex-wrap: wrap; }
+.ace-eyebrow { font-size: .74rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); }
+.ace-score { display: flex; align-items: baseline; gap: 8px; margin-top: 2px; font-family: var(--font-display), system-ui, sans-serif; font-weight: 600; }
+.ace-n { font-size: clamp(2.6rem, 5vw, 3.8rem); line-height: .95; letter-spacing: -.035em; font-variant-numeric: tabular-nums; }
+.ace-of { font-size: 1.15rem; color: var(--muted); letter-spacing: -.01em; }
+.ace-status { display: flex; flex-direction: column; align-items: flex-end; text-align: right; gap: 2px; }
+.ace-status strong { font-family: var(--font-display), system-ui, sans-serif; font-weight: 600; font-size: 1.2rem; }
+.ace.done .ace-status strong { color: var(--ace-ink); }
+.ace-track { position: relative; height: 34px; border-radius: 10px; background: var(--tag); margin-top: 20px; }
+.ace-fill { position: absolute; inset: 0; display: flex; gap: 2px; border-radius: 10px; overflow: hidden; }
+.ace-seg { display: flex; align-items: center; justify-content: flex-end; min-width: 6px; padding: 0 8px; text-decoration: none; color: #fff;
+  background: var(--ace-a); transform-origin: left center; animation: ace-grow .7s var(--ease) both; animation-delay: calc(var(--i, 0) * 120ms + 200ms);
+  transition: filter .2s var(--ease); }
+.ace-seg:nth-child(even) { background: var(--ace-b); }
+.ace.done .ace-seg { background: var(--ace); color: #3a2600; }
+.ace.done .ace-seg:nth-child(even) { background: color-mix(in oklch, var(--ace) 80%, #fff); }
+.ace-seg:hover, .ace-seg:focus-visible { filter: brightness(1.1); }
+.ace-seg-cp { font-family: var(--font-display), system-ui, sans-serif; font-weight: 600; font-size: .95rem; font-variant-numeric: tabular-nums; }
+.ace-tick { position: absolute; top: 8px; bottom: 8px; width: 1px; background: var(--line); }
+.ace-line { position: absolute; top: -8px; bottom: -8px; width: 2px; margin-left: -2px; background: var(--ink); border-radius: 2px; z-index: 1; }
+.ace-line span { position: absolute; bottom: calc(100% + 2px); right: -2px; font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; }
+.ace-legend { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px 18px; font-size: .86rem; }
+.ace-legend li { display: inline-flex; align-items: center; gap: 7px; }
+.ace-dot { width: 9px; height: 9px; border-radius: 3px; background: var(--ace-a); }
+.ace-legend li:nth-child(even) .ace-dot { background: var(--ace-b); }
+.ace.done .ace-dot { background: var(--ace); }
+@keyframes ace-grow { from { transform: scaleX(0); } }
+@media (max-width: 640px) {
+  .ace-status { align-items: flex-start; text-align: left; }
+  .ace-seg-cp { font-size: .8rem; }
+  .ace-seg { padding: 0 5px; }
+  .t-cp { margin-left: 0; }
+}
+@media (prefers-reduced-motion: reduce) { .ace-seg { animation: none; } }
