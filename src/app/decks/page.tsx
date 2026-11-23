@@ -13,11 +13,12 @@ export default async function Decks() {
   const decks = (data ?? []) as Deck[]
   // each deck's record across all its versions
   const line = new Map(decks.map((d) => [d.id, d.line_id]))
-  const records: Record<string, Tally> = {}
+  const records: Record<string, Tally & { last?: string }> = {}
   for (const g of games) {
     const l = g.deck_id && line.get(g.deck_id)
     if (!l) continue
-    const r = (records[l] ??= { games: 0, wins: 0, losses: 0 })
+    // games come newest first, so the first one seen is when the deck was last played
+    const r = (records[l] ??= { games: 0, wins: 0, losses: 0, last: g.played_at })
     r.games++
     if (g.result === 'W') r.wins++
     if (g.result === 'L') r.losses++

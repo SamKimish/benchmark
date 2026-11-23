@@ -13,6 +13,8 @@ export interface Deck {
   active: boolean
   /** up to two Pokémon slugs drawn for this deck; empty = its archetype's */
   sprites: string[]
+  /** when the deck (all its versions) was archived; null = in use */
+  archived_at?: string | null
   created_at: string
 }
 
