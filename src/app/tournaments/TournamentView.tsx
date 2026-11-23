@@ -15,6 +15,7 @@ export default function TournamentView({ t, deck: d }: { t: Tournament; deck: De
   const myArch = d?.archetype ?? t.my_archetype
   const rec = record(t.rounds)
   const finish = finishText(t.placement, t.players)
+  const labs = t.notes.match(/https:\/\/labs\.limitlesstcg\.com\/\S+/)?.[0]
 
   return (
     <>
@@ -32,6 +33,7 @@ export default function TournamentView({ t, deck: d }: { t: Tournament; deck: De
               <span className={`t-pill kind-${t.kind}`}><KindIcon kind={t.kind} /> {kindLabel(t.kind)}</span>
               {t.format && <span className="t-pill">{t.format}</span>}
               {finish && <span className="t-pill finish">{finish}</span>}
+              {labs && <a className="t-pill t-pill-link" href={labs} target="_blank" rel="noreferrer">Limitless <Icon name="external" size={14} /></a>}
             </div>
           </div>
           <div className="t-score">

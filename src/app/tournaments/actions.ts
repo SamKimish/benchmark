@@ -4,6 +4,7 @@ import { requireUser } from '@/lib/supabase/server'
 import { basics, cardKey, parseDecklist } from '@/lib/decklist'
 import { matchArchetypes } from '@/lib/archetypes'
 import { isKind, normaliseRounds, type Round } from '@/lib/tournaments'
+import { fetchLabs, parseLabsUrl, type ImportedTournament } from '@/lib/limitless'
 import type { Card } from '@/lib/decklist'
 import cardData from '../../../public/cards.json'
 import { saveDeck } from '../decks/actions'
@@ -79,4 +80,29 @@ export async function deleteTournament(id: string): Promise<{ error?: string }> 
   if (error) return { error: error.message }
   revalidatePath('/tournaments')
   return {}
+}
+
+export interface LimitlessImport {
+  run?: ImportedTournament
+  /** a tournament already logged for the same event, so you don't log it twice */
+  existing?: { id: string; name: string } | null
+  error?: string
+}
+
+/** Read a run from a Limitless Labs player link, for the editor to prefill. Saves nothing. */
+export async function importFromLimitless(url: string): Promise<LimitlessImport> {
+  const { supabase } = await requireUser()
+  const ref = parseLabsUrl(url)
+  if (!ref) return { error: "That isn't a Limitless player link. Open your name on the event's Standings page on labs.limitlesstcg.com and copy the address." }
+  let run: ImportedTournament
+  try {
+    run = await fetchLabs(ref)
+  } catch (e) {
+    return { error: e instanceof Error ? e.message : "Couldn't read that page from Limitless." }
+  }
+  const { data } = run.start_date
+    ? await supabase.from('tournaments').select('id, name, notes').eq('start_date', run.start_date)
+    : { data: null }
+  const same = (data ?? []).find((t: { name: string; notes: string }) => t.notes?.includes(run.source) || t.name.trim().toLowerCase() === run.name.toLowerCase())
+  return { run, existing: same ? { id: same.id, name: same.name } : null }
 }

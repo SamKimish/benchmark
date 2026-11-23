@@ -10,6 +10,8 @@ const PATHS = {
   plus: 'M12 5v14M5 12h14',
   back: 'M19 12H5M12 19l-7-7 7-7',
   edit: 'M4 20h4L19 9l-4-4L4 16zM14 6l4 4',
+  link: 'M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1',
+  external: 'M14 4h6v6M20 4l-9 9M18 14v6H4V6h6',
 } as const
 
 export type IconName = keyof typeof PATHS

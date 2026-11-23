@@ -1,0 +1,20 @@
+{
+    "ok": true,
+    "message": {
+        "rk9_id": "GD001-Hoo7UUNiVvyRG4",
+        "playlatam_id": null,
+        "type": "regional",
+        "city": "Gda\u0144sk",
+        "name": null,
+        "date": "October 31\u2013November 1, 2026",
+        "season": 2027,
+        "country": "PL",
+        "updated_at": "2026-11-01 16:22:15",
+        "decklists": 1,
+        "round": 17,
+        "players": 1739,
+        "players_r1": 1732,
+        "started": 1,
+        "completed": 1
+    }
+}
