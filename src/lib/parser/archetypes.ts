@@ -34,6 +34,7 @@ export const ARCHETYPES: [string, number][] = [
   ['sharpedo-mega', 4],
   ['meganium-mega,venusaur-mega', 3],
   ['hydrapple', 3],
+  ['stevens-metagross', 4],   // ahead of plain Metagross when Steven's Metagross ex shows
   ['metagross', 3],
   ['toxtricity,absol-mega', 3],
   ['darkrai-mega', 3],
