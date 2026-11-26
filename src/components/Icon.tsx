@@ -7,6 +7,8 @@ const PATHS = {
   history: 'M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5M12 7v5l3 3',
   clear: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM9 9l6 6M15 9l-6 6',
   trash: 'M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13',
+  archive: 'M3 4h18v4H3zM5 8v12h14V8M10 12h4',
+  unarchive: 'M3 4h18v4H3zM5 8v12h14V8M12 18v-7M9 14l3-3 3 3',
   plus: 'M12 5v14M5 12h14',
   back: 'M19 12H5M12 19l-7-7 7-7',
   edit: 'M4 20h4L19 9l-4-4L4 16zM14 6l4 4',

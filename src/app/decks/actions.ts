@@ -92,6 +92,14 @@ export async function deleteDeck(lineId: string) {
   refresh()
 }
 
+/** Archives a deck (every version), or brings it back. Its games and stats are untouched. */
+export async function archiveDeck(lineId: string, archived: boolean) {
+  const { supabase } = await requireUser()
+  const { error } = await supabase.from('decks').update({ archived_at: archived ? new Date().toISOString() : null }).eq('line_id', lineId)
+  refresh()
+  return error?.message
+}
+
 /** Every version of a deck's list, oldest first. */
 export async function deckHistory(lineId: string): Promise<Deck[]> {
   const { supabase } = await requireUser()

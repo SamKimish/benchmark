@@ -783,3 +783,51 @@ button.link.lx-link:hover { color: var(--accent); }
   .t-cp { margin-left: 0; }
 }
 @media (prefers-reduced-motion: reduce) { .ace-seg { animation: none; } }
+
+/* Decks: archive. Archived decks sit on a collapsed shelf under the gallery, drained of colour until you reach for one. */
+.tile-tools { display: inline-flex; gap: 0; flex: none; }
+button.icon.archive-btn:hover { color: var(--ink); }
+button.icon.archive-btn.pending { opacity: .4; cursor: progress; }
+.deck-when { font-size: .74rem; letter-spacing: .02em; color: var(--muted); margin-top: 2px; }
+.deck-when.idle { color: #a8641a; }
+.deck-when.rotated { display: flex; align-items: center; gap: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rotated-tag { flex: none; font-size: .64rem; font-weight: 600; text-transform: uppercase; letter-spacing: .1em; padding: 1px 6px;
+  border-radius: 99px; background: var(--loss-bg); color: var(--loss); }
+@media (prefers-color-scheme: dark) { .deck-when.idle { color: #e0a35c; } }
+details.deck-archive { margin-top: clamp(40px, 4vw, 64px); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+details.deck-archive > summary { display: flex; align-items: center; gap: 18px; padding: 16px 12px; margin: 4px -12px; border-radius: 14px;
+  cursor: pointer; list-style: none; transition: background .25s var(--ease); }
+details.deck-archive > summary::-webkit-details-marker { display: none; }
+details.deck-archive > summary:hover { background: var(--panel); }
+details.deck-archive > summary:hover .chevron { background: var(--line); }
+details.deck-archive:not([open]) .chevron { transform: rotate(-90deg); }
+details.deck-archive > summary:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.archive-title { flex: 1; display: flex; align-items: baseline; gap: 14px; min-width: 0; flex-wrap: wrap; }
+.archive-name { font-family: var(--font-display), system-ui, sans-serif; font-weight: 600; font-size: 1.4rem; letter-spacing: -.01em; }
+/* the shelf's decks as a fanned stack of chips; they spread out when you hover the row */
+.archive-stack { display: flex; align-items: center; }
+.archive-stack .deck-chip { box-shadow: 0 0 0 2px var(--bg); margin-left: -14px; filter: grayscale(1); opacity: .75;
+  transition: margin .4s var(--ease), filter .4s var(--ease), opacity .4s var(--ease); }
+.archive-stack .deck-chip:first-child { margin-left: 0; }
+details.deck-archive > summary:hover .archive-stack .deck-chip { margin-left: 4px; filter: none; opacity: 1; }
+details.deck-archive > summary:hover .archive-stack .deck-chip:first-child { margin-left: 0; }
+details.deck-archive[open] .archive-stack { visibility: hidden; }
+.archive-more { margin-left: 8px; font-size: .8rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.archive-grid { padding: 8px 0 32px; }
+.deck-tile.archived .mosaic { filter: grayscale(.85) contrast(.9); opacity: .7; transition: filter .4s var(--ease), opacity .4s var(--ease); }
+.deck-tile.archived:hover .mosaic, .deck-tile.archived:focus-within .mosaic { filter: none; opacity: 1; }
+.deck-tile.archived .deck-tile-info strong { color: var(--muted); }
+details.deck-archive[open] .archive-grid > .deck-tile { animation: shelf-in .6s var(--ease) both; animation-delay: calc(var(--i, 0) * 60ms); }
+@keyframes shelf-in { from { opacity: 0; transform: translateY(18px); } }
+/* names line up across a row even when one tile carries an extra line */
+.deck-tile { align-content: start; }
+.deck-tile .deck-tile-info { align-items: start; }
+@media (max-width: 640px) {
+  .archive-stack, .archive-why { display: none; }
+  .archive-name { font-size: 1.2rem; }
+  details.deck-archive > summary { gap: 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  details.deck-archive[open] .archive-grid > .deck-tile { animation: none; }
+  .archive-stack .deck-chip, .deck-tile.archived .mosaic, details.deck-archive > summary { transition: none; }
+}
